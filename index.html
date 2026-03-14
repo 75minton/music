@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="75 Music" />
+  <link rel="manifest" href="./manifest.json" />
   <title>75 Minton Music Player</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,6 +67,16 @@
     .brand svg { width: 24px; height: 24px; fill: var(--accent); }
     .brand span { color: var(--accent); font-weight: 400; font-size: 1rem; }
     
+    /* PWA Install Button Style */
+    #installBtn {
+      appearance: none; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 999px; padding: 6px 14px;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    #installBtn:hover { background: var(--accent); color: #000; }
+    #installBtn[hidden] { display: none !important; }
+
     .tabs-wrapper {
       flex-shrink: 0; padding: 0 20px 12px;
       border-bottom: 1px solid var(--border);
@@ -240,7 +251,7 @@
         border: 1px solid rgba(212,175,55,0.1);
       }
       .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: center; }
-      #lrcTrackName { display: none; } /* 모바일에서는 가사창 제목 생략하여 깔끔하게 */
+      #lrcTrackName { display: none; }
       .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
       .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
     }
@@ -256,6 +267,15 @@
     </svg>
     75<span>MINTON</span>
   </div>
+  
+  <button id="installBtn" hidden>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    <span>앱 설치</span>
+  </button>
 </header>
 
 <div class="tabs-wrapper">
@@ -372,7 +392,6 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 const songs = [
   { title:"Seven Five Rabbits", artist:"Tony.Park", cover:"./sound/Seven Five Rabbits.png", url:"./sound/Seven Five Rabbits.mp3", lrc:"./sound/Seven Five Rabbits.lrc", youtube:"#" },
   { title:"같은 코트, 같은 마음(EDM)", artist:"Tony.Park", cover:"./sound/같은 코트, 같은 마음(EDM).png",url:"./sound/같은 코트, 같은 마음(EDM).mp3",lrc:"./sound/같은 코트, 같은 마음(EDM).lrc",youtube:"https://youtu.be/K9yy9eBCtFI?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS" }
-
 ];
 
 const state = { cur:0, lyrics:[], shuffle:false, repeat:false };
@@ -524,6 +543,42 @@ audio.addEventListener('timeupdate', () => {
 audio.addEventListener('ended', () => state.repeat ? audio.play() : next());
 audio.addEventListener('pause', () => setPlaying(false));
 audio.addEventListener('play', () => setPlaying(true));
+
+/* ── PWA 설치 로직 ── */
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // 모바일 브라우저 기본 설치 팝업 방지
+  e.preventDefault();
+  // 이벤트를 보관해두었다가 사용자가 버튼을 클릭하면 트리거
+  deferredPrompt = e;
+  // 숨겨뒀던 앱 설치 버튼을 보여줌
+  installBtn.hidden = false;
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  
+  // 브라우저의 설치 프롬프트 띄우기
+  deferredPrompt.prompt();
+  
+  // 사용자의 응답 대기 (설치 수락 혹은 거절)
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log(`사용자 설치 응답: ${outcome}`);
+  
+  // 프롬프트는 한 번만 사용할 수 있으므로 비워줌
+  deferredPrompt = null;
+  // 버튼 다시 숨김
+  installBtn.hidden = true;
+});
+
+window.addEventListener('appinstalled', () => {
+  // 앱이 정상적으로 설치되면 버튼을 숨김
+  installBtn.hidden = true;
+  deferredPrompt = null;
+  console.log('PWA가 성공적으로 설치되었습니다.');
+});
 
 // 초기화
 renderPlaylist(); renderLinks(); loadTrack(0, false); 
