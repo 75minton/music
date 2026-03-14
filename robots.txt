@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 
-Sitemap: https://seongupark.github.io/75minton/sitemap.xml
+Sitemap: https://75minton.github.io/music/sitemap.xml
