@@ -252,17 +252,43 @@
       location.href = './index.html'; 
     });
 
-    window.addEventListener('load', () => {
-  // 앱 설치 여부 확인
-  if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-    // 앱이 이미 설치되어 실행 중인 경우
-    // 필요한 로직 추가 (예: 특정 페이지로 이동, 특정 기능 실행)
-    window.location.href = 'index.html'; // 예시: index.html로 이동
+    // app.html의 스크립트 부분
+window.addEventListener('load', () => {
+  // 1. 현재 앱 모드(standalone)로 실행 중인지 확인
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+
+  if (isStandalone) {
+    // 앱 모드로 실행 중이라면 메인 콘텐츠(index.html 등)를 보여줌
+    console.log("PWA 앱 모드로 실행 중입니다.");
+    // 필요하다면 여기서 index.html 내용을 fetch해서 보여주거나 할 수 있습니다.
   } else {
-    // 앱이 설치되지 않았거나 브라우저에서 실행 중인 경우
-    // 설치 유도 로직 추가 (예: 설치 버튼 표시)
+    // 2. 브라우저 모드로 실행 중인 경우
+    console.log("브라우저 모드로 실행 중입니다.");
+
+    // 설치 여부를 판단하는 확실한 방법은 없지만,
+    // (예전에 설치 프롬프트를 수락했는지 기록해둔 로컬 스토리지 등을 활용할 수는 있음)
+    // 여기서는 단순히 앱 설치를 유도하는 UI를 보여줍니다.
+
+    const installNoticeHTML = `
+      <div id="app-install-notice" style="position:fixed; bottom:0; left:0; width:100%; background:#333; color:#fff; padding:20px; text-align:center; z-index:1000;">
+        <p>75민턴 앱이 설치되어 있다면 앱으로 더 편리하게 이용하세요!</p>
+        <button onclick="openInApp()" style="background:#D4AF37; color:#000; border:none; padding:10px 20px; margin-top:10px; cursor:pointer; border-radius:5px;">앱으로 열기</button>
+        <button onclick="closeNotice()" style="background:none; color:#aaa; border:none; margin-left:10px; cursor:pointer;">닫기</button>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', installNoticeHTML);
   }
 });
+
+function openInApp() {
+  // 앱을 강제로 열 수는 없지만, start_url로 지정된 주소로 이동시켜
+  // 브라우저가 앱 실행을 제안하도록 유도해볼 수 있습니다. (동작 보장 불가)
+  window.location.href = '/music/index.html?utm_source=app_link';
+}
+
+function closeNotice() {
+  document.getElementById('app-install-notice').style.display = 'none';
+}
   </script>
 </body>
 </html>
