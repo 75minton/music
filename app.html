@@ -251,6 +251,18 @@
       // 설치 완료 후 메인 페이지로 이동
       location.href = './index.html'; 
     });
+
+    window.addEventListener('load', () => {
+  // 앱 설치 여부 확인
+  if (navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    // 앱이 이미 설치되어 실행 중인 경우
+    // 필요한 로직 추가 (예: 특정 페이지로 이동, 특정 기능 실행)
+    window.location.href = 'index.html'; // 예시: index.html로 이동
+  } else {
+    // 앱이 설치되지 않았거나 브라우저에서 실행 중인 경우
+    // 설치 유도 로직 추가 (예: 설치 버튼 표시)
+  }
+});
   </script>
 </body>
 </html>
