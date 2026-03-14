@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+
+Sitemap: https://seongupark.github.io/75minton/sitemap.xml

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#121212" />
+  <meta name="description" content="75 Minton Music - 75년 토끼띠 배드민턴 동호회" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="75 Music" />
+  <title>75 Minton Music Player</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* 75 Minton Gold & Rose Gold Theme */
+      --bg: #121212;
+      --bg-elevated: #1a1a1a;
+      --bg-highlight: #2c2c2c;
+      
+      --text-base: #FFFFFF;
+      --text-sub: #A0A0A0;
+      --text-dim: #666666;
+      
+      --accent: #D4AF37; /* Luxury Gold */
+      --accent-hover: #F2D06B;
+      --rose: #E5A9A9; /* Rose Gold for Lyrics */
+      
+      --border: rgba(212, 175, 55, 0.15); /* Gold tinted border */
+      
+      --topbar-h: 60px;
+      --bar-h: 76px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* ════════════════════════════
+       APP LAYOUT (NO SCROLL)
+    ════════════════════════════ */
+    html, body {
+      height: 100dvh; 
+      overflow: hidden; 
+      font-family: 'Inter', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body { display: flex; flex-direction: column; }
+
+    /* ════════════════════════════
+       TOP NAV & TABS
+    ════════════════════════════ */
+    .topbar {
+      flex-shrink: 0; height: var(--topbar-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; background: var(--bg);
+    }
+    .brand { 
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; 
+    }
+    .brand svg { width: 24px; height: 24px; fill: var(--accent); }
+    .brand span { color: var(--accent); font-weight: 400; font-size: 1rem; }
+    
+    .tabs-wrapper {
+      flex-shrink: 0; padding: 0 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs { display: flex; background: #000; border-radius: 8px; padding: 4px; border: 1px solid rgba(255,255,255,0.05); }
+    .tab-btn {
+      flex: 1; height: 36px; background: transparent; border: none; border-radius: 6px;
+      color: var(--text-sub); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+    }
+    .tab-btn.active { background: var(--bg-highlight); color: var(--accent); }
+
+    /* ════════════════════════════
+       PANELS CONTAINER
+    ════════════════════════════ */
+    .tab-panel { flex: 1; overflow-y: auto; display: none; padding-bottom: 90px; }
+    .tab-panel.active { display: block; }
+    #tab-player.active { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+    .wrap { max-width: 1000px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+    /* ════════════════════════════
+       ① PLAYER TAB
+    ════════════════════════════ */
+    .player-layout { flex: 1; display: grid; grid-template-columns: 320px 1fr; gap: 40px; min-height: 0; }
+
+    /* — Album Art (Animated LP/CD Style) — */
+    .art-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    
+    .art-frame { 
+      position: relative; width: 100%; aspect-ratio: 1; 
+      border-radius: 50%; 
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 0 1px rgba(212,175,55,0.2); 
+      margin-bottom: 24px; 
+      background: var(--bg-highlight);
+      animation: spin 12s linear infinite;
+      animation-play-state: paused; 
+      transition: box-shadow 0.4s ease;
+    }
+    .art-frame.playing {
+      animation-play-state: running;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 0 3px var(--accent), 0 0 20px rgba(212,175,55,0.4); 
+    }
+    /* LP Center Hole with Gold Ring */
+    .art-frame::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 12%; height: 12%; background: var(--bg); border-radius: 50%;
+      border: 2px solid var(--accent); box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .art-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    /* — Meta & Progress — */
+    .song-meta { width: 100%; text-align: center; margin-bottom: 24px; }
+    .song-t { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
+    .song-a { font-size: 1rem; color: var(--accent); font-weight: 500; }
+
+    .prog-wrap { width: 100%; margin-bottom: 20px; }
+    .range-container { position: relative; height: 16px; display: flex; align-items: center; cursor: pointer; }
+    input.range { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); outline: none; z-index: 2; }
+    input.range::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; border-radius: 50%; background: var(--text-base); transition: 0.1s; }
+    .range-container:hover input.range::-webkit-slider-thumb { width: 14px; height: 14px; box-shadow: 0 0 10px var(--accent); }
+    .progress-fill { position: absolute; left: 0; height: 4px; border-radius: 2px; background: var(--text-base); z-index: 1; pointer-events: none; }
+    .range-container:hover .progress-fill { background: var(--accent); }
+    
+    .time-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* — Transport Controls — */
+    .transport { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 24px; }
+    .ib { appearance: none; border: 0; background: transparent; color: var(--text-sub); width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; transition: color 0.2s;}
+    .ib:hover { color: var(--accent); }
+    .ib.lit { color: var(--accent); position: relative; }
+    .ib.lit::after { content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); width:4px; height:4px; background:var(--accent); border-radius:50%; }
+    
+    .play-btn { 
+      width: 68px !important; height: 68px !important; border-radius: 50% !important; 
+      font-size: 1.8rem !important; background: linear-gradient(135deg, #F2D06B, #D4AF37) !important; 
+      color: #000 !important; box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+    }
+    .play-btn:hover { transform: scale(1.05) !important; }
+
+    .vol-grp { display: flex; align-items: center; gap: 12px; width: 100%; color: var(--text-sub); font-size: 1rem; }
+    .vol-grp .range-container { flex: 1; }
+
+    /* — Lyrics Box — */
+    .lyrics-col { background: var(--bg-elevated); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; min-height: 0; border: 1px solid rgba(255,255,255,0.03); }
+    .lyrics-header { font-size: 0.85rem; font-weight: 800; margin-bottom: 16px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--accent); letter-spacing: 1px;}
+    
+    .lyrics-viewport {
+      flex: 1; overflow: hidden; position: relative;
+      mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+    #lyricsInner { position: absolute; left: 0; right: 0; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+    .lyric-line {
+      min-height: 44px; line-height: 1.5; font-size: 1.15rem; font-weight: 700; color: var(--text-dim);
+      padding: 6px 0; transition: all 0.3s ease; cursor: pointer;
+    }
+    .lyric-line:hover { color: var(--text-sub); }
+    .lyric-line.active { color: var(--rose); font-size: 1.45rem; text-shadow: 0 0 15px rgba(229,169,169,0.3); transform: scale(1.02); transform-origin: left; }
+
+    /* ════════════════════════════
+       ② PLAYLIST / ③ LINKS 
+    ════════════════════════════ */
+    .pl-hd { margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .track-list { display: flex; flex-direction: column; gap: 8px;}
+    .track-btn { display: grid; grid-template-columns: 50px 1fr auto; gap: 16px; align-items: center; padding: 12px; border-radius: 12px; cursor: pointer; text-align: left; background: var(--bg-elevated); border: 1px solid transparent; color: inherit; transition: 0.2s; }
+    .track-btn:hover { background: var(--bg-highlight); }
+    .track-btn.active { border-color: var(--accent); background: rgba(212,175,55,0.05); }
+    .track-btn.active .t-name { color: var(--accent); }
+    .t-thumb { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+    .t-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .t-by { font-size: 0.85rem; color: var(--text-sub); }
+
+    .links-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .lk-card { padding: 16px 20px; border-radius: 12px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid rgba(255,255,255,0.03); }
+    .lk-num { font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;}
+    .lk-title { font-size: 1.1rem; font-weight: 700; }
+    .lk-btns { display: flex; gap: 8px; }
+    .lk-btn { padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; text-decoration: none; border: 1px solid var(--accent); color: var(--accent); transition: 0.2s;}
+    .lk-btn:hover { background: var(--accent); color: #000; }
+
+    /* ════════════════════════════
+       MINI PLAYER
+    ════════════════════════════ */
+    .mini-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; height: var(--bar-h);
+      background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    body.on-player-tab .mini-bar { transform: translateY(100%); }
+
+    .mini-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
+    .mini-art { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
+    .mini-t { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-a { font-size: 0.75rem; color: var(--accent); margin-top: 2px;}
+    .mini-ctrls { display: flex; align-items: center; gap: 16px; }
+    .mb { appearance: none; border: 0; background: transparent; color: var(--text-base); font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
+    .mb:hover { color: var(--accent); }
+    .mb.mplay { width: 36px; height: 36px; color: var(--accent); }
+
+    .mini-prog-rail { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.05); }
+    .mini-prog-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.1s linear; box-shadow: 0 0 8px var(--accent);}
+
+    /* ════════════════════════════
+       🔥 MOBILE OPTIMIZATION 🔥
+    ════════════════════════════ */
+    @media (max-width: 768px) {
+      .wrap { padding: 12px 20px 20px; }
+      .player-layout { display: flex; flex-direction: column; gap: 16px; }
+      
+      .art-col { display: flex; flex-direction: column; align-items: center; padding: 0; }
+      .art-frame { 
+        width: 48vw; max-width: 240px; 
+        height: 48vw; max-height: 240px; 
+        margin-bottom: 16px; 
+      }
+      
+      .song-meta { text-align: center; margin-bottom: 0; }
+      .song-t { font-size: 1.35rem; margin-bottom: 4px; }
+      .song-a { font-size: 0.9rem; }
+      
+      .prog-wrap { margin-top: 12px; margin-bottom: 8px; width: 100%; }
+      .transport { margin-bottom: 0; padding: 0 10px; width: 100%; }
+      .play-btn { width: 60px !important; height: 60px !important; font-size: 1.6rem !important; }
+      .vol-grp { display: none; }
+
+      .lyrics-col { 
+        flex: 1; min-height: 0; 
+        padding: 16px; border-radius: 16px; background: rgba(26, 26, 26, 0.6); 
+        border: 1px solid rgba(212,175,55,0.1);
+      }
+      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: center; }
+      #lrcTrackName { display: none; } /* 모바일에서는 가사창 제목 생략하여 깔끔하게 */
+      .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
+      .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
+    }
+  </style>
+</head>
+<body class="on-player-tab">
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"/>
+      <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212"/>
+    </svg>
+    75<span>MINTON</span>
+  </div>
+</header>
+
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="player" role="tab">NOW PLAYING</button>
+    <button class="tab-btn" data-tab="playlist" role="tab">PLAYLIST</button>
+    <button class="tab-btn" data-tab="links" role="tab">DOWNLOAD</button>
+  </nav>
+</div>
+
+<div class="tab-panel active" id="tab-player" role="tabpanel">
+  <div class="wrap">
+    <div class="player-layout">
+
+      <div class="art-col">
+        <div class="art-frame" id="artFrame">
+          <img id="cover" class="art-img" src="" alt="75 Minton Cover" />
+        </div>
+        
+        <div class="song-meta">
+          <div class="song-t" id="title">음악을 불러오는 중</div>
+          <div class="song-a" id="artist">75 Minton</div>
+        </div>
+
+        <div class="prog-wrap">
+          <div class="range-container">
+            <div class="progress-fill" id="progFill"></div>
+            <input id="progress" class="range" type="range" min="0" max="100" value="0" step="0.1" />
+          </div>
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="transport">
+          <button id="shuffleBtn" class="ib" type="button" aria-label="셔플"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg></button>
+          <button id="prevBtn" class="ib" type="button" aria-label="이전곡"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6V6zm3.5 6 8.5 6V6l-8.5 6z"></path></svg></button>
+          <button id="playBtn" class="ib play-btn" type="button" aria-label="재생">▶</button>
+          <button id="nextBtn" class="ib" type="button" aria-label="다음곡"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
+          <button id="repeatBtn" class="ib" type="button" aria-label="반복"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg></button>
+        </div>
+
+        <div class="vol-grp">
+          <span>🔈</span>
+          <div class="range-container">
+            <div class="progress-fill" id="volFill" style="background: var(--text-base);"></div>
+            <input id="volume" class="range" type="range" min="0" max="1" step="0.01" value="0.65" />
+          </div>
+          <span>🔊</span>
+        </div>
+      </div>
+
+      <div class="lyrics-col">
+        <div class="lyrics-header">
+          <span>LYRICS</span><span id="lrcTrackName">—</span>
+        </div>
+        <div class="lyrics-viewport">
+          <div id="lyricsInner">
+            <div class="lyric-line">재생을 시작하면 가사가 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-playlist" role="tabpanel">
+  <div class="wrap" style="max-width: 800px;">
+    <div class="pl-hd">Club Playlist</div>
+    <div class="track-list" id="playlist"></div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-links" role="tabpanel">
+  <div class="wrap" style="max-width: 800px;">
+    <div class="links-list" id="trackLinks"></div>
+    <div style="background:var(--bg-elevated); padding:24px; border-radius:12px; font-size:0.95rem; color:var(--text-sub); line-height:1.7; border: 1px solid rgba(212,175,55,0.2); text-align: center;">
+      <b style="color:var(--accent); font-size:1.1rem;">1975 Rabbit Badminton Club</b><br><br>
+      코트 위에서는 치열하게, 코트 밖에서는 다정하게!<br>토끼띠 친구들을 위한 전용 음악 공간입니다.
+    </div>
+  </div>
+</div>
+
+<div class="mini-bar">
+  <div class="mini-prog-rail"><div class="mini-prog-fill" id="miniFill"></div></div>
+  <div class="mini-left" id="miniGoPlayer">
+    <img id="miniCover" class="mini-art" src="" />
+    <div class="mini-meta">
+      <div class="mini-t" id="miniTitle">Title</div>
+      <div class="mini-a" id="miniArtist">Artist</div>
+    </div>
+  </div>
+  <div class="mini-ctrls">
+    <button class="mb mplay" id="miniPlay">▶</button>
+    <button class="mb" id="miniNext">⏭</button>
+  </div>
+</div>
+
+<audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+
+<script>
+// 🐰 외부 이미지 파일 없이 HTML 자체에서 그려내는 75+토끼+셔틀콕 고화질 SVG 이미지 리소스입니다.
+const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
+
+// 곡 데이터 세팅 (cover 속성을 생략하거나 빈 값이면 위에서 만든 전용 이미지가 뜹니다)
+const songs = [
+  { title:"Seven Five Rabbits (75 Anthem)", artist:"Tony.Park", cover:"./sound/Seven Five Rabbits.png", url:"./sound/Seven Five Rabbits.mp3", lrc:"./sound/Seven Five Rabbits.lrc", youtube:"#" },
+  { title:"같은 코트, 같은 마음(EDM)", artist:"Tony.Park", cover:"./sound/같은 코트, 같은 마음(EDM).png",url:"./sound/같은 코트, 같은 마음(EDM).mp3",lrc:"./sound/같은 코트, 같은 마음(EDM).lrc",youtube:"https://youtu.be/K9yy9eBCtFI?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS" }
+
+];
+
+const state = { cur:0, lyrics:[], shuffle:false, repeat:false };
+
+const $  = id => document.getElementById(id);
+const audio = $('audio'), titleEl = $('title'), artistEl = $('artist'), coverEl = $('cover');
+const progressEl = $('progress'), progFill = $('progFill'), playBtn = $('playBtn');
+const volumeEl = $('volume'), volFill = $('volFill'), lyricsInner = $('lyricsInner');
+const artFrame = $('artFrame'); 
+
+const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ── UI 탭 이동 로직 ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    
+    if(btn.dataset.tab === 'player') document.body.classList.add('on-player-tab');
+    else document.body.classList.remove('on-player-tab');
+  });
+});
+$('miniGoPlayer').addEventListener('click', () => document.querySelector('.tab-btn[data-tab="player"]').click());
+
+/* ── 렌더링 ── */
+function renderPlaylist() {
+  const pl = $('playlist'); pl.innerHTML = '';
+  songs.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'track-btn' + (i === state.cur ? ' active' : '');
+    btn.innerHTML = `<img class="t-thumb" src="${s.cover || defaultCover}" alt=""><div style="min-width:0"><div class="t-name">${esc(s.title)}</div><div class="t-by">${esc(s.artist)}</div></div>`;
+    btn.addEventListener('click', () => loadTrack(i, true));
+    pl.appendChild(btn);
+  });
+}
+function renderLinks() {
+  const lk = $('trackLinks'); lk.innerHTML = '';
+  songs.forEach((s, i) => {
+    const div = document.createElement('div'); div.className = 'lk-card';
+    div.innerHTML = `<div style="flex:1;"><div class="lk-num">TRACK ${String(i+1).padStart(2,'0')}</div><div class="lk-title">${esc(s.title)}</div></div>
+                     <div class="lk-btns"><a class="lk-btn" href="${s.url}" download>MP3</a><a class="lk-btn" href="${s.lrc}" download>가사</a></div>`;
+    lk.appendChild(div);
+  });
+}
+
+/* ── 가사 파싱 ── */
+async function parseLRC(path) {
+  lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+  state.lyrics = [];
+  try {
+    const r = await fetch(path, { cache: 'no-store' });
+    if (!r.ok) throw new Error();
+    const text = await r.text();
+    const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+    for (const raw of text.split('\n')) {
+      const line = raw.trim(); const ms = [...line.matchAll(re)];
+      if (!ms.length) continue;
+      const content = line.replace(re, '').trim();
+      if (!content) continue;
+      for (const m of ms) {
+        const frac = m[3].length === 2 ? +m[3]/100 : +m[3]/1000;
+        state.lyrics.push({ time: +m[1]*60 + +m[2] + frac, content });
+      }
+    }
+    state.lyrics.sort((a, b) => a.time - b.time);
+    lyricsInner.innerHTML = state.lyrics.length
+      ? state.lyrics.map((l, i) => `<div class="lyric-line" id="ln${i}">${esc(l.content)}</div>`).join('')
+      : '<div class="lyric-line">가사가 없습니다</div>';
+      
+    document.querySelectorAll('.lyric-line').forEach((el, i) => {
+      el.addEventListener('click', () => { if(state.lyrics[i]) audio.currentTime = state.lyrics[i].time; });
+    });
+  } catch { lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>'; }
+}
+
+/* ── 재생 제어 ── */
+function setPlaying(on) {
+  playBtn.textContent = $('miniPlay').textContent = on ? '⏸' : '▶';
+  if (on) artFrame.classList.add('playing');
+  else artFrame.classList.remove('playing');
+  renderPlaylist();
+}
+
+async function loadTrack(idx, auto = false) {
+  state.cur = idx; const s = songs[idx];
+  titleEl.textContent = $('miniTitle').textContent = s.title;
+  artistEl.textContent = $('miniArtist').textContent = s.artist;
+  $('lrcTrackName').textContent = s.title;
+  
+  // 이미지 설정 (없으면 자체 내장된 토끼 SVG 사용)
+  coverEl.src = $('miniCover').src = s.cover || defaultCover;
+  
+  audio.src = s.url;
+  progressEl.value = 0; progFill.style.width = $('miniFill').style.width = '0%';
+  $('currentTime').textContent = $('duration').textContent = '0:00';
+  
+  // 애니메이션 리셋
+  artFrame.style.animation = 'none';
+  artFrame.offsetHeight; 
+  artFrame.style.animation = null;
+
+  renderPlaylist(); await parseLRC(s.lrc);
+  setPlaying(false); if(auto) audio.play();
+}
+
+/* ── 이벤트 연결 ── */
+const toggle = () => audio.paused ? audio.play() : audio.pause();
+const next = () => loadTrack(state.shuffle ? Math.floor(Math.random()*songs.length) : (state.cur+1)%songs.length, true);
+const prev = () => loadTrack((state.cur-1+songs.length)%songs.length, true);
+
+playBtn.addEventListener('click', toggle); $('miniPlay').addEventListener('click', toggle);
+$('prevBtn').addEventListener('click', prev); $('nextBtn').addEventListener('click', next); $('miniNext').addEventListener('click', next);
+
+$('shuffleBtn').addEventListener('click', (e) => { state.shuffle = !state.shuffle; e.target.classList.toggle('lit', state.shuffle); });
+$('repeatBtn').addEventListener('click', (e) => { state.repeat = !state.repeat; e.target.classList.toggle('lit', state.repeat); });
+
+progressEl.addEventListener('input', () => {
+  if (audio.duration) audio.currentTime = (progressEl.value / 100) * audio.duration;
+});
+volumeEl.addEventListener('input', () => { 
+  audio.volume = volumeEl.value; volFill.style.width = (volumeEl.value * 100) + '%';
+});
+
+audio.addEventListener('loadedmetadata', () => $('duration').textContent = fmt(audio.duration));
+audio.addEventListener('timeupdate', () => {
+  const pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+  progressEl.value = pct; progFill.style.width = $('miniFill').style.width = pct + '%';
+  $('currentTime').textContent = fmt(audio.currentTime);
+  
+  // 가사 중앙 정렬 싱크
+  if(!state.lyrics.length) return;
+  let ai = -1;
+  for (let i=0; i<state.lyrics.length; i++) {
+    if (audio.currentTime >= state.lyrics[i].time && (!state.lyrics[i+1] || audio.currentTime < state.lyrics[i+1].time)) { ai = i; break; }
+  }
+  document.querySelectorAll('.lyric-line').forEach((el, i) => { el.classList.toggle('active', i === ai); });
+  
+  if(ai >= 0) {
+    const lineObj = document.getElementById('ln' + ai);
+    if(lineObj) {
+      const viewportHeight = lyricsInner.parentElement.clientHeight;
+      lyricsInner.style.top = (viewportHeight / 2 - lineObj.offsetTop - (lineObj.clientHeight / 2)) + 'px';
+    }
+  }
+});
+audio.addEventListener('ended', () => state.repeat ? audio.play() : next());
+audio.addEventListener('pause', () => setPlaying(false));
+audio.addEventListener('play', () => setPlaying(true));
+
+// 초기화
+renderPlaylist(); renderLinks(); loadTrack(0, false); 
+audio.volume = 0.8; volFill.style.width = '80%';
+</script>
+</body>
+</html>
