@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
   <style>
     :root {
       --bg: #121212;
@@ -126,41 +125,23 @@
   <div class="install-card">
     <div class="logo-visual">
       <div class="logo-glow"></div>
-      <img src="./icons/icon-192.png" width=100 height=100  alt="75민턴 로고" onerror="this.src='./icons/icon-192.png'">
-      <!-- svg class="logo-visual-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <!-- img src="./icons/icon-192.png" width=100 height=100  alt="75민턴 로고" onerror="this.src='./icons/icon-192.png'" -->
+      <svg class="logo-visual-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"/>
         <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#1a1a1a"/>
-    </svg -->
+		</svg>
     </div>
     
-    <h1>75 <span>Music</span> 앱 설치</h1>
-    <p>함께하는 75민턴 토끼들의<br>전용 플레이어를 홈 화면에 설치하고<br>편리하게 이용하세요.</p>
+    <h1>75민턴 <span>Music</span> 앱 설치</h1>
+    <p>75민턴 전용 플레이어를<br> 홈 화면에 설치하고<br>편리하게 감상하세요.</p>
 
-    <button id="installBtn" class="btn" hidden>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
-      </svg>
-      앱 설치하기 (최적 화면)
-    </button>
-    
-    
-    
-    <!-- button id="viewBtn" class="btn"  onclick="javascript:window.location.replace('./');">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg>
-      그냥 웹으로 볼래요
-  </button -->
+    <button id="installBtn" class="btn" hidden></button>
 
     <div id="inAppNotice">
       <p>현재 브라우저에서는 직접 설치가 지원되지 않습니다.</p>
       
-      <p id="iosInstructions" style="display:none; font-size: 0.9rem; color: var(--sub-text);">
-        하단 메뉴의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A0A0A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유"> 버튼을 누른 후<br>'홈 화면에 추가'를 선택해주세요.
+      <p id="iosInstructions" style="display:none; font-size: 0.9rem;">
+        하단 메뉴의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237dd3fc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유" style="vertical-align: middle; margin: 0 2px;"> 버튼을 누른 후<br>'홈 화면에 추가'를 선택해주세요.
       </p>
 
       <a href="#" id="androidOutBtn" class="btn btn-outline" style="display:none;">
@@ -169,36 +150,30 @@
           <polyline points="15 3 21 3 21 9"></polyline>
           <line x1="10" y1="14" x2="21" y2="3"></line>
         </svg>
-        Chrome/Safari/삼성 브라우저로 빠른 앱 설치 (최적 실행 화면)
+        Chrome 브라우저로 열어 설치하기
       </a>
-      <br><br>
-      <button id="viewBtn" class="btn"  onclick="javascript:window.location.replace('./');">
-      <!-- svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg -->
-      그냥 웹으로 볼래요 (화면 잘림)
-    </button>
-
+      
+      <button id="viewBtn" class="btn" onclick="javascript:window.location.replace('./');">
+        그냥 웹으로 볼래요 (화면 잘림)
+      </button>
     </div>
   </div>
 
   <script>
     let deferredPrompt;
+    let isAppInstalled = false;
     const installBtn = document.getElementById('installBtn');
     const inAppNotice = document.getElementById('inAppNotice');
     const androidOutBtn = document.getElementById('androidOutBtn');
     const iosInstructions = document.getElementById('iosInstructions');
 
-    // 인앱 브라우저 여부 확인 함수
+    // 1. 인앱 브라우저 감지 함수
     function isInAppBrowser() {
       const ua = navigator.userAgent.toLowerCase();
-      // 카카오톡, 라인, 페이스북, 인스타그램, 네이버 앱 등 감지
       return (ua.indexOf('kakao') > -1 || ua.indexOf('line') > -1 || ua.indexOf('fb_iab') > -1 || ua.indexOf('instagram') > -1 || ua.indexOf('naver') > -1);
     }
 
-    // OS 확인 함수
+    // 2. 운영체제 확인 함수
     function getOS() {
       const ua = navigator.userAgent;
       if (/android/i.test(ua)) return "android";
@@ -206,101 +181,108 @@
       return "other";
     }
 
-    // 초기 화면 설정
-    window.addEventListener('load', () => {
-      if (isInAppBrowser()) {
-        // 인앱 브라우저일 경우 설치 버튼 숨기고 안내창 표시
+    // 3. UI 변경: 앱 실행 모드
+    function setUIForPlay() {
+      installBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon>
+        </svg>
+        앱 실행하기 (플레이어로 이동)
+      `;
+      installBtn.hidden = false;
+      installBtn.onclick = () => {
+        window.location.replace('./index.html');
+      };
+    }
+
+    // 4. UI 변경: 앱 설치 모드
+    function setUIForInstall() {
+      installBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        앱 설치하기 (최적 화면)
+      `;
+      installBtn.hidden = false;
+      installBtn.onclick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response: ${outcome}`);
+        deferredPrompt = null;
+        installBtn.hidden = true;
+      };
+    }
+
+    // 5. 설치 여부 종합 점검
+    async function checkInstallationStatus() {
+      // (1) 이미 PWA 앱 내부에서 실행 중인 경우 즉시 플레이어로 강제 이동
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+        window.location.replace('./index.html');
+        return;
+      }
+
+      // (2) 지원하는 브라우저 API를 통한 설치 여부 확인
+      if ('getInstalledRelatedApps' in navigator) {
+        const relatedApps = await navigator.getInstalledRelatedApps();
+        if (relatedApps.length > 0) isAppInstalled = true;
+      }
+
+      // (3) 로컬 스토리지를 통한 설치 기록 확인
+      if (localStorage.getItem('pwaInstalled') === 'true') {
+        isAppInstalled = true;
+      }
+
+      // 점검 결과 설치된 것으로 판단되면 '실행하기' 버튼 노출
+      if (isAppInstalled) {
+        setUIForPlay();
+      }
+    }
+
+    // --- 페이지 로드 시 실행 로직 ---
+    window.addEventListener('load', async () => {
+      await checkInstallationStatus();
+
+      // 설치되지 않은 인앱 브라우저 사용자 예외 처리
+      if (!isAppInstalled && isInAppBrowser()) {
         installBtn.style.setProperty('display', 'none', 'important');
         inAppNotice.style.display = 'block';
         
         const os = getOS();
         if (os === "android") {
-          // 안드로이드는 외부 브라우저로 열기 버튼 표시
           androidOutBtn.style.display = 'inline-flex';
-          // 현재 URL을 외부 브라우저에서 열도록 링크 설정 (intent 사용)
           androidOutBtn.href = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;end';
         } else if (os === "ios") {
-          // iOS는 사파리 '홈 화면에 추가' 방법 안내
           iosInstructions.style.display = 'block';
         }
       }
     });
 
-    // --- 기존 PWA 설치 로직 (정식 브라우저용) ---
+    // --- 설치 가능한 상태일 때 브라우저가 호출하는 이벤트 ---
     window.addEventListener('beforeinstallprompt', (e) => {
-      // 인앱 브라우저가 아닐 때만 작동
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // 설치 프롬프트가 뜬다는 것은 기기에 앱이 확실히 지워져 있다는 증거이므로 캐시 초기화
+      localStorage.removeItem('pwaInstalled');
+      isAppInstalled = false;
+
+      // 인앱 브라우저가 아닐 때만 설치 버튼 표시
       if (!isInAppBrowser()) {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.hidden = false;
+        setUIForInstall();
       }
     });
 
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.hidden = true;
-    });
-
+    // --- 실제 설치가 완료되었을 때 실행되는 이벤트 ---
     window.addEventListener('appinstalled', () => {
+      localStorage.setItem('pwaInstalled', 'true'); // 설치 기록 저장
       installBtn.hidden = true;
       deferredPrompt = null;
-      // 설치 완료 후 메인 페이지로 이동
-      location.href = './index.html'; 
+      // 설치가 완료되면 자동으로 플레이어로 이동
+      window.location.replace('./index.html'); 
     });
-
-    // app.html의 스크립트 부분
-// app.html의 스크립트 부분 (수정 제안)
-window.addEventListener('load', () => {
-  // 1. 현재 앱 모드(standalone)로 실행 중인지 확인
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-
-  if (isStandalone) {
-    // 앱 모드로 실행 중이라면 메인 콘텐츠(index.html 등)를 보여줌
-    console.log("PWA 앱 모드로 실행 중입니다.");
-    // 여기에 index.html의 내용을 로드하거나 표시하는 로직 추가
-    // 예: document.getElementById('main-content').innerHTML = `index.html 내용`;
-  } else {
-    // 2. 브라우저 모드로 실행 중인 경우
-    console.log("브라우저 모드로 실행 중입니다.");
-
-    // 설치 여부를 확실히 판단할 수 없으므로, 두 가지 경우를 모두 고려한 안내 UI를 보여줍니다.
-    // '앱으로 열기' 대신 '앱 설치 확인/이동'과 같은 완곡하고 명확한 표현을 사용합니다.
-
-    const installNoticeHTML = `
-      <div id="app-install-notice" style="position:fixed; bottom:0; left:0; width:100%; background:#333; color:#fff; padding:20px; text-align:center; z-index:1000; border-top: 1px solid #D4AF37;">
-        <p>75민턴 앱으로 더 편리하게 이용하세요!</p>
-        <div style="margin-top:10px;">
-          <button onclick="gotoStartPage()" style="background:#D4AF37; color:#000; border:none; padding:10px 20px; cursor:pointer; border-radius:5px; font-weight:bold;">앱 시작하기/이동</button>
-          
-          <button onclick="gotoInstallGuide()" style="background:none; color:#D4AF37; border:1px solid #D4AF37; padding:9px 19px; margin-left:10px; cursor:pointer; border-radius:5px;">설치 방법</button>
-          
-          <button onclick="closeNotice()" style="background:none; color:#aaa; border:none; margin-left:15px; cursor:pointer;">닫기</button>
-        </div>
-      </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', installNoticeHTML);
-  }
-});
-
-// 앱의 start_url(예: index.html)로 이동하는 함수
-function gotoStartPage() {
-  // '앱으로 열기'가 아닌, 앱의 시작 페이지로 이동함을 명시합니다.
-  // 브라우저가 이 URL을 앱으로 열지 제안할 수도 있지만, 보장되지 않습니다.
-  window.location.href = '/music/index.html?utm_source=web_notice';
-}
-
-// 설치 방법 안내 페이지(예: install.html)로 이동하는 함수 (선택 사항)
-function gotoInstallGuide() {
-  window.location.href = '/music/install.html';
-}
-
-function closeNotice() {
-  document.getElementById('app-install-notice').style.display = 'none';
-}
   </script>
 </body>
 </html>
