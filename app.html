@@ -25,7 +25,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       display: flex;
@@ -46,7 +46,6 @@
       width: 100%;
     }
 
-    /* 75토끼 로고를 형상화한 SVG (CSS로 구현) */
     .logo-visual {
       width: 100px;
       height: 100px;
@@ -72,7 +71,7 @@
       font-size: 1rem;
       color: var(--sub-text);
       line-height: 1.6;
-      margin-bottom: 35px;
+      margin-bottom: 30px;
       word-break: keep-all;
     }
 
@@ -102,7 +101,15 @@
     }
     #installBtn[hidden] { display: none !important; }
 
-    /* 카카오톡 등 인앱 브라우저용 안내 박스 (기본 숨김) */
+    /* 서브 아웃라인 버튼 */
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      margin-top: 10px;
+    }
+
+    /* 카카오톡 등 인앱 안내 박스 */
     #inAppNotice {
       display: none;
       background-color: rgba(255,255,255,0.05);
@@ -110,13 +117,30 @@
       border-radius: 12px;
       border: 1px dashed var(--sub-text);
     }
-    
     #inAppNotice p { margin-bottom: 15px; color: var(--text); font-size: 0.95rem; }
     
-    /* 외부 브라우저 실행 버튼 (White) */
-    .btn-outline {
-      background-color: var(--text);
-      color: #000;
+    /* Safari 설치 안내 가이드 박스 */
+    #safariGuide {
+      display: none;
+      text-align: left;
+      background-color: rgba(212, 175, 55, 0.08); /* 옅은 골드 배경 */
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px dashed var(--accent);
+      margin-bottom: 25px;
+    }
+    #safariGuide p.title {
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #safariGuide p.desc {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 0;
     }
   </style>
 </head>
@@ -124,41 +148,39 @@
 
   <div class="install-card">
     <div class="logo-visual">
-      <div class="logo-glow"></div>
       <svg class="logo-visual-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"/>
         <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#1a1a1a"/>
-		</svg>
+      </svg>
     </div>
     
     <h1>75민턴 <span id="page-status">Music</span> 앱 설치</h1>
     <p id="page-description">함께하는 75민턴 토끼들의 <br> 전용 플레이어를 홈 화면에 설치하고<br>편리하게 감상하세요.</p>
 
-    <div id="safariGuide" style="display:none; font-size: 0.9rem; color: var(--sub-text); margin-bottom: 35px; border: 1px dashed var(--accent); padding: 20px; border-radius: 12px;">
-      <p style="color: var(--text); font-weight: 500; margin-bottom: 15px;">Safari 브라우저 사용자를 위한 설치 방법</p>
-      하단 메뉴의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237dd3fc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유" style="vertical-align: middle; margin: 0 2px;"> 버튼을 누른 후<br>'홈 화면에 추가'를 선택해주세요.
+    <div id="safariGuide">
+      <p class="title">🍎 Safari 앱 설치 가이드</p>
+      <p class="desc">
+        1. 화면 하단의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유" style="vertical-align: middle;"> <b>공유</b> 버튼을 누르세요.<br>
+        2. 메뉴를 위로 올려 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='12' y1='8' x2='12' y2='16'%3E%3C/line%3E%3Cline x1='8' y1='12' x2='16' y2='12'%3E%3C/line%3E%3C/svg%3E" alt="추가" style="vertical-align: middle;"> <b>'홈 화면에 추가'</b>를 선택하세요.<br>
+        3. 우측 상단의 <b>'추가'</b>를 누르면 완료됩니다!
+      </p>
     </div>
 
     <button id="installBtn" class="btn" hidden></button>
 
     <div id="inAppNotice">
-      <p>현재 브라우저(카톡/기타앱)에서는 직접 설치가 지원되지 않습니다.</p>
+      <p>현재 앱(카톡 등)에서는 홈 화면 설치가 불가능합니다.</p>
       
-      <p id="iosInstructions" style="display:none; font-size: 0.9rem;">
-        하단 메뉴의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237dd3fc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유" style="vertical-align: middle; margin: 0 2px;"> 버튼을 누른 후<br>'홈 화면에 추가'를 선택해주세요.
+      <p id="iosInstructions" style="display:none; font-size: 0.9rem; color: var(--accent);">
+        하단 메뉴의 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="공유" style="vertical-align: middle;"> 버튼을 누른 후<br><b>'Safari로 열기'</b>를 선택해주세요.
       </p>
 
-      <a href="#" id="androidOutBtn" class="btn btn-outline" style="display:none;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
-        </svg>
-        Chrome/Safari/삼성 브라우저로 빠른 앱 설치 (최적 실행 화면)
+      <a href="#" id="androidOutBtn" class="btn btn-outline" style="display:none; background-color: var(--text); color: black;">
+        Chrome 기본 브라우저로 열기
       </a>
-      <br><br>
-      <button id="viewBtn" class="btn" onclick="javascript:window.location.replace('./');">
-        그냥 웹으로 볼래요 (화면 잘림)
+      
+      <button id="viewBtn" class="btn btn-outline" onclick="javascript:window.location.replace('./index.html');">
+        그냥 웹에서 들을래요
       </button>
     </div>
   </div>
@@ -171,40 +193,35 @@
     const androidOutBtn = document.getElementById('androidOutBtn');
     const iosInstructions = document.getElementById('iosInstructions');
 
-    // 1. 인앱 브라우저 감지 함수
+    // 1. 인앱 브라우저 감지
     function isInAppBrowser() {
       const ua = navigator.userAgent.toLowerCase();
       return (ua.indexOf('kakao') > -1 || ua.indexOf('line') > -1 || ua.indexOf('fb_iab') > -1 || ua.indexOf('instagram') > -1 || ua.indexOf('naver') > -1);
     }
 
-    // 2. 운영체제 확인 함수
+    // 2. 운영체제 감지 (★ 아이패드OS 완벽 대응 추가)
     function getOS() {
       const ua = navigator.userAgent;
       if (/android/i.test(ua)) return "android";
+      // 아이폰, 구형 아이패드
       if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) return "ios";
+      // 데스크탑 모드로 속이는 신형 아이패드(iOS 13+) 완벽 감지
+      if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return "ios";
       return "other";
     }
 
-    // 3. UI 변경: 앱 실행 모드
-	function setUIForPlay() {
-      // 설치 완료 안내 텍스트로 변경
+    // 3. UI 변경: 앱이 이미 설치된 경우 (또는 강제로 웹에서 볼 때)
+    function setUIForPlay() {
       document.getElementById('page-status').innerHTML = '<span>Music</span> 설치 완료';
-      document.getElementById('page-description').innerHTML = '이미 홈 화면에 앱이 설치되어 있습니다.<br>바탕화면에서 <b>75민턴송 아이콘</b>을 찾아 실행해주세요.';
+      document.getElementById('page-description').innerHTML = '이미 기기에 플레이어가 설치되어 있습니다.<br>바탕화면에서 <b>75민턴 아이콘</b>을 찾아 실행해주세요.';
 
-      // 버튼은 웹 버전을 그대로 이용할 수 있게 제공
-      installBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon>
-        </svg>
-        그냥 웹 브라우저에서 듣기
-      `;
+      installBtn.innerHTML = `그냥 웹 브라우저에서 듣기`;
+      installBtn.className = "btn btn-outline"; // 눈에 덜 띄게 스타일 변경
       installBtn.hidden = false;
-      installBtn.onclick = () => {
-        window.location.replace('./index.html');
-      };
+      installBtn.onclick = () => window.location.replace('./index.html');
     }
 
-    // 4. UI 변경: 앱 설치 모드
+    // 4. UI 변경: 안드로이드/Chrome 앱 설치 가능 상태
     function setUIForInstall() {
       installBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -214,110 +231,100 @@
         </svg>
         앱 설치하기 (최적 화면)
       `;
+      installBtn.className = "btn"; // 메인 골드 색상 적용
       installBtn.hidden = false;
       installBtn.onclick = async () => {
         if (!deferredPrompt) return;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        console.log(`User response: ${outcome}`);
         deferredPrompt = null;
         installBtn.hidden = true;
       };
     }
 
-    // 5. Safari 가이드 표시 모드
+    // 5. UI 변경: Safari용 수동 설치 가이드
     function setUIForSafariGuide() {
       document.getElementById('safariGuide').style.display = 'block';
-
-      installBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon>
-        </svg>
-        그냥 웹 브라우저에서 듣기
-      `;
+      
+      // 사파리에서는 버튼으로 설치를 띄울 수 없으므로, 메인 버튼은 임시 우회용으로 둡니다.
+      installBtn.innerHTML = `설치 없이 웹에서 듣기`;
+      installBtn.className = "btn btn-outline"; 
       installBtn.hidden = false;
-      installBtn.onclick = () => {
-        window.location.replace('./index.html');
-      };
+      installBtn.onclick = () => window.location.replace('./index.html');
     }
 
     // 6. 설치 여부 종합 점검
     async function checkInstallationStatus() {
-      // (1) 이미 PWA 앱 내부에서 실행 중인 경우 즉시 플레이어로 강제 이동
       if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
         window.location.replace('./index.html');
-        return;
+        return true;
       }
-
-      // (2) 지원하는 브라우저 API를 통한 설치 여부 확인
       if ('getInstalledRelatedApps' in navigator) {
         const relatedApps = await navigator.getInstalledRelatedApps();
         if (relatedApps.length > 0) isAppInstalled = true;
       }
-
-      // (3) 로컬 스토리지를 통한 설치 기록 확인
       if (localStorage.getItem('pwaInstalled') === 'true') {
         isAppInstalled = true;
       }
-
-      // 점검 결과 설치된 것으로 판단되면 '실행하기' 버튼 노출
       if (isAppInstalled) {
         setUIForPlay();
+        return true;
       }
+      return false;
     }
 
-    // --- 페이지 로드 시 실행 로직 ---
+    // --- 페이지 로드시 실행되는 메인 흐름 컨트롤 ---
     window.addEventListener('load', async () => {
-      // (1) 이미 PWA 앱 내부에서 실행 중인 경우 즉시 플레이어로 강제 이동
-      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-        window.location.replace('./index.html');
-        return;
-      }
-
-      // iOS Safari인 경우 가이드 표시
-      if (getOS() === "ios" && !isInAppBrowser()) {
-          setUIForSafariGuide();
-          return;
-      }
-      
+      // 1. 이미 앱 내에서 켰거나, 설치 기록이 있는지 확인
       await checkInstallationStatus();
+      if (isAppInstalled) return; // 설치되었다면 이하 로직 중단
 
-      // 설치되지 않은 인앱 브라우저 사용자 예외 처리
-      if (!isAppInstalled && isInAppBrowser()) {
-        installBtn.style.setProperty('display', 'none', 'important');
+      // 2. 미설치 상태 + 카톡 등 인앱 브라우저로 접속한 경우
+      if (isInAppBrowser()) {
+        installBtn.hidden = true;
         inAppNotice.style.display = 'block';
-        
-        const os = getOS();
-        if (os === "android") {
+        if (getOS() === "android") {
           androidOutBtn.style.display = 'inline-flex';
           androidOutBtn.href = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;end';
-        } else if (os === "ios") {
+        } else if (getOS() === "ios") {
           iosInstructions.style.display = 'block';
+        }
+      } 
+      // 3. 미설치 상태 + 일반 웹 브라우저 접속인 경우
+      else {
+        // 아이폰/아이패드 (Safari 또는 iOS Chrome)일 경우 자동 설치 팝업이 안 뜨므로 수동 가이드 노출
+        if (getOS() === "ios") {
+          setUIForSafariGuide();
+        } 
+        // 안드로이드 환경일 경우 beforeinstallprompt 이벤트를 대기
+        else {
+          installBtn.innerHTML = `그냥 웹으로 들을래요`;
+          installBtn.className = "btn btn-outline";
+          installBtn.hidden = false;
+          installBtn.onclick = () => window.location.replace('./index.html');
         }
       }
     });
 
-    // --- 설치 가능한 상태일 때 브라우저가 호출하는 이벤트 ---
+    // --- 안드로이드/크롬 전용: 설치 준비 완료 이벤트 ---
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      
-      // 설치 프롬프트가 뜬다는 것은 기기에 앱이 확실히 지워져 있다는 증거이므로 캐시 초기화
       localStorage.removeItem('pwaInstalled');
       isAppInstalled = false;
 
-      // 인앱 브라우저가 아닐 때만 설치 버튼 표시
+      // 인앱 브라우저가 아닐 때만 메인 황금색 "앱 설치하기" 버튼으로 바꿈
       if (!isInAppBrowser()) {
         setUIForInstall();
+        document.getElementById('safariGuide').style.display = 'none'; // 혹시 모를 충돌 방지
       }
     });
 
-    // --- 실제 설치가 완료되었을 때 실행되는 이벤트 ---
+    // --- 앱 설치가 실제 완료되었을 때 ---
     window.addEventListener('appinstalled', () => {
-      localStorage.setItem('pwaInstalled', 'true'); // 설치 기록 저장
+      localStorage.setItem('pwaInstalled', 'true');
       installBtn.hidden = true;
       deferredPrompt = null;
-      // 설치가 완료되면 자동으로 플레이어로 이동
       window.location.replace('./index.html'); 
     });
   </script>
