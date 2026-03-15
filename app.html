@@ -176,11 +176,11 @@
       </p>
 
       <a href="#" id="androidOutBtn" class="btn btn-outline" style="display:none; background-color: var(--text); color: black;">
-        Chrome/Safari/삼성 브라우저로 빠른 앱 설치 (최적 실행 화면)
+        Chrome/Safari/삼성 브라우저로<br> 빠른 앱 설치 (최적 실행 화면)
       </a>
       <br><br>
       <button id="viewBtn" class="btn btn-outline" onclick="javascript:window.location.replace('./index.html');">
-        그냥 웹에서 들을래요 (화면 스크롤)
+        그냥 웹에서 들을래요<br> (화면 스크롤)
       </button>
     </div>
   </div>
@@ -298,7 +298,7 @@
         } 
         // 안드로이드 환경일 경우 beforeinstallprompt 이벤트를 대기
         else {
-          installBtn.innerHTML = `그냥 웹으로 들을래요`;
+          installBtn.innerHTML = `그냥 웹으로 들을래요 <br>(화면 스크롤)`;
           installBtn.className = "btn btn-outline";
           installBtn.hidden = false;
           installBtn.onclick = () => window.location.replace('./index.html');
