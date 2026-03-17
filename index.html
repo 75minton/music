@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -391,10 +392,33 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 // 곡 데이터 세팅 (cover 속성을 생략하거나 빈 값이면 위에서 만든 전용 이미지가 뜹니다)
 const songs = [
   { title:"Seven Five Rabbits", artist:"Tony.Park", cover:"./sound/Seven Five Rabbits.png", url:"./sound/Seven Five Rabbits.mp3", lrc:"./sound/Seven Five Rabbits.lrc", youtube:"#" },
-  { title:"우리는 하나 (10대 그 시절)", artist:"Tony.Park", cover:"./sound/우리는 하나 (10대 그 시절).png",url:"./sound/우리는 하나 (10대 그 시절).mp3",lrc:"./sound/우리는 하나 (10대 그 시절).lrc",youtube:"" }
+  { title:"같은 코트, 같은 마음(EDM)", artist:"Tony.Park", cover:"./sound/같은 코트, 같은 마음(EDM).png",url:"./sound/같은 코트, 같은 마음(EDM).mp3",lrc:"./sound/같은 코트, 같은 마음(EDM).lrc",youtube:"https://youtu.be/K9yy9eBCtFI?list=PLtnrWHMnCtEJN9XV3eQUA8OPPkXkyNaRS" }
 ];
 
 const state = { cur:0, lyrics:[], shuffle:false, repeat:false };
+
+function getTrackIndexFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const no = parseInt(params.get('no') || '', 10);
+  if (Number.isFinite(no) && no >= 1 && no <= songs.length) return no - 1;
+
+  const idx = parseInt(params.get('idx') || '', 10);
+  if (Number.isFinite(idx) && idx >= 0 && idx < songs.length) return idx;
+
+  return 0;
+}
+
+function shouldAutoplayFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const value = (params.get('autoplay') || '').toLowerCase();
+  return value === '1' || value === 'true' || params.has('no');
+}
+
+function updateUrlForCurrentTrack() {
+  const url = new URL(window.location.href);
+  url.searchParams.set('no', String(state.cur + 1));
+  window.history.replaceState({}, '', url);
+}
 
 const $  = id => document.getElementById(id);
 const audio = $('audio'), titleEl = $('title'), artistEl = $('artist'), coverEl = $('cover');
@@ -480,6 +504,7 @@ function setPlaying(on) {
 
 async function loadTrack(idx, auto = false) {
   state.cur = idx; const s = songs[idx];
+  updateUrlForCurrentTrack();
   titleEl.textContent = $('miniTitle').textContent = s.title;
   artistEl.textContent = $('miniArtist').textContent = s.artist;
   $('lrcTrackName').textContent = s.title;
@@ -581,7 +606,18 @@ window.addEventListener('appinstalled', () => {
 });
 
 // 초기화
-renderPlaylist(); renderLinks(); loadTrack(0, false); 
+const initialTrackIndex = getTrackIndexFromUrl();
+const initialAutoplay = shouldAutoplayFromUrl();
+
+renderPlaylist();
+renderLinks();
+loadTrack(initialTrackIndex, false).then(() => {
+  if (initialAutoplay) {
+    audio.play().catch(() => {
+      console.log('브라우저 자동재생 정책으로 인해 자동 재생이 차단되었습니다.');
+    });
+  }
+});
 audio.volume = 0.8; volFill.style.width = '80%';
 </script>
 </body>
