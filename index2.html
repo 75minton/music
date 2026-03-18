@@ -6,13 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#121212" />
-  <meta name="description" content="75 Minton Music - 75년 토끼띠 배드민턴 동호회 - 함께하는75민턴" />
-  <meta name="keywords" content="75민턴, 서울시배드민턴, 민턴송, 뮤직앨범, 민턴앨범, 75뮤직, mp3, 함께하는 75토끼의 노래"/>
-  <meta name="format-detection" content="telephone=no"/>
-  <meta name="twitter:description" content="75민턴, 서울시배드민턴, 민턴송, 뮤직앨범, 민턴앨범, 75뮤직, mp3, 함께하는 75토끼의 노래"/>
-
-
-
+  <meta name="description" content="75 Minton Music - 75년 토끼띠 배드민턴 동호회" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="75 Music" />
@@ -291,14 +285,14 @@
 
       .art-col {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 56px;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
         grid-template-areas:
-          "art vol"
-          "meta meta"
-          "prog prog"
-          "transport transport";
+          "vol art ."
+          "meta meta meta"
+          "prog prog prog"
+          "transport transport transport";
         align-items: center;
-        column-gap: 12px;
+        column-gap: 10px;
         row-gap: 12px;
         width: 100%;
         padding: 0;
@@ -322,19 +316,19 @@
       .vol-grp {
         grid-area: vol;
         align-self: stretch;
-        justify-self: center;
+        justify-self: start;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 10px;
-        width: 56px;
+        gap: 8px;
+        width: 44px;
         height: min(44vw, 220px);
         min-height: 160px;
         margin-top: 0;
-        padding: 10px 6px;
-        border-radius: 18px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(212,175,55,0.12);
+        padding: 8px 4px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(212,175,55,0.10);
       }
       .vol-grp .range-container {
         position: relative;
@@ -348,7 +342,7 @@
       .vol-grp .progress-fill { display: none; }
       .vol-grp span {
         flex-shrink: 0;
-        font-size: 0.95rem;
+        font-size: 0.74rem;
         line-height: 1;
         text-align: center;
       }
@@ -356,10 +350,10 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: calc(min(44vw, 220px) - 36px);
-        min-width: 118px;
-        max-width: 184px;
-        height: 28px;
+        width: calc(min(44vw, 220px) - 26px);
+        min-width: 122px;
+        max-width: 194px;
+        height: 24px;
         transform: translate(-50%, -50%) rotate(-90deg);
         transform-origin: center;
       }
