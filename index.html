@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -68,14 +69,18 @@
     .brand svg { width: 24px; height: 24px; fill: var(--accent); }
     .brand span { color: var(--accent); font-weight: 400; font-size: 1rem; }
     
-    /* PWA Install Button Style */
-    #installBtn {
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* PWA Install / Utility Button Style */
+    .utility-btn, #installBtn {
       appearance: none; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
       color: var(--accent); border-radius: 999px; padding: 6px 14px;
       font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
       display: inline-flex; align-items: center; gap: 6px;
+      min-height: 34px;
+      white-space: nowrap;
     }
-    #installBtn:hover { background: var(--accent); color: #000; }
+    .utility-btn:hover, #installBtn:hover { background: var(--accent); color: #000; }
     #installBtn[hidden] { display: none !important; }
 
     .tabs-wrapper {
@@ -135,11 +140,53 @@
     .song-a { font-size: 1rem; color: var(--accent); font-weight: 500; }
 
     .prog-wrap { width: 100%; margin-bottom: 20px; }
-    .range-container { position: relative; height: 16px; display: flex; align-items: center; cursor: pointer; }
-    input.range { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.15); outline: none; z-index: 2; }
-    input.range::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; border-radius: 50%; background: var(--text-base); transition: 0.1s; }
-    .range-container:hover input.range::-webkit-slider-thumb { width: 14px; height: 14px; box-shadow: 0 0 10px var(--accent); }
-    .progress-fill { position: absolute; left: 0; height: 4px; border-radius: 2px; background: var(--text-base); z-index: 1; pointer-events: none; }
+    .range-container { position: relative; height: 18px; display: flex; align-items: center; cursor: pointer; }
+    input.range {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      outline: none;
+      z-index: 2;
+      accent-color: var(--accent);
+    }
+    input.range::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+    input.range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      margin-top: -3px;
+      border-radius: 50%;
+      background: var(--text-base);
+      border: 1px solid rgba(0,0,0,0.25);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.18);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    input.range::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+    }
+    input.range::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 1px solid rgba(0,0,0,0.25);
+      border-radius: 50%;
+      background: var(--text-base);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.18);
+    }
+    .range-container:hover input.range::-webkit-slider-thumb,
+    .range-container:hover input.range::-moz-range-thumb {
+      transform: scale(1.15);
+      box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 12px rgba(212,175,55,0.4);
+    }
+    .progress-fill { position: absolute; left: 0; height: 6px; border-radius: 999px; background: var(--text-base); z-index: 1; pointer-events: none; }
     .range-container:hover .progress-fill { background: var(--accent); }
     
     .time-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -227,24 +274,89 @@
        🔥 MOBILE OPTIMIZATION 🔥
     ════════════════════════════ */
     @media (max-width: 768px) {
-      .wrap { padding: 12px 20px 20px; }
+      .topbar { padding: 0 12px; gap: 8px; }
+      .brand { font-size: 1.05rem; gap: 6px; }
+      .brand span { font-size: 0.82rem; }
+      .top-actions { gap: 6px; }
+      .utility-btn, #installBtn { padding: 6px 10px; font-size: 0.68rem; min-height: 32px; }
+
+      .wrap { padding: 12px 16px 20px; }
       .player-layout { display: flex; flex-direction: column; gap: 16px; }
-      
-      .art-col { display: flex; flex-direction: column; align-items: center; padding: 0; }
-      .art-frame { 
-        width: 48vw; max-width: 240px; 
-        height: 48vw; max-height: 240px; 
-        margin-bottom: 16px; 
+
+      .art-col {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+        grid-template-areas:
+          "vol art ."
+          "meta meta meta"
+          "prog prog prog"
+          "transport transport transport";
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 12px;
+        width: 100%;
+        padding: 0;
       }
-      
-      .song-meta { text-align: center; margin-bottom: 0; }
+      .art-frame {
+        grid-area: art;
+        justify-self: center;
+        width: min(44vw, 220px);
+        height: min(44vw, 220px);
+        margin-bottom: 0;
+      }
+
+      .song-meta { grid-area: meta; text-align: center; margin-bottom: 0; width: 100%; }
       .song-t { font-size: 1.35rem; margin-bottom: 4px; }
       .song-a { font-size: 0.9rem; }
-      
-      .prog-wrap { margin-top: 12px; margin-bottom: 8px; width: 100%; }
-      .transport { margin-bottom: 0; padding: 0 10px; width: 100%; }
+
+      .prog-wrap { grid-area: prog; margin: 0; width: 100%; }
+      .transport { grid-area: transport; margin-bottom: 0; padding: 0 4px; width: 100%; }
       .play-btn { width: 60px !important; height: 60px !important; font-size: 1.6rem !important; }
-      .vol-grp { display: none; }
+
+      .vol-grp {
+        grid-area: vol;
+        align-self: stretch;
+        justify-self: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+        width: 44px;
+        height: min(44vw, 220px);
+        min-height: 160px;
+        margin-top: 0;
+        padding: 8px 4px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(212,175,55,0.10);
+      }
+      .vol-grp .range-container {
+        position: relative;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        overflow: visible;
+        cursor: ns-resize;
+      }
+      .vol-grp .progress-fill { display: none; }
+      .vol-grp span {
+        flex-shrink: 0;
+        font-size: 0.74rem;
+        line-height: 1;
+        text-align: center;
+      }
+      #volume {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: calc(min(44vw, 220px) - 26px);
+        min-width: 122px;
+        max-width: 194px;
+        height: 24px;
+        transform: translate(-50%, -50%) rotate(-90deg);
+        transform-origin: center;
+      }
 
       .lyrics-col { 
         flex: 1; min-height: 0; 
@@ -255,6 +367,20 @@
       #lrcTrackName { display: none; }
       .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
       .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      input.range::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+        margin-top: -6px;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 10px rgba(212,175,55,0.35);
+      }
+      input.range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 10px rgba(212,175,55,0.35);
+      }
     }
   </style>
 </head>
@@ -269,14 +395,25 @@
     75<span>MINTON</span>
   </div>
   
-  <button id="installBtn" hidden>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-      <polyline points="7 10 12 15 17 10"></polyline>
-      <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg>
-    <span>앱 설치</span>
-  </button>
+  <div class="top-actions">
+    <button id="clearCacheBtn" class="utility-btn" type="button" aria-label="캐시 삭제">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+        <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+      </svg>
+      <span>캐시 초기화</span>
+    </button>
+    <button id="installBtn" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>앱 설치</span>
+    </button>
+  </div>
 </header>
 
 <div class="tabs-wrapper">
@@ -539,8 +676,13 @@ $('repeatBtn').addEventListener('click', (e) => { state.repeat = !state.repeat; 
 progressEl.addEventListener('input', () => {
   if (audio.duration) audio.currentTime = (progressEl.value / 100) * audio.duration;
 });
+function renderVolumeFill() {
+  const pct = Number(volumeEl.value) * 100;
+  volFill.style.width = pct + '%';
+}
 volumeEl.addEventListener('input', () => { 
-  audio.volume = volumeEl.value; volFill.style.width = (volumeEl.value * 100) + '%';
+  audio.volume = volumeEl.value;
+  renderVolumeFill();
 });
 
 audio.addEventListener('loadedmetadata', () => $('duration').textContent = fmt(audio.duration));
@@ -572,6 +714,7 @@ audio.addEventListener('play', () => setPlaying(true));
 /* ── PWA 설치 로직 ── */
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
+const clearCacheBtn = document.getElementById('clearCacheBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
   // 모바일 브라우저 기본 설치 팝업 방지
@@ -605,6 +748,42 @@ window.addEventListener('appinstalled', () => {
   console.log('PWA가 성공적으로 설치되었습니다.');
 });
 
+async function clearPwaCaches() {
+  const ok = window.confirm('앱 캐시와 저장 데이터를 정리한 뒤 새로고침합니다. 계속할까요?');
+  if (!ok) return;
+
+  clearCacheBtn.disabled = true;
+  const originalLabel = clearCacheBtn.innerHTML;
+  clearCacheBtn.innerHTML = '<span>정리 중…</span>';
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(reg => reg.unregister()));
+    }
+
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    }
+
+    try { localStorage.clear(); } catch (e) { console.warn('localStorage clear 실패', e); }
+    try { sessionStorage.clear(); } catch (e) { console.warn('sessionStorage clear 실패', e); }
+
+    alert('캐시 정리가 완료되었습니다. 페이지를 새로고침합니다.');
+    const url = new URL(window.location.href);
+    url.searchParams.set('cacheReset', Date.now().toString());
+    window.location.replace(url.toString());
+  } catch (err) {
+    console.error(err);
+    alert('캐시 정리 중 오류가 발생했습니다. 브라우저 설정에서도 한 번 더 확인해주세요.');
+    clearCacheBtn.disabled = false;
+    clearCacheBtn.innerHTML = originalLabel;
+  }
+}
+
+clearCacheBtn.addEventListener('click', clearPwaCaches);
+
 // 초기화
 const initialTrackIndex = getTrackIndexFromUrl();
 const initialAutoplay = shouldAutoplayFromUrl();
@@ -618,7 +797,7 @@ loadTrack(initialTrackIndex, false).then(() => {
     });
   }
 });
-audio.volume = 0.8; volFill.style.width = '80%';
+audio.volume = 0.8; renderVolumeFill();
 </script>
 </body>
 </html>
