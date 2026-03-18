@@ -11,6 +11,15 @@
   <link rel="manifest" href="./manifest.json" />
   <title>75 Minton Music Player</title>
   
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://75minton.github.io/music/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="함께하는 75민턴 | 서울경기배드민턴" />
+  <meta property="og:description" content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
+  <meta property="og:url" content="https://75minton.github.io/music/" />
+  <meta property="og:image" content="https://75minton.github.io/music/icons/icon-512.png" />
+  
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -204,7 +213,16 @@
     .play-btn:hover { transform: scale(1.05) !important; }
 
     .vol-grp { display: flex; align-items: center; gap: 12px; width: 100%; color: var(--text-sub); font-size: 1rem; }
-    .vol-grp .range-container { flex: 1; }
+    .vol-grp .range-container { flex: 1; order: 1; }
+    .vol-grp .vol-down { order: 0; }
+    .vol-grp .vol-up { order: 2; }
+    .vol-grp .vol-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      user-select: none;
+    }
 
     /* — Lyrics Box — */
     .lyrics-col { background: var(--bg-elevated); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; min-height: 0; border: 1px solid rgba(255,255,255,0.03); }
@@ -338,12 +356,15 @@
         cursor: ns-resize;
       }
       .vol-grp .progress-fill { display: none; }
-      .vol-grp span {
+      .vol-grp .vol-icon {
         flex-shrink: 0;
         font-size: 0.74rem;
         line-height: 1;
         text-align: center;
       }
+      .vol-grp .vol-up { order: 0; }
+      .vol-grp .range-container { order: 1; }
+      .vol-grp .vol-down { order: 2; }
       #volume {
         position: absolute;
         top: 50%;
@@ -462,12 +483,12 @@
         </div>
 
         <div class="vol-grp">
-          <span>🔈</span>
+          <span class="vol-icon vol-down" aria-hidden="true">🔈</span>
           <div class="range-container">
             <div class="progress-fill" id="volFill" style="background: var(--text-base);"></div>
             <input id="volume" class="range" type="range" min="0" max="1" step="0.01" value="0.65" />
           </div>
-          <span>🔊</span>
+          <span class="vol-icon vol-up" aria-hidden="true">🔊</span>
         </div>
       </div>
 
