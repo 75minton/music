@@ -1,0 +1,33 @@
+{
+  "version": "2026-03-19-1",
+  "updatedAt": "2026-03-19T00:00:00+09:00",
+  "songs": [
+    {
+      "id": "seven-five-rabbits",
+      "title": "Seven Five Rabbits",
+      "artist": "Tony.Park",
+      "cover": "./sound/Seven Five Rabbits.png",
+      "url": "./sound/Seven Five Rabbits.mp3",
+      "lrc": "./sound/Seven Five Rabbits.lrc",
+      "youtube": ""
+    },
+    {
+      "id": "The-spring-remaining-for-us",
+      "title": "우리에게 남은 봄",
+      "artist": "Tony.Park",
+      "cover": "./sound/우리에게 남은 봄.png",
+      "url": "./sound/우리에게 남은 봄.mp3",
+      "lrc": "./sound/우리에게 남은 봄.lrc",
+      "youtube": ""
+    },
+    {
+      "id": "we-are-one-teen-days",
+      "title": "우리는 하나 (10대 그 시절)",
+      "artist": "Tony.Park",
+      "cover": "./sound/우리는 하나 (10대 그 시절).png",
+      "url": "./sound/우리는 하나 (10대 그 시절).mp3",
+      "lrc": "./sound/우리는 하나 (10대 그 시절).lrc",
+      "youtube": ""
+    }
+  ]
+}
