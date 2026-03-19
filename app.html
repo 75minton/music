@@ -218,7 +218,7 @@
         Chrome/Safari/삼성 브라우저로<br> 빠른 앱 설치 (최적 실행 화면)
       </a>
       <br><br>
-      <button id="viewBtn" class="btn btn-outline" onclick="javascript:window.location.replace('./index.html');">
+      <button id="viewBtn" class="btn btn-outline" onclick="javascript:window.location.replace('./');">
         그냥 웹에서 들을래요<br> (화면 스크롤)
       </button>
     </div>
@@ -257,7 +257,7 @@
       installBtn.innerHTML = `그냥 웹 브라우저에서 듣기`;
       installBtn.className = "btn btn-outline"; // 눈에 덜 띄게 스타일 변경
       installBtn.hidden = false;
-      installBtn.onclick = () => window.location.replace('./index.html');
+      installBtn.onclick = () => window.location.replace('./');
     }
 
     // 4. UI 변경: 안드로이드/Chrome 앱 설치 가능 상태
@@ -289,13 +289,13 @@
       installBtn.innerHTML = `설치 없이 웹에서 듣기`;
       installBtn.className = "btn btn-outline"; 
       installBtn.hidden = false;
-      installBtn.onclick = () => window.location.replace('./index.html');
+      installBtn.onclick = () => window.location.replace('./');
     }
 
     // 6. 설치 여부 종합 점검
     async function checkInstallationStatus() {
       if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-        window.location.replace('./index.html');
+        window.location.replace('./');
         return true;
       }
       if ('getInstalledRelatedApps' in navigator) {
@@ -340,7 +340,7 @@
           installBtn.innerHTML = `그냥 웹으로 들을래요 <br>(화면 스크롤)`;
           installBtn.className = "btn btn-outline";
           installBtn.hidden = false;
-          installBtn.onclick = () => window.location.replace('./index.html');
+          installBtn.onclick = () => window.location.replace('./');
         }
       }
     });
@@ -364,7 +364,7 @@
       localStorage.setItem('pwaInstalled', 'true');
       installBtn.hidden = true;
       deferredPrompt = null;
-      window.location.replace('./index.html'); 
+      window.location.replace('./'); 
     });
   </script>
 </body>
