@@ -3,15 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta name="referrer" content="same-origin" />
   <title>함께하는 75민턴 뮤직 플레이어 설치</title>
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json?v=20260320-01">
   
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png?v=20260320-01">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png?v=20260320-01">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    (function () {
+      const CACHE_BUSTER_KEY = 'appGuideNoCacheTs';
+      const now = Date.now();
+      const url = new URL(window.location.href);
+      const currentTs = Number(url.searchParams.get('_ts') || '0');
+      const lastTs = Number(sessionStorage.getItem(CACHE_BUSTER_KEY) || '0');
+      const shouldRefreshUrl = !currentTs || currentTs !== lastTs;
+
+      if (shouldRefreshUrl) {
+        url.searchParams.set('_ts', String(now));
+        sessionStorage.setItem(CACHE_BUSTER_KEY, String(now));
+        window.location.replace(url.toString());
+      }
+
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+          const refreshUrl = new URL(window.location.href);
+          const ts = Date.now();
+          refreshUrl.searchParams.set('_ts', String(ts));
+          sessionStorage.setItem(CACHE_BUSTER_KEY, String(ts));
+          window.location.replace(refreshUrl.toString());
+        }
+      });
+    })();
+  </script>
 
   <style>
     :root {
