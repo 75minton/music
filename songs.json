@@ -1,6 +1,6 @@
 {
-  "version": "2026-03-19-1",
-  "updatedAt": "2026-03-19T00:00:00+09:00",
+  "version": "2026-03-21-1",
+  "updatedAt": "2026-03-21T00:00:00+09:00",
   "songs": [
     {
       "id": "seven-five-rabbits",
@@ -18,7 +18,7 @@
       "cover": "./sound/우리에게 남은 봄.png?v=20260319",
       "url": "./sound/우리에게 남은 봄.mp3?v=20260319",
       "lrc": "./sound/우리에게 남은 봄.lrc?v=20260319",
-      "youtube": ""
+      "youtube": "https://youtu.be/ATgsGn-bhkE"
     },
     {
       "id": "we-are-one-teen-days",
