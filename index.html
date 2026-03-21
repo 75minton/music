@@ -9,8 +9,18 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="75 Music" />
   <link rel="manifest" href="./manifest.json" />
-  <link rel="apple-touch-icon" href="./icons/icon-180.png" />
   <title>75 Minton Music Player</title>
+  
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://75minton.github.io/music/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="함께하는 75민턴 | 서울배드민턴" />
+  <meta property="og:description" content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
+  <meta property="og:url" content="https://75minton.github.io/music/" />
+  <meta property="og:image" content="https://75minton.github.io/music/icons/icon-512.png" />
+    
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <style>
@@ -68,7 +78,7 @@
     .top-actions { display: flex; align-items: center; gap: 8px; }
 
     /* PWA Install / Utility Button Style */
-    .utility-btn, #installBtn {
+    .utility-btn, .lyrics-toggle-btn, #installBtn {
       appearance: none; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
       color: var(--accent); border-radius: 999px; padding: 6px 14px;
       font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
@@ -275,6 +285,10 @@
     .mini-prog-rail { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.05); }
     .mini-prog-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.1s linear; box-shadow: 0 0 8px var(--accent);}
 
+    @media (min-width: 769px) {
+      .lyrics-toggle-btn { display: none; }
+    }
+
     /* ════════════════════════════
        🔥 MOBILE OPTIMIZATION 🔥
     ════════════════════════════ */
@@ -371,10 +385,45 @@
         padding: 16px; border-radius: 16px; background: rgba(26, 26, 26, 0.6); 
         border: 1px solid rgba(212,175,55,0.1);
       }
-      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: center; }
+      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); }
+      .lyrics-header-left { min-width: 0; }
+      .lyrics-header-right { margin-left: auto; }
       #lrcTrackName { display: none; }
+      .lyrics-toggle-btn { display: inline-flex; align-items: center; justify-content: center; }
       .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
       .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
+
+      body.lyrics-expanded .lyrics-col {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        top: calc(var(--topbar-h) + 68px);
+        bottom: calc(var(--bar-h) + 12px);
+        z-index: 500;
+        background: rgba(18, 18, 18, 0.98);
+        border: 1px solid rgba(212,175,55,0.22);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+      }
+      body.lyrics-expanded .lyrics-viewport {
+        mask-image: none;
+        -webkit-mask-image: none;
+      }
+      body.lyrics-expanded .lyrics-header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: rgba(18, 18, 18, 0.98);
+      }
+      body.lyrics-expanded .lyric-line {
+        font-size: 1.12rem;
+        min-height: 42px;
+      }
+      body.lyrics-expanded .lyric-line.active {
+        font-size: 1.42rem;
+      }
+      body.lyrics-expanded .mini-bar {
+        transform: translateY(100%);
+      }
     }
 
     @media (hover: none), (pointer: coarse) {
@@ -483,7 +532,13 @@
 
       <div class="lyrics-col">
         <div class="lyrics-header">
-          <span>LYRICS 가사</span><span id="lrcTrackName">—</span>
+          <div class="lyrics-header-left">
+            <span>LYRICS 가사</span>
+          </div>
+          <div class="lyrics-header-right">
+            <span id="lrcTrackName">—</span>
+            <button id="lyricsExpandBtn" class="lyrics-toggle-btn" type="button" aria-expanded="false" aria-pressed="false">가사 확대</button>
+          </div>
         </div>
         <div class="lyrics-viewport">
           <div id="lyricsInner">
@@ -579,6 +634,9 @@ const volumeEl = $('volume');
 const volFill = $('volFill');
 const lyricsInner = $('lyricsInner');
 const artFrame = $('artFrame');
+const lyricsCol = document.querySelector('.lyrics-col');
+const lyricsViewport = document.querySelector('.lyrics-viewport');
+const lyricsExpandBtn = $('lyricsExpandBtn');
 
 const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -587,6 +645,29 @@ const escAttr = s => String(s)
   .replace(/"/g,'&quot;')
   .replace(/</g,'&lt;')
   .replace(/>/g,'&gt;');
+
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function updateLyricsExpandButton() {
+  if (!lyricsExpandBtn) return;
+  const expanded = document.body.classList.contains('lyrics-expanded');
+  lyricsExpandBtn.textContent = expanded ? '가사 축소' : '가사 확대';
+  lyricsExpandBtn.setAttribute('aria-expanded', String(expanded));
+  lyricsExpandBtn.setAttribute('aria-pressed', String(expanded));
+}
+
+function closeLyricsExpanded() {
+  document.body.classList.remove('lyrics-expanded');
+  updateLyricsExpandButton();
+}
+
+function toggleLyricsExpanded() {
+  if (!isMobileViewport()) return;
+  document.body.classList.toggle('lyrics-expanded');
+  updateLyricsExpandButton();
+}
 
 function getTrackSignature(song) {
   return song?.id || song?.url || `${song?.title || ''}|${song?.artist || ''}`;
@@ -708,9 +789,21 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
     if (btn.dataset.tab === 'player') document.body.classList.add('on-player-tab');
     else document.body.classList.remove('on-player-tab');
+    if (btn.dataset.tab !== 'player') closeLyricsExpanded();
   });
 });
 $('miniGoPlayer').addEventListener('click', () => document.querySelector('.tab-btn[data-tab="player"]').click());
+
+lyricsExpandBtn?.addEventListener('click', toggleLyricsExpanded);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeLyricsExpanded();
+});
+
+window.addEventListener('resize', () => {
+  if (!isMobileViewport()) closeLyricsExpanded();
+});
+
 
 /* ── 렌더링 ── */
 function renderPlaylist() {
@@ -1183,6 +1276,7 @@ function startSongsPolling() {
 }
 
 async function initializeApp() {
+  updateLyricsExpandButton();
   const initialAutoplay = shouldAutoplayFromUrl();
 
   await registerOfflinePwa();
