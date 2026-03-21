@@ -14,7 +14,7 @@
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://75minton.github.io/music/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="함께하는 75민턴 | 서울경기배드민턴" />
+  <meta property="og:title" content="함께하는 75민턴 | 서울배드민턴" />
   <meta property="og:description" content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
   <meta property="og:url" content="https://75minton.github.io/music/" />
   <meta property="og:image" content="https://75minton.github.io/music/icons/icon-512.png" />
@@ -381,10 +381,21 @@
         padding: 16px; border-radius: 16px; background: rgba(26, 26, 26, 0.6); 
         border: 1px solid rgba(212,175,55,0.1);
       }
-      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: center; }
+      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: space-between; }
+      .lyrics-actions { gap: 8px; }
+      .lyrics-toggle-btn { min-width: 64px; height: 30px; padding: 0 10px; font-size: 0.72rem; }
       #lrcTrackName { display: none; }
       .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
       .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
+      .lyrics-col.expanded {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        padding: 18px 14px;
+      }
+      .lyrics-col.expanded .lyric-line { font-size: 1.12rem; min-height: 40px; }
+      .lyrics-col.expanded .lyric-line.active { font-size: 1.38rem; }
     }
 
     @media (hover: none), (pointer: coarse) {
@@ -491,9 +502,25 @@
         </div>
       </div>
 
-      <div class="lyrics-col">
+      <div class="lyrics-col" id="lyricsCol">
         <div class="lyrics-header">
-          <span>LYRICS 가사</span><span id="lrcTrackName">—</span>
+          <span>LYRICS 가사</span>
+          <div class="lyrics-actions">
+            <span id="lrcTrackName">—</span>
+            <button id="lyricsExpandBtn" class="lyrics-toggle-btn" type="button" aria-expanded="false" aria-controls="lyricsCol" aria-label="가사창 확대">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 3H3v5"></path>
+                <path d="M16 3h5v5"></path>
+                <path d="M21 16v5h-5"></path>
+                <path d="M8 21H3v-5"></path>
+                <path d="M3 8l6-6"></path>
+                <path d="M21 8l-6-6"></path>
+                <path d="M3 16l6 6"></path>
+                <path d="M21 16l-6 6"></path>
+              </svg>
+              <span id="lyricsExpandLabel">확대</span>
+            </button>
+          </div>
         </div>
         <div class="lyrics-viewport">
           <div id="lyricsInner">
@@ -579,10 +606,73 @@ const $  = id => document.getElementById(id);
 const audio = $('audio'), titleEl = $('title'), artistEl = $('artist'), coverEl = $('cover');
 const progressEl = $('progress'), progFill = $('progFill'), playBtn = $('playBtn');
 const volumeEl = $('volume'), volFill = $('volFill'), lyricsInner = $('lyricsInner');
-const artFrame = $('artFrame'); 
+const artFrame = $('artFrame');
+const lyricsCol = $('lyricsCol');
+const lyricsExpandBtn = $('lyricsExpandBtn');
+const lyricsExpandLabel = $('lyricsExpandLabel');
 
 const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function toggleLyricsExpand(forceExpanded) {
+  const next = typeof forceExpanded === 'boolean'
+    ? forceExpanded
+    : !lyricsCol.classList.contains('expanded');
+
+  lyricsCol.classList.toggle('expanded', next);
+  lyricsExpandBtn.setAttribute('aria-expanded', String(next));
+  lyricsExpandBtn.setAttribute('aria-label', next ? '가사창 축소' : '가사창 확대');
+  lyricsExpandLabel.textContent = next ? '축소' : '확대';
+
+  requestAnimationFrame(() => {
+    if (!state.lyrics.length) return;
+    const activeLine = lyricsInner.querySelector('.lyric-line.active');
+    if (!activeLine) return;
+    const viewportHeight = lyricsInner.parentElement.clientHeight;
+    lyricsInner.style.top = (viewportHeight / 2 - activeLine.offsetTop - (activeLine.clientHeight / 2)) + 'px';
+  });
+}
+
+function updateMediaSession(song) {
+  if (!('mediaSession' in navigator) || !song) return;
+
+  const artworkSrc = song.cover || './icons/icon-192.png';
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title || '',
+      artist: song.artist || '',
+      album: '75 Minton Music',
+      artwork: [
+        { src: artworkSrc, sizes: '192x192', type: 'image/png' },
+        { src: artworkSrc, sizes: '512x512', type: 'image/png' }
+      ]
+    });
+  } catch (err) {
+    console.warn('Media Session 메타데이터 설정 실패', err);
+  }
+
+  const safeSetAction = (action, handler) => {
+    try {
+      navigator.mediaSession.setActionHandler(action, handler);
+    } catch (err) {
+      console.warn(`Media Session 액션 등록 실패: ${action}`, err);
+    }
+  };
+
+  safeSetAction('play', async () => { await audio.play(); });
+  safeSetAction('pause', () => audio.pause());
+  safeSetAction('previoustrack', () => prev());
+  safeSetAction('nexttrack', () => next());
+  safeSetAction('seekbackward', (details) => {
+    const offset = details?.seekOffset || 10;
+    audio.currentTime = Math.max(audio.currentTime - offset, 0);
+  });
+  safeSetAction('seekforward', (details) => {
+    const offset = details?.seekOffset || 10;
+    const duration = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + offset;
+    audio.currentTime = Math.min(audio.currentTime + offset, duration);
+  });
+}
 
 /* ── UI 탭 이동 로직 ── */
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -597,6 +687,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 $('miniGoPlayer').addEventListener('click', () => document.querySelector('.tab-btn[data-tab="player"]').click());
+lyricsExpandBtn.addEventListener('click', () => toggleLyricsExpand());
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && lyricsCol.classList.contains('expanded')) {
+    toggleLyricsExpand(false);
+  }
+});
 
 /* ── 렌더링 ── */
 function renderPlaylist() {
@@ -725,9 +821,18 @@ audio.addEventListener('timeupdate', () => {
     }
   }
 });
-audio.addEventListener('ended', () => state.repeat ? audio.play() : next());
-audio.addEventListener('pause', () => setPlaying(false));
-audio.addEventListener('play', () => setPlaying(true));
+audio.addEventListener('ended', () => {
+  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
+  state.repeat ? audio.play() : next();
+});
+audio.addEventListener('pause', () => {
+  setPlaying(false);
+  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+});
+audio.addEventListener('play', () => {
+  setPlaying(true);
+  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+});
 
 /* ── PWA 설치 로직 ── */
 let deferredPrompt;
