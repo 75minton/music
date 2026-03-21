@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#121212" />
+  <meta name="description" content="75 Minton Music - 75년 토끼띠 배드민턴 동호회 - 함께하는 75민턴" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="75 Music" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>75 Minton Music Player</title>
+  
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://75minton.github.io/music/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="함께하는 75민턴 | 서울배드민턴" />
+  <meta property="og:description" content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" />
+  <meta property="og:url" content="https://75minton.github.io/music/" />
+  <meta property="og:image" content="https://75minton.github.io/music/icons/icon-512.png" />
+    
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* 75 Minton Gold & Rose Gold Theme */
+      --bg: #121212;
+      --bg-elevated: #1a1a1a;
+      --bg-highlight: #2c2c2c;
+      
+      --text-base: #FFFFFF;
+      --text-sub: #A0A0A0;
+      --text-dim: #666666;
+      
+      --accent: #D4AF37; /* Luxury Gold */
+      --accent-hover: #F2D06B;
+      --rose: #E5A9A9; /* Rose Gold for Lyrics */
+      
+      --border: rgba(212, 175, 55, 0.15); /* Gold tinted border */
+      
+      --topbar-h: 60px;
+      --bar-h: 76px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* ════════════════════════════
+       APP LAYOUT (NO SCROLL)
+    ════════════════════════════ */
+    html, body {
+      height: 100dvh; 
+      overflow: hidden; 
+      font-family: 'Inter', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body { display: flex; flex-direction: column; }
+
+    /* ════════════════════════════
+       TOP NAV & TABS
+    ════════════════════════════ */
+    .topbar {
+      flex-shrink: 0; height: var(--topbar-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; background: var(--bg);
+    }
+    .brand { 
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.25rem; font-weight: 900; letter-spacing: -0.5px; 
+    }
+    .brand svg { width: 24px; height: 24px; fill: var(--accent); }
+    .brand span { color: var(--accent); font-weight: 400; font-size: 1rem; }
+    
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* PWA Install / Utility Button Style */
+    .utility-btn, #installBtn {
+      appearance: none; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
+      color: var(--accent); border-radius: 999px; padding: 6px 14px;
+      font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: 34px;
+      white-space: nowrap;
+    }
+    .utility-btn:hover, #installBtn:hover { background: var(--accent); color: #000; }
+    #installBtn[hidden] { display: none !important; }
+
+    .tabs-wrapper {
+      flex-shrink: 0; padding: 0 20px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs { display: flex; background: #000; border-radius: 8px; padding: 4px; border: 1px solid rgba(255,255,255,0.05); }
+    .tab-btn {
+      flex: 1; height: 36px; background: transparent; border: none; border-radius: 6px;
+      color: var(--text-sub); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+    }
+    .tab-btn.active { background: var(--bg-highlight); color: var(--accent); }
+
+    /* ════════════════════════════
+       PANELS CONTAINER
+    ════════════════════════════ */
+    .tab-panel { flex: 1; overflow-y: auto; display: none; padding-bottom: 90px; }
+    .tab-panel.active { display: block; }
+    #tab-player.active { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+    .wrap { max-width: 1000px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+    /* ════════════════════════════
+       ① PLAYER TAB
+    ════════════════════════════ */
+    .player-layout { flex: 1; display: grid; grid-template-columns: 320px 1fr; gap: 40px; min-height: 0; }
+
+    /* — Album Art (Animated LP/CD Style) — */
+    .art-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    
+    .art-frame { 
+      position: relative; width: 100%; aspect-ratio: 1; 
+      border-radius: 50%; 
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 0 1px rgba(212,175,55,0.2); 
+      margin-bottom: 24px; 
+      background: var(--bg-highlight);
+      animation: spin 12s linear infinite;
+      animation-play-state: paused; 
+      transition: box-shadow 0.4s ease;
+    }
+    .art-frame.playing {
+      animation-play-state: running;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.9), 0 0 0 3px var(--accent), 0 0 20px rgba(212,175,55,0.4); 
+    }
+    /* LP Center Hole with Gold Ring */
+    .art-frame::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 12%; height: 12%; background: var(--bg); border-radius: 50%;
+      border: 2px solid var(--accent); box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .art-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    /* — Meta & Progress — */
+    .song-meta { width: 100%; text-align: center; margin-bottom: 24px; }
+    .song-t { font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
+    .song-a { font-size: 1rem; color: var(--accent); font-weight: 500; }
+
+    .prog-wrap { width: 100%; margin-bottom: 20px; }
+    .range-container { position: relative; height: 18px; display: flex; align-items: center; cursor: pointer; }
+    input.range {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      outline: none;
+      z-index: 2;
+      accent-color: var(--accent);
+    }
+    input.range::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+    input.range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      margin-top: -3px;
+      border-radius: 50%;
+      background: var(--text-base);
+      border: 1px solid rgba(0,0,0,0.25);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.18);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    input.range::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+    }
+    input.range::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border: 1px solid rgba(0,0,0,0.25);
+      border-radius: 50%;
+      background: var(--text-base);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.18);
+    }
+    .range-container:hover input.range::-webkit-slider-thumb,
+    .range-container:hover input.range::-moz-range-thumb {
+      transform: scale(1.15);
+      box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 12px rgba(212,175,55,0.4);
+    }
+    .progress-fill { position: absolute; left: 0; height: 6px; border-radius: 999px; background: var(--text-base); z-index: 1; pointer-events: none; }
+    .range-container:hover .progress-fill { background: var(--accent); }
+    
+    .time-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    /* — Transport Controls — */
+    .transport { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 24px; }
+    .ib { appearance: none; border: 0; background: transparent; color: var(--text-sub); width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; transition: color 0.2s;}
+    .ib:hover { color: var(--accent); }
+    .ib.lit { color: var(--accent); position: relative; }
+    .ib.lit::after { content:''; position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); width:4px; height:4px; background:var(--accent); border-radius:50%; }
+    
+    .play-btn { 
+      width: 68px !important; height: 68px !important; border-radius: 50% !important; 
+      font-size: 1.8rem !important; background: linear-gradient(135deg, #F2D06B, #D4AF37) !important; 
+      color: #000 !important; box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+    }
+    .play-btn:hover { transform: scale(1.05) !important; }
+
+    .vol-grp { display: flex; align-items: center; gap: 12px; width: 100%; color: var(--text-sub); font-size: 1rem; }
+    .vol-grp .range-container { flex: 1; order: 1; }
+    .vol-grp .vol-down { order: 0; }
+    .vol-grp .vol-up { order: 2; }
+    .vol-grp .vol-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* — Lyrics Box — */
+    .lyrics-col { background: var(--bg-elevated); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; min-height: 0; border: 1px solid rgba(255,255,255,0.03); }
+    .lyrics-header { font-size: 0.85rem; font-weight: 800; margin-bottom: 16px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--accent); letter-spacing: 1px;}
+    
+    .lyrics-viewport {
+      flex: 1; overflow: hidden; position: relative;
+      mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    }
+    #lyricsInner { position: absolute; left: 0; right: 0; transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+    .lyric-line {
+      min-height: 44px; line-height: 1.5; font-size: 1.15rem; font-weight: 700; color: var(--text-dim);
+      padding: 6px 0; transition: all 0.3s ease; cursor: pointer;
+    }
+    .lyric-line:hover { color: var(--text-sub); }
+    .lyric-line.active { color: var(--rose); font-size: 1.45rem; text-shadow: 0 0 15px rgba(229,169,169,0.3); transform: scale(1.02); transform-origin: left; }
+
+    /* ════════════════════════════
+       ② PLAYLIST / ③ LINKS 
+    ════════════════════════════ */
+    .pl-hd { margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .track-list { display: flex; flex-direction: column; gap: 8px;}
+    .track-btn { display: grid; grid-template-columns: 50px 1fr auto; gap: 16px; align-items: center; padding: 12px; border-radius: 12px; cursor: pointer; text-align: left; background: var(--bg-elevated); border: 1px solid transparent; color: inherit; transition: 0.2s; }
+    .track-btn:hover { background: var(--bg-highlight); }
+    .track-btn.active { border-color: var(--accent); background: rgba(212,175,55,0.05); }
+    .track-btn.active .t-name { color: var(--accent); }
+    .t-thumb { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+    .t-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .t-by { font-size: 0.85rem; color: var(--text-sub); }
+
+    .links-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+    .lk-card { padding: 16px 20px; border-radius: 12px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border: 1px solid rgba(255,255,255,0.03); }
+    .lk-num { font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;}
+    .lk-title { font-size: 1.1rem; font-weight: 700; }
+    .lk-btns { display: flex; gap: 8px; }
+    .lk-btn { padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; text-decoration: none; border: 1px solid var(--accent); color: var(--accent); transition: 0.2s;}
+    .lk-btn:hover { background: var(--accent); color: #000; }
+
+    /* ════════════════════════════
+       MINI PLAYER
+    ════════════════════════════ */
+    .mini-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; height: var(--bar-h);
+      background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    body.on-player-tab .mini-bar { transform: translateY(100%); }
+
+    .mini-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; cursor: pointer; }
+    .mini-art { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
+    .mini-t { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-a { font-size: 0.75rem; color: var(--accent); margin-top: 2px;}
+    .mini-ctrls { display: flex; align-items: center; gap: 16px; }
+    .mb { appearance: none; border: 0; background: transparent; color: var(--text-base); font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
+    .mb:hover { color: var(--accent); }
+    .mb.mplay { width: 36px; height: 36px; color: var(--accent); }
+
+    .mini-prog-rail { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.05); }
+    .mini-prog-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.1s linear; box-shadow: 0 0 8px var(--accent);}
+
+    /* ════════════════════════════
+       🔥 MOBILE OPTIMIZATION 🔥
+    ════════════════════════════ */
+    @media (max-width: 768px) {
+      .topbar { padding: 0 12px; gap: 8px; }
+      .brand { font-size: 1.05rem; gap: 6px; }
+      .brand span { font-size: 0.82rem; }
+      .top-actions { gap: 6px; }
+      .utility-btn, #installBtn { padding: 6px 10px; font-size: 0.68rem; min-height: 32px; }
+
+      .wrap { padding: 12px 16px 20px; }
+      .player-layout { display: flex; flex-direction: column; gap: 16px; }
+
+      .art-col {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 44px;
+        grid-template-areas:
+          "vol art ."
+          "meta meta meta"
+          "prog prog prog"
+          "transport transport transport";
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 12px;
+        width: 100%;
+        padding: 0;
+      }
+      .art-frame {
+        grid-area: art;
+        justify-self: center;
+        width: min(44vw, 220px);
+        height: min(44vw, 220px);
+        margin-bottom: 0;
+      }
+
+      .song-meta { grid-area: meta; text-align: center; margin-bottom: 0; width: 100%; }
+      .song-t { font-size: 1.35rem; margin-bottom: 4px; }
+      .song-a { font-size: 0.9rem; }
+
+      .prog-wrap { grid-area: prog; margin: 0; width: 100%; }
+      .transport { grid-area: transport; margin-bottom: 0; padding: 0 4px; width: 100%; }
+      .play-btn { width: 60px !important; height: 60px !important; font-size: 1.6rem !important; }
+
+      .vol-grp {
+        grid-area: vol;
+        align-self: stretch;
+        justify-self: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 8px;
+        width: 44px;
+        height: min(44vw, 220px);
+        min-height: 160px;
+        margin-top: 0;
+        padding: 8px 4px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(212,175,55,0.10);
+      }
+      .vol-grp .range-container {
+        position: relative;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        overflow: visible;
+        cursor: ns-resize;
+      }
+      .vol-grp .progress-fill { display: none; }
+      .vol-grp .vol-icon {
+        flex-shrink: 0;
+        font-size: 0.74rem;
+        line-height: 1;
+        text-align: center;
+      }
+      .vol-grp .vol-up { order: 0; }
+      .vol-grp .range-container { order: 1; }
+      .vol-grp .vol-down { order: 2; }
+      #volume {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: calc(min(44vw, 220px) - 26px);
+        min-width: 122px;
+        max-width: 194px;
+        height: 24px;
+        transform: translate(-50%, -50%) rotate(-90deg);
+        transform-origin: center;
+      }
+
+      .lyrics-col { 
+        flex: 1; min-height: 0; 
+        padding: 16px; border-radius: 16px; background: rgba(26, 26, 26, 0.6); 
+        border: 1px solid rgba(212,175,55,0.1);
+      }
+      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: center; }
+      #lrcTrackName { display: none; }
+      .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
+      .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      input.range::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+        margin-top: -6px;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 10px rgba(212,175,55,0.35);
+      }
+      input.range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        box-shadow: 0 0 0 4px rgba(212,175,55,0.18), 0 0 10px rgba(212,175,55,0.35);
+      }
+    }
+  </style>
+</head>
+<body class="on-player-tab">
+
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"/>
+      <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212"/>
+    </svg>
+    75<span>MINTON</span>
+  </div>
+  
+  <div class="top-actions">
+    <button id="clearCacheBtn" class="utility-btn" type="button" aria-label="캐시 삭제">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"></polyline>
+        <polyline points="1 20 1 14 7 14"></polyline>
+        <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+        <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+      </svg>
+      <span>캐시 초기화</span>
+    </button>
+    <button id="installBtn" hidden>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span>앱 설치</span>
+    </button>
+  </div>
+</header>
+
+<div class="tabs-wrapper">
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="player" role="tab">NOW PLAYING</button>
+    <button class="tab-btn" data-tab="playlist" role="tab">PLAYLIST</button>
+    <button class="tab-btn" data-tab="links" role="tab">DOWNLOAD</button>
+  </nav>
+</div>
+
+<div class="tab-panel active" id="tab-player" role="tabpanel">
+  <div class="wrap">
+    <div class="player-layout">
+
+      <div class="art-col">
+        <div class="art-frame" id="artFrame">
+          <img id="cover" class="art-img" src="" alt="75 Minton Cover" />
+        </div>
+        
+        <div class="song-meta">
+          <div class="song-t" id="title">음악을 불러오는 중</div>
+          <div class="song-a" id="artist">75 Minton</div>
+        </div>
+
+        <div class="prog-wrap">
+          <div class="range-container">
+            <div class="progress-fill" id="progFill"></div>
+            <input id="progress" class="range" type="range" min="0" max="100" value="0" step="0.1" />
+          </div>
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="transport">
+          <button id="shuffleBtn" class="ib" type="button" aria-label="셔플"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg></button>
+          <button id="prevBtn" class="ib" type="button" aria-label="이전곡"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6V6zm3.5 6 8.5 6V6l-8.5 6z"></path></svg></button>
+          <button id="playBtn" class="ib play-btn" type="button" aria-label="재생">▶</button>
+          <button id="nextBtn" class="ib" type="button" aria-label="다음곡"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
+          <button id="repeatBtn" class="ib" type="button" aria-label="반복"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg></button>
+        </div>
+
+        <div class="vol-grp">
+          <span class="vol-icon vol-down" aria-hidden="true">🔈</span>
+          <div class="range-container">
+            <div class="progress-fill" id="volFill" style="background: var(--text-base);"></div>
+            <input id="volume" class="range" type="range" min="0" max="1" step="0.01" value="0.65" />
+          </div>
+          <span class="vol-icon vol-up" aria-hidden="true">🔊</span>
+        </div>
+      </div>
+
+      <div class="lyrics-col">
+        <div class="lyrics-header">
+          <span>LYRICS 가사</span><span id="lrcTrackName">—</span>
+        </div>
+        <div class="lyrics-viewport">
+          <div id="lyricsInner">
+            <div class="lyric-line">재생을 시작하면 가사가 표시됩니다.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-playlist" role="tabpanel">
+  <div class="wrap" style="max-width: 800px;">
+    <div class="pl-hd">Playlist</div>
+    <div class="track-list" id="playlist"></div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-links" role="tabpanel">
+  <div class="wrap" style="max-width: 800px;">
+    <div class="links-list" id="trackLinks"></div>
+    <div style="background:var(--bg-elevated); padding:24px; border-radius:12px; font-size:0.95rem; color:var(--text-sub); line-height:1.7; border: 1px solid rgba(212,175,55,0.2); text-align: center;">
+      <b style="color:var(--accent); font-size:1.1rem;">함께하는 1975 Rabbit Badminton</b><br><br>
+      코트 위에서는 치열하게,<br> 코트 밖에서는 다정하게!<br>토끼띠 친구들을 위한,<br> 전용 음악 공간입니다.
+    </div>
+  </div>
+</div>
+
+<div class="mini-bar">
+  <div class="mini-prog-rail"><div class="mini-prog-fill" id="miniFill"></div></div>
+  <div class="mini-left" id="miniGoPlayer">
+    <img id="miniCover" class="mini-art" src="" />
+    <div class="mini-meta">
+      <div class="mini-t" id="miniTitle">Title</div>
+      <div class="mini-a" id="miniArtist">Artist</div>
+    </div>
+  </div>
+  <div class="mini-ctrls">
+    <button class="mb mplay" id="miniPlay">▶</button>
+    <button class="mb" id="miniNext">⏭</button>
+  </div>
+</div>
+
+<audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
+
+<script>
+// 🐰 외부 이미지 파일 없이 HTML 자체에서 그려내는 75+토끼+셔틀콕 고화질 SVG 이미지 리소스입니다.
+const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
+
+const SONGS_JSON_URL = './songs.json';
+const SONGS_POLL_MS = 60000;
+const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
+const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
+
+// songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
+const FALLBACK_SONGS = [
+  {
+    id: 'seven-five-rabbits',
+    title: "Seven Five Rabbits",
+    artist: "Tony.Park",
+    cover: "./sound/Seven Five Rabbits.png",
+    url: "./sound/Seven Five Rabbits.mp3",
+    lrc: "./sound/Seven Five Rabbits.lrc",
+    youtube: "#"
+  },
+  {
+    id: 'we-are-one-teen-days',
+    title: "우리는 하나 (10대 그 시절)",
+    artist: "Tony.Park",
+    cover: "./sound/우리는 하나 (10대 그 시절).png",
+    url: "./sound/우리는 하나 (10대 그 시절).mp3",
+    lrc: "./sound/우리는 하나 (10대 그 시절).lrc",
+    youtube: "#"
+  }
+];
+
+let songs = [...FALLBACK_SONGS];
+const state = { cur: 0, lyrics: [], shuffle: false, repeat: false };
+
+let songsPollTimer = null;
+let swRegistrationPromise = null;
+
+const $  = id => document.getElementById(id);
+const audio = $('audio');
+const titleEl = $('title');
+const artistEl = $('artist');
+const coverEl = $('cover');
+const progressEl = $('progress');
+const progFill = $('progFill');
+const playBtn = $('playBtn');
+const volumeEl = $('volume');
+const volFill = $('volFill');
+const lyricsInner = $('lyricsInner');
+const artFrame = $('artFrame');
+
+const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const escAttr = s => String(s)
+  .replace(/&/g,'&amp;')
+  .replace(/"/g,'&quot;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;');
+
+function getTrackSignature(song) {
+  return song?.id || song?.url || `${song?.title || ''}|${song?.artist || ''}`;
+}
+
+function normalizeSongEntry(raw, index) {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const title = String(raw.title || raw.name || `Track ${index + 1}`).trim();
+  const artist = String(raw.artist || 'Unknown Artist').trim();
+  const url = String(raw.url || raw.src || '').trim();
+  if (!url) return null;
+
+  const lrc = raw.lrc ? String(raw.lrc).trim() : '';
+  const cover = raw.cover ? String(raw.cover).trim() : '';
+  const youtube = raw.youtube ? String(raw.youtube).trim() : '';
+  const id = raw.id ? String(raw.id).trim() : url;
+
+  return { id, title, artist, url, lrc, cover, youtube };
+}
+
+function normalizeSongsList(input) {
+  const list = Array.isArray(input) ? input : (input && Array.isArray(input.songs) ? input.songs : []);
+  const normalized = list.map(normalizeSongEntry).filter(Boolean);
+  return normalized.length ? normalized : [...FALLBACK_SONGS];
+}
+
+function getSongsFingerprint(list) {
+  return JSON.stringify(
+    list.map(({ id, title, artist, url, lrc, cover, youtube }) => ({
+      id, title, artist, url, lrc, cover, youtube
+    }))
+  );
+}
+
+function getStoredSongsSnapshot() {
+  try {
+    const raw = localStorage.getItem(STORAGE_SONGS_SNAPSHOT_KEY);
+    if (!raw) return null;
+    return normalizeSongsList(JSON.parse(raw));
+  } catch (err) {
+    console.warn('저장된 곡 스냅샷을 읽지 못했습니다.', err);
+    return null;
+  }
+}
+
+function persistSongsSnapshot(list) {
+  try {
+    localStorage.setItem(STORAGE_SONGS_HASH_KEY, getSongsFingerprint(list));
+    localStorage.setItem(STORAGE_SONGS_SNAPSHOT_KEY, JSON.stringify(list));
+  } catch (err) {
+    console.warn('곡 스냅샷 저장 실패', err);
+  }
+}
+
+function getTrackIndexFromUrl(totalCount = songs.length) {
+  const params = new URLSearchParams(window.location.search);
+  const no = parseInt(params.get('no') || '', 10);
+  if (Number.isFinite(no) && no >= 1 && no <= totalCount) return no - 1;
+
+  const idx = parseInt(params.get('idx') || '', 10);
+  if (Number.isFinite(idx) && idx >= 0 && idx < totalCount) return idx;
+
+  return 0;
+}
+
+function shouldAutoplayFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const value = (params.get('autoplay') || '').toLowerCase();
+  return value === '1' || value === 'true' || params.has('no');
+}
+
+function updateUrlForCurrentTrack() {
+  if (!songs.length) return;
+  const url = new URL(window.location.href);
+  url.searchParams.set('no', String(state.cur + 1));
+  window.history.replaceState({}, '', url);
+}
+
+async function fetchSongsList({ forceNetwork = false } = {}) {
+  const requestUrl = forceNetwork
+    ? `${SONGS_JSON_URL}${SONGS_JSON_URL.includes('?') ? '&' : '?'}_=${Date.now()}`
+    : SONGS_JSON_URL;
+
+  const response = await fetch(requestUrl, {
+    cache: forceNetwork ? 'no-store' : 'default',
+    headers: { 'Accept': 'application/json' }
+  });
+
+  if (!response.ok) {
+    throw new Error(`songs.json 응답 오류: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return normalizeSongsList(data);
+}
+
+function syncSongMeta(song) {
+  titleEl.textContent = $('miniTitle').textContent = song.title;
+  artistEl.textContent = $('miniArtist').textContent = song.artist;
+  $('lrcTrackName').textContent = song.title;
+  coverEl.src = $('miniCover').src = song.cover || defaultCover;
+}
+
+function resetProgressUi() {
+  progressEl.value = 0;
+  progFill.style.width = $('miniFill').style.width = '0%';
+  $('currentTime').textContent = '0:00';
+  $('duration').textContent = '0:00';
+}
+
+/* ── UI 탭 이동 로직 ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+    if (btn.dataset.tab === 'player') document.body.classList.add('on-player-tab');
+    else document.body.classList.remove('on-player-tab');
+  });
+});
+$('miniGoPlayer').addEventListener('click', () => document.querySelector('.tab-btn[data-tab="player"]').click());
+
+/* ── 렌더링 ── */
+function renderPlaylist() {
+  const pl = $('playlist');
+  pl.innerHTML = '';
+
+  songs.forEach((song, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'track-btn' + (index === state.cur ? ' active' : '');
+    btn.innerHTML = `<img class="t-thumb" src="${escAttr(song.cover || defaultCover)}" alt="">
+      <div style="min-width:0">
+        <div class="t-name">${esc(song.title)}</div>
+        <div class="t-by">${esc(song.artist)}</div>
+      </div>`;
+    btn.addEventListener('click', () => loadTrack(index, true));
+    pl.appendChild(btn);
+  });
+}
+
+function renderLinks() {
+  const lk = $('trackLinks');
+  lk.innerHTML = '';
+
+  songs.forEach((song, index) => {
+    const buttons = [
+      `<a class="lk-btn" href="${escAttr(song.url)}" download>MP3</a>`
+    ];
+
+    if (song.lrc) buttons.push(`<a class="lk-btn" href="${escAttr(song.lrc)}" download>가사</a>`);
+    if (song.youtube && song.youtube !== '#') buttons.push(`<a class="lk-btn" href="${escAttr(song.youtube)}" target="_blank" rel="noopener">YouTube</a>`);
+
+    const div = document.createElement('div');
+    div.className = 'lk-card';
+    div.innerHTML = `<div style="flex:1;">
+        <div class="lk-num">TRACK ${String(index + 1).padStart(2, '0')}</div>
+        <div class="lk-title">${esc(song.title)}</div>
+      </div>
+      <div class="lk-btns">${buttons.join('')}</div>`;
+    lk.appendChild(div);
+  });
+}
+
+/* ── 가사 파싱 ── */
+async function parseLRC(path) {
+  if (!path) {
+    state.lyrics = [];
+    lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+    lyricsInner.style.top = '0px';
+    return;
+  }
+
+  lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+  lyricsInner.style.top = '0px';
+  state.lyrics = [];
+
+  try {
+    const response = await fetch(path, { cache: 'no-store' });
+    if (!response.ok) throw new Error('가사 파일을 불러오지 못했습니다.');
+
+    const text = await response.text();
+    const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+
+    for (const rawLine of text.split('\n')) {
+      const line = rawLine.trim();
+      const matches = [...line.matchAll(re)];
+      if (!matches.length) continue;
+
+      const content = line.replace(re, '').trim();
+      if (!content) continue;
+
+      for (const match of matches) {
+        const frac = match[3].length === 2 ? Number(match[3]) / 100 : Number(match[3]) / 1000;
+        state.lyrics.push({
+          time: Number(match[1]) * 60 + Number(match[2]) + frac,
+          content
+        });
+      }
+    }
+
+    state.lyrics.sort((a, b) => a.time - b.time);
+
+    lyricsInner.innerHTML = state.lyrics.length
+      ? state.lyrics.map((line, i) => `<div class="lyric-line" id="ln${i}">${esc(line.content)}</div>`).join('')
+      : '<div class="lyric-line">가사가 없습니다</div>';
+
+    document.querySelectorAll('.lyric-line').forEach((el, i) => {
+      el.addEventListener('click', () => {
+        if (state.lyrics[i]) audio.currentTime = state.lyrics[i].time;
+      });
+    });
+  } catch (err) {
+    console.warn('가사 로딩 실패', err);
+    lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+  }
+}
+
+/* ── 재생 제어 ── */
+function setPlaying(on) {
+  playBtn.textContent = $('miniPlay').textContent = on ? '⏸' : '▶';
+  if (on) artFrame.classList.add('playing');
+  else artFrame.classList.remove('playing');
+  renderPlaylist();
+}
+
+async function loadTrack(idx, auto = false) {
+  if (!songs.length) return;
+
+  state.cur = Math.max(0, Math.min(idx, songs.length - 1));
+  const song = songs[state.cur];
+
+  updateUrlForCurrentTrack();
+  syncSongMeta(song);
+
+  audio.src = song.url;
+  audio.load();
+  resetProgressUi();
+
+  artFrame.style.animation = 'none';
+  artFrame.offsetHeight;
+  artFrame.style.animation = null;
+
+  renderPlaylist();
+  await parseLRC(song.lrc);
+  setPlaying(false);
+
+  if (auto) {
+    try {
+      await audio.play();
+    } catch (err) {
+      console.log('브라우저 자동재생 정책으로 인해 재생이 차단되었습니다.', err);
+    }
+  }
+}
+
+function renderVolumeFill() {
+  const pct = Number(volumeEl.value) * 100;
+  volFill.style.width = pct + '%';
+}
+
+const toggle = () => audio.paused ? audio.play() : audio.pause();
+const next = () => {
+  if (!songs.length) return;
+  const nextIndex = state.shuffle
+    ? Math.floor(Math.random() * songs.length)
+    : (state.cur + 1) % songs.length;
+  loadTrack(nextIndex, true);
+};
+const prev = () => {
+  if (!songs.length) return;
+  loadTrack((state.cur - 1 + songs.length) % songs.length, true);
+};
+
+playBtn.addEventListener('click', toggle);
+$('miniPlay').addEventListener('click', toggle);
+$('prevBtn').addEventListener('click', prev);
+$('nextBtn').addEventListener('click', next);
+$('miniNext').addEventListener('click', next);
+
+$('shuffleBtn').addEventListener('click', (e) => {
+  state.shuffle = !state.shuffle;
+  e.target.classList.toggle('lit', state.shuffle);
+});
+$('repeatBtn').addEventListener('click', (e) => {
+  state.repeat = !state.repeat;
+  e.target.classList.toggle('lit', state.repeat);
+});
+
+progressEl.addEventListener('input', () => {
+  if (audio.duration) {
+    audio.currentTime = (progressEl.value / 100) * audio.duration;
+  }
+});
+
+volumeEl.addEventListener('input', () => {
+  audio.volume = Number(volumeEl.value);
+  renderVolumeFill();
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  $('duration').textContent = fmt(audio.duration);
+});
+
+audio.addEventListener('timeupdate', () => {
+  const pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+  progressEl.value = pct;
+  progFill.style.width = $('miniFill').style.width = pct + '%';
+  $('currentTime').textContent = fmt(audio.currentTime);
+
+  if (!state.lyrics.length) return;
+
+  let activeIndex = -1;
+  for (let i = 0; i < state.lyrics.length; i++) {
+    if (
+      audio.currentTime >= state.lyrics[i].time &&
+      (!state.lyrics[i + 1] || audio.currentTime < state.lyrics[i + 1].time)
+    ) {
+      activeIndex = i;
+      break;
+    }
+  }
+
+  document.querySelectorAll('.lyric-line').forEach((el, i) => {
+    el.classList.toggle('active', i === activeIndex);
+  });
+
+  if (activeIndex >= 0) {
+    const lineObj = document.getElementById('ln' + activeIndex);
+    if (lineObj) {
+      const viewportHeight = lyricsInner.parentElement.clientHeight;
+      lyricsInner.style.top = (viewportHeight / 2 - lineObj.offsetTop - (lineObj.clientHeight / 2)) + 'px';
+    }
+  }
+});
+
+audio.addEventListener('ended', () => {
+  if (state.repeat) audio.play();
+  else next();
+});
+audio.addEventListener('pause', () => setPlaying(false));
+audio.addEventListener('play', () => setPlaying(true));
+
+/* ── PWA 설치 로직 ── */
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+const clearCacheBtn = document.getElementById('clearCacheBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.hidden = false;
+});
+
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.hidden = true;
+});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.hidden = true;
+  deferredPrompt = null;
+  console.log('PWA가 성공적으로 설치되었습니다.');
+});
+
+async function clearPwaCaches() {
+  const ok = window.confirm('앱 캐시와 저장 데이터를 정리한 뒤 새로고침합니다. 계속할까요?');
+  if (!ok) return;
+
+  clearCacheBtn.disabled = true;
+  const originalLabel = clearCacheBtn.innerHTML;
+  clearCacheBtn.innerHTML = '<span>정리 중…</span>';
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(reg => reg.unregister()));
+    }
+
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    }
+
+    try { localStorage.clear(); } catch (err) { console.warn('localStorage clear 실패', err); }
+    try { sessionStorage.clear(); } catch (err) { console.warn('sessionStorage clear 실패', err); }
+
+    alert('캐시 정리가 완료되었습니다. 페이지를 새로고침합니다.');
+    const url = new URL(window.location.href);
+    url.searchParams.set('cacheReset', Date.now().toString());
+    window.location.replace(url.toString());
+  } catch (err) {
+    console.error(err);
+    alert('캐시 정리 중 오류가 발생했습니다. 브라우저 설정에서도 한 번 더 확인해주세요.');
+    clearCacheBtn.disabled = false;
+    clearCacheBtn.innerHTML = originalLabel;
+  }
+}
+
+clearCacheBtn.addEventListener('click', clearPwaCaches);
+
+function getWarmCacheAssets() {
+  const shellAssets = [
+    './',
+    './index.html',
+    './manifest.json',
+    './songs.json',
+    './icons/icon-180.png',
+    './icons/icon-192.png',
+    './icons/icon-512.png'
+  ];
+  const mediaAssets = songs.flatMap(song => [song.url, song.lrc, song.cover]).filter(Boolean);
+  return [...new Set([...shellAssets, ...mediaAssets])];
+}
+
+async function registerOfflinePwa() {
+  if (!('serviceWorker' in navigator)) return null;
+  if (swRegistrationPromise) return swRegistrationPromise;
+
+  swRegistrationPromise = navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then((registration) => {
+      console.log('Service Worker 등록 완료', registration.scope);
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        warmCacheWithCurrentAssets();
+      });
+
+      return registration;
+    })
+    .catch((err) => {
+      console.warn('Service Worker 등록 실패', err);
+      swRegistrationPromise = null;
+      return null;
+    });
+
+  return swRegistrationPromise;
+}
+
+async function warmCacheWithCurrentAssets() {
+  const registration = await registerOfflinePwa();
+  if (!registration) return;
+
+  const payload = { type: 'WARM_CACHE', assets: getWarmCacheAssets() };
+  const sendWarmMessage = (sw) => {
+    try {
+      sw?.postMessage(payload);
+    } catch (err) {
+      console.warn('캐시 예열 메시지 전송 실패', err);
+    }
+  };
+
+  if (registration.active) sendWarmMessage(registration.active);
+  navigator.serviceWorker.ready.then((readyReg) => {
+    sendWarmMessage(readyReg.active || readyReg.waiting || readyReg.installing);
+  });
+}
+
+async function updateServiceWorkerIfPossible() {
+  const registration = await registerOfflinePwa();
+  if (!registration) return;
+  try {
+    await registration.update();
+  } catch (err) {
+    console.warn('Service Worker 업데이트 확인 실패', err);
+  }
+}
+
+async function applySongsList(nextSongs, { initial = false, keepCurrent = true } = {}) {
+  const normalized = normalizeSongsList(nextSongs);
+  const prevSong = songs[state.cur];
+  const prevSig = getTrackSignature(prevSong);
+  const prevWasPlaying = !audio.paused && !!audio.src;
+  const prevTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+  const prevVolume = Number.isFinite(audio.volume) ? audio.volume : 0.8;
+
+  songs = normalized;
+  persistSongsSnapshot(songs);
+
+  let nextIndex = getTrackIndexFromUrl(songs.length);
+
+  if (!initial && keepCurrent && prevSig) {
+    const matchedIndex = songs.findIndex(song => getTrackSignature(song) === prevSig);
+    if (matchedIndex >= 0) nextIndex = matchedIndex;
+    else nextIndex = Math.min(state.cur, songs.length - 1);
+  }
+
+  const nextSong = songs[nextIndex];
+  const sameCurrentTrack = Boolean(
+    prevSong &&
+    nextSong &&
+    getTrackSignature(nextSong) === prevSig &&
+    nextSong.url === prevSong.url
+  );
+
+  renderPlaylist();
+  renderLinks();
+
+  if (!nextSong) return;
+
+  if (sameCurrentTrack) {
+    state.cur = nextIndex;
+    updateUrlForCurrentTrack();
+    syncSongMeta(nextSong);
+
+    if ((nextSong.lrc || '') !== (prevSong?.lrc || '')) {
+      await parseLRC(nextSong.lrc);
+    }
+  } else {
+    await loadTrack(nextIndex, false);
+
+    if (!initial && keepCurrent && prevTime > 0) {
+      const restoreTime = audio.duration
+        ? Math.min(prevTime, Math.max(audio.duration - 0.25, 0))
+        : prevTime;
+      try { audio.currentTime = restoreTime; } catch (err) { console.warn('재생 위치 복원 실패', err); }
+    }
+
+    if (!initial && keepCurrent && prevWasPlaying) {
+      await audio.play().catch((err) => {
+        console.warn('업데이트 후 자동 재생 복원 실패', err);
+      });
+    }
+  }
+
+  audio.volume = prevVolume;
+  volumeEl.value = String(prevVolume);
+  renderVolumeFill();
+
+  await warmCacheWithCurrentAssets();
+}
+
+async function getInitialSongsList() {
+  try {
+    return await fetchSongsList({ forceNetwork: true });
+  } catch (networkErr) {
+    console.warn('최신 songs.json 로딩 실패, 캐시 또는 저장본을 확인합니다.', networkErr);
+
+    try {
+      return await fetchSongsList({ forceNetwork: false });
+    } catch (cacheErr) {
+      console.warn('캐시된 songs.json 로딩 실패, 저장된 스냅샷을 확인합니다.', cacheErr);
+      return getStoredSongsSnapshot() || [...FALLBACK_SONGS];
+    }
+  }
+}
+
+async function checkForSongsUpdates() {
+  try {
+    const freshSongs = await fetchSongsList({ forceNetwork: true });
+    const currentHash = getSongsFingerprint(songs);
+    const freshHash = getSongsFingerprint(freshSongs);
+
+    if (freshHash !== currentHash) {
+      console.log('서버의 최신 곡 목록을 감지하여 자동 반영합니다.');
+      await applySongsList(freshSongs, { initial: false, keepCurrent: true });
+    }
+  } catch (err) {
+    console.warn('곡 목록 업데이트 확인 실패', err);
+  }
+}
+
+function startSongsPolling() {
+  if (songsPollTimer) clearInterval(songsPollTimer);
+
+  songsPollTimer = window.setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      updateServiceWorkerIfPossible();
+      checkForSongsUpdates();
+    }
+  }, SONGS_POLL_MS);
+
+  window.addEventListener('focus', () => {
+    updateServiceWorkerIfPossible();
+    checkForSongsUpdates();
+  });
+
+  window.addEventListener('online', () => {
+    updateServiceWorkerIfPossible();
+    checkForSongsUpdates();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      updateServiceWorkerIfPossible();
+      checkForSongsUpdates();
+    }
+  });
+}
+
+async function initializeApp() {
+  const initialAutoplay = shouldAutoplayFromUrl();
+
+  await registerOfflinePwa();
+  const initialSongs = await getInitialSongsList();
+  await applySongsList(initialSongs, { initial: true, keepCurrent: false });
+
+  if (initialAutoplay) {
+    audio.play().catch(() => {
+      console.log('브라우저 자동재생 정책으로 인해 자동 재생이 차단되었습니다.');
+    });
+  }
+
+  audio.volume = 0.8;
+  volumeEl.value = '0.8';
+  renderVolumeFill();
+
+  startSongsPolling();
+  updateServiceWorkerIfPossible();
+  checkForSongsUpdates();
+}
+
+initializeApp();
+</script>
+</body>
+</html>
