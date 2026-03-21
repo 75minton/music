@@ -78,7 +78,7 @@
     .top-actions { display: flex; align-items: center; gap: 8px; }
 
     /* PWA Install / Utility Button Style */
-    .utility-btn, #installBtn {
+    .utility-btn, .lyrics-toggle-btn, #installBtn {
       appearance: none; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--accent);
       color: var(--accent); border-radius: 999px; padding: 6px 14px;
       font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: 0.2s;
@@ -285,6 +285,10 @@
     .mini-prog-rail { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.05); }
     .mini-prog-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.1s linear; box-shadow: 0 0 8px var(--accent);}
 
+    @media (min-width: 769px) {
+      .lyrics-toggle-btn { display: none; }
+    }
+
     /* ════════════════════════════
        🔥 MOBILE OPTIMIZATION 🔥
     ════════════════════════════ */
@@ -381,21 +385,45 @@
         padding: 16px; border-radius: 16px; background: rgba(26, 26, 26, 0.6); 
         border: 1px solid rgba(212,175,55,0.1);
       }
-      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); justify-content: space-between; }
-      .lyrics-actions { gap: 8px; }
-      .lyrics-toggle-btn { min-width: 64px; height: 30px; padding: 0 10px; font-size: 0.72rem; }
+      .lyrics-header { padding-bottom: 8px; margin-bottom: 8px; border-color: rgba(212,175,55,0.2); }
+      .lyrics-header-left { min-width: 0; }
+      .lyrics-header-right { margin-left: auto; }
       #lrcTrackName { display: none; }
+      .lyrics-toggle-btn { display: inline-flex; align-items: center; justify-content: center; }
       .lyric-line { font-size: 1.05rem; min-height: 36px; padding: 6px 0; text-align: center; }
       .lyric-line.active { font-size: 1.3rem; transform-origin: center; }
-      .lyrics-col.expanded {
-        top: 12px;
+
+      body.lyrics-expanded .lyrics-col {
+        position: fixed;
         left: 12px;
         right: 12px;
-        bottom: 12px;
-        padding: 18px 14px;
+        top: calc(var(--topbar-h) + 68px);
+        bottom: calc(var(--bar-h) + 12px);
+        z-index: 500;
+        background: rgba(18, 18, 18, 0.98);
+        border: 1px solid rgba(212,175,55,0.22);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.45);
       }
-      .lyrics-col.expanded .lyric-line { font-size: 1.12rem; min-height: 40px; }
-      .lyrics-col.expanded .lyric-line.active { font-size: 1.38rem; }
+      body.lyrics-expanded .lyrics-viewport {
+        mask-image: none;
+        -webkit-mask-image: none;
+      }
+      body.lyrics-expanded .lyrics-header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: rgba(18, 18, 18, 0.98);
+      }
+      body.lyrics-expanded .lyric-line {
+        font-size: 1.12rem;
+        min-height: 42px;
+      }
+      body.lyrics-expanded .lyric-line.active {
+        font-size: 1.42rem;
+      }
+      body.lyrics-expanded .mini-bar {
+        transform: translateY(100%);
+      }
     }
 
     @media (hover: none), (pointer: coarse) {
@@ -502,24 +530,14 @@
         </div>
       </div>
 
-      <div class="lyrics-col" id="lyricsCol">
+      <div class="lyrics-col">
         <div class="lyrics-header">
-          <span>LYRICS 가사</span>
-          <div class="lyrics-actions">
+          <div class="lyrics-header-left">
+            <span>LYRICS 가사</span>
+          </div>
+          <div class="lyrics-header-right">
             <span id="lrcTrackName">—</span>
-            <button id="lyricsExpandBtn" class="lyrics-toggle-btn" type="button" aria-expanded="false" aria-controls="lyricsCol" aria-label="가사창 확대">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 3H3v5"></path>
-                <path d="M16 3h5v5"></path>
-                <path d="M21 16v5h-5"></path>
-                <path d="M8 21H3v-5"></path>
-                <path d="M3 8l6-6"></path>
-                <path d="M21 8l-6-6"></path>
-                <path d="M3 16l6 6"></path>
-                <path d="M21 16l-6 6"></path>
-              </svg>
-              <span id="lyricsExpandLabel">확대</span>
-            </button>
+            <button id="lyricsExpandBtn" class="lyrics-toggle-btn" type="button" aria-expanded="false" aria-pressed="false">가사 확대</button>
           </div>
         </div>
         <div class="lyrics-viewport">
@@ -571,21 +589,147 @@
 // 🐰 외부 이미지 파일 없이 HTML 자체에서 그려내는 75+토끼+셔틀콕 고화질 SVG 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-// 곡 데이터 세팅 (cover 속성을 생략하거나 빈 값이면 위에서 만든 전용 이미지가 뜹니다)
-const songs = [
-  { title:"Seven Five Rabbits", artist:"Tony.Park", cover:"./sound/Seven Five Rabbits.png", url:"./sound/Seven Five Rabbits.mp3", lrc:"./sound/Seven Five Rabbits.lrc", youtube:"#" },
-  { title:"우리는 하나 (10대 그 시절)", artist:"Tony.Park", cover:"./sound/우리는 하나 (10대 그 시절).png",url:"./sound/우리는 하나 (10대 그 시절).mp3",lrc:"./sound/우리는 하나 (10대 그 시절).lrc",youtube:"" }
-];
-  
-const state = { cur:0, lyrics:[], shuffle:false, repeat:false };
+const SONGS_JSON_URL = './songs.json';
+const SONGS_POLL_MS = 60000;
+const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
+const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 
-function getTrackIndexFromUrl() {
+// songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
+const FALLBACK_SONGS = [
+  {
+    id: 'seven-five-rabbits',
+    title: "Seven Five Rabbits",
+    artist: "Tony.Park",
+    cover: "./sound/Seven Five Rabbits.png",
+    url: "./sound/Seven Five Rabbits.mp3",
+    lrc: "./sound/Seven Five Rabbits.lrc",
+    youtube: "#"
+  },
+  {
+    id: 'we-are-one-teen-days',
+    title: "우리는 하나 (10대 그 시절)",
+    artist: "Tony.Park",
+    cover: "./sound/우리는 하나 (10대 그 시절).png",
+    url: "./sound/우리는 하나 (10대 그 시절).mp3",
+    lrc: "./sound/우리는 하나 (10대 그 시절).lrc",
+    youtube: "#"
+  }
+];
+
+let songs = [...FALLBACK_SONGS];
+const state = { cur: 0, lyrics: [], shuffle: false, repeat: false };
+
+let songsPollTimer = null;
+let swRegistrationPromise = null;
+
+const $  = id => document.getElementById(id);
+const audio = $('audio');
+const titleEl = $('title');
+const artistEl = $('artist');
+const coverEl = $('cover');
+const progressEl = $('progress');
+const progFill = $('progFill');
+const playBtn = $('playBtn');
+const volumeEl = $('volume');
+const volFill = $('volFill');
+const lyricsInner = $('lyricsInner');
+const artFrame = $('artFrame');
+const lyricsCol = document.querySelector('.lyrics-col');
+const lyricsViewport = document.querySelector('.lyrics-viewport');
+const lyricsExpandBtn = $('lyricsExpandBtn');
+
+const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const escAttr = s => String(s)
+  .replace(/&/g,'&amp;')
+  .replace(/"/g,'&quot;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;');
+
+function isMobileViewport() {
+  return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function updateLyricsExpandButton() {
+  if (!lyricsExpandBtn) return;
+  const expanded = document.body.classList.contains('lyrics-expanded');
+  lyricsExpandBtn.textContent = expanded ? '가사 축소' : '가사 확대';
+  lyricsExpandBtn.setAttribute('aria-expanded', String(expanded));
+  lyricsExpandBtn.setAttribute('aria-pressed', String(expanded));
+}
+
+function closeLyricsExpanded() {
+  document.body.classList.remove('lyrics-expanded');
+  updateLyricsExpandButton();
+}
+
+function toggleLyricsExpanded() {
+  if (!isMobileViewport()) return;
+  document.body.classList.toggle('lyrics-expanded');
+  updateLyricsExpandButton();
+}
+
+function getTrackSignature(song) {
+  return song?.id || song?.url || `${song?.title || ''}|${song?.artist || ''}`;
+}
+
+function normalizeSongEntry(raw, index) {
+  if (!raw || typeof raw !== 'object') return null;
+
+  const title = String(raw.title || raw.name || `Track ${index + 1}`).trim();
+  const artist = String(raw.artist || 'Unknown Artist').trim();
+  const url = String(raw.url || raw.src || '').trim();
+  if (!url) return null;
+
+  const lrc = raw.lrc ? String(raw.lrc).trim() : '';
+  const cover = raw.cover ? String(raw.cover).trim() : '';
+  const youtube = raw.youtube ? String(raw.youtube).trim() : '';
+  const id = raw.id ? String(raw.id).trim() : url;
+
+  return { id, title, artist, url, lrc, cover, youtube };
+}
+
+function normalizeSongsList(input) {
+  const list = Array.isArray(input) ? input : (input && Array.isArray(input.songs) ? input.songs : []);
+  const normalized = list.map(normalizeSongEntry).filter(Boolean);
+  return normalized.length ? normalized : [...FALLBACK_SONGS];
+}
+
+function getSongsFingerprint(list) {
+  return JSON.stringify(
+    list.map(({ id, title, artist, url, lrc, cover, youtube }) => ({
+      id, title, artist, url, lrc, cover, youtube
+    }))
+  );
+}
+
+function getStoredSongsSnapshot() {
+  try {
+    const raw = localStorage.getItem(STORAGE_SONGS_SNAPSHOT_KEY);
+    if (!raw) return null;
+    return normalizeSongsList(JSON.parse(raw));
+  } catch (err) {
+    console.warn('저장된 곡 스냅샷을 읽지 못했습니다.', err);
+    return null;
+  }
+}
+
+function persistSongsSnapshot(list) {
+  try {
+    localStorage.setItem(STORAGE_SONGS_HASH_KEY, getSongsFingerprint(list));
+    localStorage.setItem(STORAGE_SONGS_SNAPSHOT_KEY, JSON.stringify(list));
+  } catch (err) {
+    console.warn('곡 스냅샷 저장 실패', err);
+  }
+}
+
+function getTrackIndexFromUrl(totalCount = songs.length) {
   const params = new URLSearchParams(window.location.search);
   const no = parseInt(params.get('no') || '', 10);
-  if (Number.isFinite(no) && no >= 1 && no <= songs.length) return no - 1;
+  if (Number.isFinite(no) && no >= 1 && no <= totalCount) return no - 1;
 
   const idx = parseInt(params.get('idx') || '', 10);
-  if (Number.isFinite(idx) && idx >= 0 && idx < songs.length) return idx;
+  if (Number.isFinite(idx) && idx >= 0 && idx < totalCount) return idx;
 
   return 0;
 }
@@ -597,81 +741,123 @@ function shouldAutoplayFromUrl() {
 }
 
 function updateUrlForCurrentTrack() {
+  if (!songs.length) return;
   const url = new URL(window.location.href);
   url.searchParams.set('no', String(state.cur + 1));
   window.history.replaceState({}, '', url);
 }
 
-const $  = id => document.getElementById(id);
-const audio = $('audio'), titleEl = $('title'), artistEl = $('artist'), coverEl = $('cover');
-const progressEl = $('progress'), progFill = $('progFill'), playBtn = $('playBtn');
-const volumeEl = $('volume'), volFill = $('volFill'), lyricsInner = $('lyricsInner');
-const artFrame = $('artFrame');
-const lyricsCol = $('lyricsCol');
-const lyricsExpandBtn = $('lyricsExpandBtn');
-const lyricsExpandLabel = $('lyricsExpandLabel');
+async function fetchSongsList({ forceNetwork = false } = {}) {
+  const requestUrl = forceNetwork
+    ? `${SONGS_JSON_URL}${SONGS_JSON_URL.includes('?') ? '&' : '?'}_=${Date.now()}`
+    : SONGS_JSON_URL;
 
-const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-function toggleLyricsExpand(forceExpanded) {
-  const next = typeof forceExpanded === 'boolean'
-    ? forceExpanded
-    : !lyricsCol.classList.contains('expanded');
-
-  lyricsCol.classList.toggle('expanded', next);
-  lyricsExpandBtn.setAttribute('aria-expanded', String(next));
-  lyricsExpandBtn.setAttribute('aria-label', next ? '가사창 축소' : '가사창 확대');
-  lyricsExpandLabel.textContent = next ? '축소' : '확대';
-
-  requestAnimationFrame(() => {
-    if (!state.lyrics.length) return;
-    const activeLine = lyricsInner.querySelector('.lyric-line.active');
-    if (!activeLine) return;
-    const viewportHeight = lyricsInner.parentElement.clientHeight;
-    lyricsInner.style.top = (viewportHeight / 2 - activeLine.offsetTop - (activeLine.clientHeight / 2)) + 'px';
+  const response = await fetch(requestUrl, {
+    cache: forceNetwork ? 'no-store' : 'default',
+    headers: { 'Accept': 'application/json' }
   });
-}
 
-function updateMediaSession(song) {
-  if (!('mediaSession' in navigator) || !song) return;
-
-  const artworkSrc = song.cover || './icons/icon-192.png';
-  try {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: song.title || '',
-      artist: song.artist || '',
-      album: '75 Minton Music',
-      artwork: [
-        { src: artworkSrc, sizes: '192x192', type: 'image/png' },
-        { src: artworkSrc, sizes: '512x512', type: 'image/png' }
-      ]
-    });
-  } catch (err) {
-    console.warn('Media Session 메타데이터 설정 실패', err);
+  if (!response.ok) {
+    throw new Error(`songs.json 응답 오류: ${response.status}`);
   }
 
-  const safeSetAction = (action, handler) => {
-    try {
-      navigator.mediaSession.setActionHandler(action, handler);
-    } catch (err) {
-      console.warn(`Media Session 액션 등록 실패: ${action}`, err);
-    }
-  };
+  const data = await response.json();
+  return normalizeSongsList(data);
+}
 
-  safeSetAction('play', async () => { await audio.play(); });
-  safeSetAction('pause', () => audio.pause());
-  safeSetAction('previoustrack', () => prev());
-  safeSetAction('nexttrack', () => next());
-  safeSetAction('seekbackward', (details) => {
-    const offset = details?.seekOffset || 10;
-    audio.currentTime = Math.max(audio.currentTime - offset, 0);
-  });
-  safeSetAction('seekforward', (details) => {
-    const offset = details?.seekOffset || 10;
-    const duration = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + offset;
-    audio.currentTime = Math.min(audio.currentTime + offset, duration);
-  });
+function syncSongMeta(song) {
+  titleEl.textContent = $('miniTitle').textContent = song.title;
+  artistEl.textContent = $('miniArtist').textContent = song.artist;
+  $('lrcTrackName').textContent = song.title;
+  coverEl.src = $('miniCover').src = song.cover || defaultCover;
+  document.title = `${song.title} - ${song.artist || '75 Minton'} | 75 Minton Music Player`;
+}
+
+function updateMediaSessionMetadata(song) {
+  if (!('mediaSession' in navigator) || !song) return;
+
+  const artworkSrc = song.cover || './icons/icon-512.png';
+  const artwork = [
+    { src: artworkSrc, sizes: '96x96', type: 'image/png' },
+    { src: artworkSrc, sizes: '128x128', type: 'image/png' },
+    { src: artworkSrc, sizes: '192x192', type: 'image/png' },
+    { src: artworkSrc, sizes: '256x256', type: 'image/png' },
+    { src: artworkSrc, sizes: '384x384', type: 'image/png' },
+    { src: artworkSrc, sizes: '512x512', type: 'image/png' }
+  ];
+
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title || '75 Minton Music',
+      artist: song.artist || '75 Minton',
+      album: '75 Minton Music Player',
+      artwork
+    });
+  } catch (err) {
+    console.warn('Media Session metadata 설정 실패', err);
+  }
+
+  try {
+    navigator.mediaSession.setActionHandler('play', async () => {
+      await audio.play();
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      audio.pause();
+    });
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      prev();
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      next();
+    });
+    navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+      const offset = details?.seekOffset || 10;
+      audio.currentTime = Math.max(0, audio.currentTime - offset);
+    });
+    navigator.mediaSession.setActionHandler('seekforward', (details) => {
+      const offset = details?.seekOffset || 10;
+      const duration = Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + offset;
+      audio.currentTime = Math.min(duration, audio.currentTime + offset);
+    });
+    navigator.mediaSession.setActionHandler('seekto', (details) => {
+      if (details?.seekTime != null) {
+        audio.currentTime = details.seekTime;
+      }
+    });
+  } catch (err) {
+    console.warn('Media Session action handler 설정 실패', err);
+  }
+}
+
+function updateMediaSessionPlaybackState() {
+  if (!('mediaSession' in navigator)) return;
+
+  try {
+    navigator.mediaSession.playbackState = audio.ended
+      ? 'none'
+      : (audio.paused ? 'paused' : 'playing');
+  } catch (err) {
+    console.warn('Media Session playbackState 설정 실패', err);
+  }
+
+  try {
+    if ('setPositionState' in navigator.mediaSession && Number.isFinite(audio.duration) && audio.duration > 0) {
+      navigator.mediaSession.setPositionState({
+        duration: audio.duration,
+        playbackRate: audio.playbackRate || 1,
+        position: Math.min(audio.currentTime || 0, audio.duration)
+      });
+    }
+  } catch (err) {
+    // 일부 브라우저는 positionState 지원이 제한적일 수 있음
+  }
+}
+
+function resetProgressUi() {
+  progressEl.value = 0;
+  progFill.style.width = $('miniFill').style.width = '0%';
+  $('currentTime').textContent = '0:00';
+  $('duration').textContent = '0:00';
 }
 
 /* ── UI 탭 이동 로직 ── */
@@ -681,68 +867,118 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-    
-    if(btn.dataset.tab === 'player') document.body.classList.add('on-player-tab');
+
+    if (btn.dataset.tab === 'player') document.body.classList.add('on-player-tab');
     else document.body.classList.remove('on-player-tab');
+    if (btn.dataset.tab !== 'player') closeLyricsExpanded();
   });
 });
 $('miniGoPlayer').addEventListener('click', () => document.querySelector('.tab-btn[data-tab="player"]').click());
-lyricsExpandBtn.addEventListener('click', () => toggleLyricsExpand());
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && lyricsCol.classList.contains('expanded')) {
-    toggleLyricsExpand(false);
-  }
+
+lyricsExpandBtn?.addEventListener('click', toggleLyricsExpanded);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeLyricsExpanded();
 });
+
+window.addEventListener('resize', () => {
+  if (!isMobileViewport()) closeLyricsExpanded();
+});
+
 
 /* ── 렌더링 ── */
 function renderPlaylist() {
-  const pl = $('playlist'); pl.innerHTML = '';
-  songs.forEach((s, i) => {
+  const pl = $('playlist');
+  pl.innerHTML = '';
+
+  songs.forEach((song, index) => {
     const btn = document.createElement('button');
-    btn.className = 'track-btn' + (i === state.cur ? ' active' : '');
-    btn.innerHTML = `<img class="t-thumb" src="${s.cover || defaultCover}" alt=""><div style="min-width:0"><div class="t-name">${esc(s.title)}</div><div class="t-by">${esc(s.artist)}</div></div>`;
-    btn.addEventListener('click', () => loadTrack(i, true));
+    btn.className = 'track-btn' + (index === state.cur ? ' active' : '');
+    btn.innerHTML = `<img class="t-thumb" src="${escAttr(song.cover || defaultCover)}" alt="">
+      <div style="min-width:0">
+        <div class="t-name">${esc(song.title)}</div>
+        <div class="t-by">${esc(song.artist)}</div>
+      </div>`;
+    btn.addEventListener('click', () => loadTrack(index, true));
     pl.appendChild(btn);
   });
 }
+
 function renderLinks() {
-  const lk = $('trackLinks'); lk.innerHTML = '';
-  songs.forEach((s, i) => {
-    const div = document.createElement('div'); div.className = 'lk-card';
-    div.innerHTML = `<div style="flex:1;"><div class="lk-num">TRACK ${String(i+1).padStart(2,'0')}</div><div class="lk-title">${esc(s.title)}</div></div>
-                     <div class="lk-btns"><a class="lk-btn" href="${s.url}" download>MP3</a><a class="lk-btn" href="${s.lrc}" download>가사</a></div>`;
+  const lk = $('trackLinks');
+  lk.innerHTML = '';
+
+  songs.forEach((song, index) => {
+    const buttons = [
+      `<a class="lk-btn" href="${escAttr(song.url)}" download>MP3</a>`
+    ];
+
+    if (song.lrc) buttons.push(`<a class="lk-btn" href="${escAttr(song.lrc)}" download>가사</a>`);
+    if (song.youtube && song.youtube !== '#') buttons.push(`<a class="lk-btn" href="${escAttr(song.youtube)}" target="_blank" rel="noopener">YouTube</a>`);
+
+    const div = document.createElement('div');
+    div.className = 'lk-card';
+    div.innerHTML = `<div style="flex:1;">
+        <div class="lk-num">TRACK ${String(index + 1).padStart(2, '0')}</div>
+        <div class="lk-title">${esc(song.title)}</div>
+      </div>
+      <div class="lk-btns">${buttons.join('')}</div>`;
     lk.appendChild(div);
   });
 }
 
 /* ── 가사 파싱 ── */
 async function parseLRC(path) {
+  if (!path) {
+    state.lyrics = [];
+    lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+    lyricsInner.style.top = '0px';
+    return;
+  }
+
   lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+  lyricsInner.style.top = '0px';
   state.lyrics = [];
+
   try {
-    const r = await fetch(path, { cache: 'no-store' });
-    if (!r.ok) throw new Error();
-    const text = await r.text();
+    const response = await fetch(path, { cache: 'no-store' });
+    if (!response.ok) throw new Error('가사 파일을 불러오지 못했습니다.');
+
+    const text = await response.text();
     const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
-    for (const raw of text.split('\n')) {
-      const line = raw.trim(); const ms = [...line.matchAll(re)];
-      if (!ms.length) continue;
+
+    for (const rawLine of text.split('\n')) {
+      const line = rawLine.trim();
+      const matches = [...line.matchAll(re)];
+      if (!matches.length) continue;
+
       const content = line.replace(re, '').trim();
       if (!content) continue;
-      for (const m of ms) {
-        const frac = m[3].length === 2 ? +m[3]/100 : +m[3]/1000;
-        state.lyrics.push({ time: +m[1]*60 + +m[2] + frac, content });
+
+      for (const match of matches) {
+        const frac = match[3].length === 2 ? Number(match[3]) / 100 : Number(match[3]) / 1000;
+        state.lyrics.push({
+          time: Number(match[1]) * 60 + Number(match[2]) + frac,
+          content
+        });
       }
     }
+
     state.lyrics.sort((a, b) => a.time - b.time);
+
     lyricsInner.innerHTML = state.lyrics.length
-      ? state.lyrics.map((l, i) => `<div class="lyric-line" id="ln${i}">${esc(l.content)}</div>`).join('')
+      ? state.lyrics.map((line, i) => `<div class="lyric-line" id="ln${i}">${esc(line.content)}</div>`).join('')
       : '<div class="lyric-line">가사가 없습니다</div>';
-      
+
     document.querySelectorAll('.lyric-line').forEach((el, i) => {
-      el.addEventListener('click', () => { if(state.lyrics[i]) audio.currentTime = state.lyrics[i].time; });
+      el.addEventListener('click', () => {
+        if (state.lyrics[i]) audio.currentTime = state.lyrics[i].time;
+      });
     });
-  } catch { lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>'; }
+  } catch (err) {
+    console.warn('가사 로딩 실패', err);
+    lyricsInner.innerHTML = '<div class="lyric-line">가사가 없습니다</div>';
+  }
 }
 
 /* ── 재생 제어 ── */
@@ -754,84 +990,130 @@ function setPlaying(on) {
 }
 
 async function loadTrack(idx, auto = false) {
-  state.cur = idx; const s = songs[idx];
+  if (!songs.length) return;
+
+  state.cur = Math.max(0, Math.min(idx, songs.length - 1));
+  const song = songs[state.cur];
+
   updateUrlForCurrentTrack();
-  titleEl.textContent = $('miniTitle').textContent = s.title;
-  artistEl.textContent = $('miniArtist').textContent = s.artist;
-  $('lrcTrackName').textContent = s.title;
-  
-  // 이미지 설정 (없으면 자체 내장된 토끼 SVG 사용)
-  coverEl.src = $('miniCover').src = s.cover || defaultCover;
-  
-  audio.src = s.url;
-  progressEl.value = 0; progFill.style.width = $('miniFill').style.width = '0%';
-  $('currentTime').textContent = $('duration').textContent = '0:00';
-  
-  // 애니메이션 리셋
+  syncSongMeta(song);
+  updateMediaSessionMetadata(song);
+
+  audio.src = song.url;
+  audio.load();
+  resetProgressUi();
+
   artFrame.style.animation = 'none';
-  artFrame.offsetHeight; 
+  artFrame.offsetHeight;
   artFrame.style.animation = null;
 
-  renderPlaylist(); await parseLRC(s.lrc);
-  setPlaying(false); if(auto) audio.play();
+  renderPlaylist();
+  await parseLRC(song.lrc);
+  setPlaying(false);
+
+  if (auto) {
+    try {
+      await audio.play();
+    } catch (err) {
+      console.log('브라우저 자동재생 정책으로 인해 재생이 차단되었습니다.', err);
+    }
+  }
 }
 
-/* ── 이벤트 연결 ── */
-const toggle = () => audio.paused ? audio.play() : audio.pause();
-const next = () => loadTrack(state.shuffle ? Math.floor(Math.random()*songs.length) : (state.cur+1)%songs.length, true);
-const prev = () => loadTrack((state.cur-1+songs.length)%songs.length, true);
-
-playBtn.addEventListener('click', toggle); $('miniPlay').addEventListener('click', toggle);
-$('prevBtn').addEventListener('click', prev); $('nextBtn').addEventListener('click', next); $('miniNext').addEventListener('click', next);
-
-$('shuffleBtn').addEventListener('click', (e) => { state.shuffle = !state.shuffle; e.target.classList.toggle('lit', state.shuffle); });
-$('repeatBtn').addEventListener('click', (e) => { state.repeat = !state.repeat; e.target.classList.toggle('lit', state.repeat); });
-
-progressEl.addEventListener('input', () => {
-  if (audio.duration) audio.currentTime = (progressEl.value / 100) * audio.duration;
-});
 function renderVolumeFill() {
   const pct = Number(volumeEl.value) * 100;
   volFill.style.width = pct + '%';
 }
-volumeEl.addEventListener('input', () => { 
-  audio.volume = volumeEl.value;
+
+const toggle = () => audio.paused ? audio.play() : audio.pause();
+const next = () => {
+  if (!songs.length) return;
+  const nextIndex = state.shuffle
+    ? Math.floor(Math.random() * songs.length)
+    : (state.cur + 1) % songs.length;
+  loadTrack(nextIndex, true);
+};
+const prev = () => {
+  if (!songs.length) return;
+  loadTrack((state.cur - 1 + songs.length) % songs.length, true);
+};
+
+playBtn.addEventListener('click', toggle);
+$('miniPlay').addEventListener('click', toggle);
+$('prevBtn').addEventListener('click', prev);
+$('nextBtn').addEventListener('click', next);
+$('miniNext').addEventListener('click', next);
+
+$('shuffleBtn').addEventListener('click', (e) => {
+  state.shuffle = !state.shuffle;
+  e.target.classList.toggle('lit', state.shuffle);
+});
+$('repeatBtn').addEventListener('click', (e) => {
+  state.repeat = !state.repeat;
+  e.target.classList.toggle('lit', state.repeat);
+});
+
+progressEl.addEventListener('input', () => {
+  if (audio.duration) {
+    audio.currentTime = (progressEl.value / 100) * audio.duration;
+  }
+});
+
+volumeEl.addEventListener('input', () => {
+  audio.volume = Number(volumeEl.value);
   renderVolumeFill();
 });
 
-audio.addEventListener('loadedmetadata', () => $('duration').textContent = fmt(audio.duration));
+audio.addEventListener('loadedmetadata', () => {
+  $('duration').textContent = fmt(audio.duration);
+  updateMediaSessionPlaybackState();
+});
+
 audio.addEventListener('timeupdate', () => {
+  updateMediaSessionPlaybackState();
   const pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
-  progressEl.value = pct; progFill.style.width = $('miniFill').style.width = pct + '%';
+  progressEl.value = pct;
+  progFill.style.width = $('miniFill').style.width = pct + '%';
   $('currentTime').textContent = fmt(audio.currentTime);
-  
-  // 가사 중앙 정렬 싱크
-  if(!state.lyrics.length) return;
-  let ai = -1;
-  for (let i=0; i<state.lyrics.length; i++) {
-    if (audio.currentTime >= state.lyrics[i].time && (!state.lyrics[i+1] || audio.currentTime < state.lyrics[i+1].time)) { ai = i; break; }
+
+  if (!state.lyrics.length) return;
+
+  let activeIndex = -1;
+  for (let i = 0; i < state.lyrics.length; i++) {
+    if (
+      audio.currentTime >= state.lyrics[i].time &&
+      (!state.lyrics[i + 1] || audio.currentTime < state.lyrics[i + 1].time)
+    ) {
+      activeIndex = i;
+      break;
+    }
   }
-  document.querySelectorAll('.lyric-line').forEach((el, i) => { el.classList.toggle('active', i === ai); });
-  
-  if(ai >= 0) {
-    const lineObj = document.getElementById('ln' + ai);
-    if(lineObj) {
+
+  document.querySelectorAll('.lyric-line').forEach((el, i) => {
+    el.classList.toggle('active', i === activeIndex);
+  });
+
+  if (activeIndex >= 0) {
+    const lineObj = document.getElementById('ln' + activeIndex);
+    if (lineObj) {
       const viewportHeight = lyricsInner.parentElement.clientHeight;
       lyricsInner.style.top = (viewportHeight / 2 - lineObj.offsetTop - (lineObj.clientHeight / 2)) + 'px';
     }
   }
 });
+
 audio.addEventListener('ended', () => {
-  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
-  state.repeat ? audio.play() : next();
+  updateMediaSessionPlaybackState();
+  if (state.repeat) audio.play();
+  else next();
 });
 audio.addEventListener('pause', () => {
   setPlaying(false);
-  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+  updateMediaSessionPlaybackState();
 });
 audio.addEventListener('play', () => {
   setPlaying(true);
-  if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+  updateMediaSessionPlaybackState();
 });
 
 /* ── PWA 설치 로직 ── */
@@ -840,32 +1122,21 @@ const installBtn = document.getElementById('installBtn');
 const clearCacheBtn = document.getElementById('clearCacheBtn');
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // 모바일 브라우저 기본 설치 팝업 방지
   e.preventDefault();
-  // 이벤트를 보관해두었다가 사용자가 버튼을 클릭하면 트리거
   deferredPrompt = e;
-  // 숨겨뒀던 앱 설치 버튼을 보여줌
   installBtn.hidden = false;
 });
 
 installBtn.addEventListener('click', async () => {
   if (!deferredPrompt) return;
-  
-  // 브라우저의 설치 프롬프트 띄우기
+
   deferredPrompt.prompt();
-  
-  // 사용자의 응답 대기 (설치 수락 혹은 거절)
-  const { outcome } = await deferredPrompt.userChoice;
-  console.log(`사용자 설치 응답: ${outcome}`);
-  
-  // 프롬프트는 한 번만 사용할 수 있으므로 비워줌
+  await deferredPrompt.userChoice;
   deferredPrompt = null;
-  // 버튼 다시 숨김
   installBtn.hidden = true;
 });
 
 window.addEventListener('appinstalled', () => {
-  // 앱이 정상적으로 설치되면 버튼을 숨김
   installBtn.hidden = true;
   deferredPrompt = null;
   console.log('PWA가 성공적으로 설치되었습니다.');
@@ -890,8 +1161,8 @@ async function clearPwaCaches() {
       await Promise.all(keys.map(key => caches.delete(key)));
     }
 
-    try { localStorage.clear(); } catch (e) { console.warn('localStorage clear 실패', e); }
-    try { sessionStorage.clear(); } catch (e) { console.warn('sessionStorage clear 실패', e); }
+    try { localStorage.clear(); } catch (err) { console.warn('localStorage clear 실패', err); }
+    try { sessionStorage.clear(); } catch (err) { console.warn('sessionStorage clear 실패', err); }
 
     alert('캐시 정리가 완료되었습니다. 페이지를 새로고침합니다.');
     const url = new URL(window.location.href);
@@ -907,20 +1178,218 @@ async function clearPwaCaches() {
 
 clearCacheBtn.addEventListener('click', clearPwaCaches);
 
-// 초기화
-const initialTrackIndex = getTrackIndexFromUrl();
-const initialAutoplay = shouldAutoplayFromUrl();
+function getWarmCacheAssets() {
+  const shellAssets = [
+    './',
+    './index.html',
+    './manifest.json',
+    './songs.json',
+    './icons/icon-180.png',
+    './icons/icon-192.png',
+    './icons/icon-512.png'
+  ];
+  const mediaAssets = songs.flatMap(song => [song.url, song.lrc, song.cover]).filter(Boolean);
+  return [...new Set([...shellAssets, ...mediaAssets])];
+}
 
-renderPlaylist();
-renderLinks();
-loadTrack(initialTrackIndex, false).then(() => {
+async function registerOfflinePwa() {
+  if (!('serviceWorker' in navigator)) return null;
+  if (swRegistrationPromise) return swRegistrationPromise;
+
+  swRegistrationPromise = navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then((registration) => {
+      console.log('Service Worker 등록 완료', registration.scope);
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        warmCacheWithCurrentAssets();
+      });
+
+      return registration;
+    })
+    .catch((err) => {
+      console.warn('Service Worker 등록 실패', err);
+      swRegistrationPromise = null;
+      return null;
+    });
+
+  return swRegistrationPromise;
+}
+
+async function warmCacheWithCurrentAssets() {
+  const registration = await registerOfflinePwa();
+  if (!registration) return;
+
+  const payload = { type: 'WARM_CACHE', assets: getWarmCacheAssets() };
+  const sendWarmMessage = (sw) => {
+    try {
+      sw?.postMessage(payload);
+    } catch (err) {
+      console.warn('캐시 예열 메시지 전송 실패', err);
+    }
+  };
+
+  if (registration.active) sendWarmMessage(registration.active);
+  navigator.serviceWorker.ready.then((readyReg) => {
+    sendWarmMessage(readyReg.active || readyReg.waiting || readyReg.installing);
+  });
+}
+
+async function updateServiceWorkerIfPossible() {
+  const registration = await registerOfflinePwa();
+  if (!registration) return;
+  try {
+    await registration.update();
+  } catch (err) {
+    console.warn('Service Worker 업데이트 확인 실패', err);
+  }
+}
+
+async function applySongsList(nextSongs, { initial = false, keepCurrent = true } = {}) {
+  const normalized = normalizeSongsList(nextSongs);
+  const prevSong = songs[state.cur];
+  const prevSig = getTrackSignature(prevSong);
+  const prevWasPlaying = !audio.paused && !!audio.src;
+  const prevTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+  const prevVolume = Number.isFinite(audio.volume) ? audio.volume : 0.8;
+
+  songs = normalized;
+  persistSongsSnapshot(songs);
+
+  let nextIndex = getTrackIndexFromUrl(songs.length);
+
+  if (!initial && keepCurrent && prevSig) {
+    const matchedIndex = songs.findIndex(song => getTrackSignature(song) === prevSig);
+    if (matchedIndex >= 0) nextIndex = matchedIndex;
+    else nextIndex = Math.min(state.cur, songs.length - 1);
+  }
+
+  const nextSong = songs[nextIndex];
+  const sameCurrentTrack = Boolean(
+    prevSong &&
+    nextSong &&
+    getTrackSignature(nextSong) === prevSig &&
+    nextSong.url === prevSong.url
+  );
+
+  renderPlaylist();
+  renderLinks();
+
+  if (!nextSong) return;
+
+  if (sameCurrentTrack) {
+    state.cur = nextIndex;
+    updateUrlForCurrentTrack();
+    syncSongMeta(nextSong);
+
+    if ((nextSong.lrc || '') !== (prevSong?.lrc || '')) {
+      await parseLRC(nextSong.lrc);
+    }
+  } else {
+    await loadTrack(nextIndex, false);
+
+    if (!initial && keepCurrent && prevTime > 0) {
+      const restoreTime = audio.duration
+        ? Math.min(prevTime, Math.max(audio.duration - 0.25, 0))
+        : prevTime;
+      try { audio.currentTime = restoreTime; } catch (err) { console.warn('재생 위치 복원 실패', err); }
+    }
+
+    if (!initial && keepCurrent && prevWasPlaying) {
+      await audio.play().catch((err) => {
+        console.warn('업데이트 후 자동 재생 복원 실패', err);
+      });
+    }
+  }
+
+  audio.volume = prevVolume;
+  volumeEl.value = String(prevVolume);
+  renderVolumeFill();
+
+  await warmCacheWithCurrentAssets();
+}
+
+async function getInitialSongsList() {
+  try {
+    return await fetchSongsList({ forceNetwork: true });
+  } catch (networkErr) {
+    console.warn('최신 songs.json 로딩 실패, 캐시 또는 저장본을 확인합니다.', networkErr);
+
+    try {
+      return await fetchSongsList({ forceNetwork: false });
+    } catch (cacheErr) {
+      console.warn('캐시된 songs.json 로딩 실패, 저장된 스냅샷을 확인합니다.', cacheErr);
+      return getStoredSongsSnapshot() || [...FALLBACK_SONGS];
+    }
+  }
+}
+
+async function checkForSongsUpdates() {
+  try {
+    const freshSongs = await fetchSongsList({ forceNetwork: true });
+    const currentHash = getSongsFingerprint(songs);
+    const freshHash = getSongsFingerprint(freshSongs);
+
+    if (freshHash !== currentHash) {
+      console.log('서버의 최신 곡 목록을 감지하여 자동 반영합니다.');
+      await applySongsList(freshSongs, { initial: false, keepCurrent: true });
+    }
+  } catch (err) {
+    console.warn('곡 목록 업데이트 확인 실패', err);
+  }
+}
+
+function startSongsPolling() {
+  if (songsPollTimer) clearInterval(songsPollTimer);
+
+  songsPollTimer = window.setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      updateServiceWorkerIfPossible();
+      checkForSongsUpdates();
+    }
+  }, SONGS_POLL_MS);
+
+  window.addEventListener('focus', () => {
+    updateServiceWorkerIfPossible();
+    checkForSongsUpdates();
+  });
+
+  window.addEventListener('online', () => {
+    updateServiceWorkerIfPossible();
+    checkForSongsUpdates();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      updateServiceWorkerIfPossible();
+      checkForSongsUpdates();
+    }
+  });
+}
+
+async function initializeApp() {
+  updateLyricsExpandButton();
+  const initialAutoplay = shouldAutoplayFromUrl();
+
+  await registerOfflinePwa();
+  const initialSongs = await getInitialSongsList();
+  await applySongsList(initialSongs, { initial: true, keepCurrent: false });
+
   if (initialAutoplay) {
     audio.play().catch(() => {
       console.log('브라우저 자동재생 정책으로 인해 자동 재생이 차단되었습니다.');
     });
   }
-});
-audio.volume = 0.8; renderVolumeFill();
+
+  audio.volume = 0.8;
+  volumeEl.value = '0.8';
+  renderVolumeFill();
+
+  startSongsPolling();
+  updateServiceWorkerIfPossible();
+  checkForSongsUpdates();
+}
+
+initializeApp();
 </script>
 </body>
 </html>
