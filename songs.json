@@ -12,12 +12,12 @@
       "youtube": ""
     },
     {
-      "id": "seven-five-rabbits",
-      "title": "Seven Five Rabbits",
+      "id": "we-are-one-teen-days",
+      "title": "우리는 하나 (10대 그 시절)",
       "artist": "Tony.Park",
-      "cover": "./sound/Seven Five Rabbits.png?v=20260319",
-      "url": "./sound/Seven Five Rabbits.mp3?v=20260319",
-      "lrc": "./sound/Seven Five Rabbits.lrc?v=20260319",
+      "cover": "./sound/우리는 하나 (10대 그 시절).png?v=20260319",
+      "url": "./sound/우리는 하나 (10대 그 시절).mp3?v=20260319",
+      "lrc": "./sound/우리는 하나 (10대 그 시절).lrc?v=20260319",
       "youtube": ""
     },
     {
@@ -30,12 +30,12 @@
       "youtube": "https://youtu.be/ATgsGn-bhkE"
     },
     {
-      "id": "we-are-one-teen-days",
-      "title": "우리는 하나 (10대 그 시절)",
+      "id": "seven-five-rabbits",
+      "title": "Seven Five Rabbits",
       "artist": "Tony.Park",
-      "cover": "./sound/우리는 하나 (10대 그 시절).png?v=20260319",
-      "url": "./sound/우리는 하나 (10대 그 시절).mp3?v=20260319",
-      "lrc": "./sound/우리는 하나 (10대 그 시절).lrc?v=20260319",
+      "cover": "./sound/Seven Five Rabbits.png?v=20260319",
+      "url": "./sound/Seven Five Rabbits.mp3?v=20260319",
+      "lrc": "./sound/Seven Five Rabbits.lrc?v=20260319",
       "youtube": ""
     }
   ]
