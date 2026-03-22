@@ -4,11 +4,11 @@
   "songs": [
     {
       "id": "we-are-75-rabbits",
-      "title": "우린 함께하는 75 민턴 (Intro)",
+      "title": "함께하는 75 민턴 (Intro)",
       "artist": "Tony.Park",
-      "cover": "./sound/우린 함께하는 75 민턴 (Intro).png?v=20260323",
-      "url": "./sound/우린 함께하는 75 민턴 (Intro).mp3?v=20260323",
-      "lrc": "./sound/우린 함께하는 75 민턴 (Intro).lrc?v=20260323",
+      "cover": "./sound/함께하는 75 민턴 (Intro).png?v=20260323",
+      "url": "./sound/함께하는 75 민턴 (Intro).mp3?v=20260323",
+      "lrc": "./sound/함께하는 75 민턴 (Intro).lrc?v=20260323",
       "youtube": ""
     },
     {
