@@ -3,6 +3,15 @@
   "updatedAt": "2026-03-21T00:00:00+09:00",
   "songs": [
     {
+      "id": "we-are-75-rabbits",
+      "title": "우린 함께하는 75 민턴 (Intro)",
+      "artist": "Tony.Park",
+      "cover": "./sound/우린 함께하는 75 민턴 (Intro).png?v=20260323",
+      "url": "./sound/우린 함께하는 75 민턴 (Intro).mp3?v=20260323",
+      "lrc": "./sound/우린 함께하는 75 민턴 (Intro).lrc?v=20260323",
+      "youtube": ""
+    },
+    {
       "id": "seven-five-rabbits",
       "title": "Seven Five Rabbits",
       "artist": "Tony.Park",
