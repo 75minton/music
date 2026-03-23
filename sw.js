@@ -1,4 +1,4 @@
-const CACHE_VERSION = '75minton-pwa-v20260319-2';
+const CACHE_VERSION = '75minton-pwa-v20260323-1';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const MEDIA_CACHE = `${CACHE_VERSION}-media`;
 
