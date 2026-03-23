@@ -1,7 +1,7 @@
 {
   "name": "75 Minton Music Player",
-  "short_name": "75 Music",
-  "description": "75년 토끼띠 배드민턴 동호회를 위한 음악 플레이어",
+  "short_name": "75민턴송",
+  "description": "1975년 토끼띠 배드민턴 동호회 '함께하는 75민턴'을 위한 음악 플레이어",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
