@@ -493,3 +493,240 @@
 
     #volFill { background: var(--text-base); }
     .info-card-title { color: var(--accent); font-size: 1.1rem; }
+
+
+    @media (max-width: 900px) and (orientation: landscape) {
+      :root {
+        --topbar-h: 52px;
+        --bar-h: 68px;
+      }
+
+      .topbar { padding: 0 10px; gap: 6px; }
+      .brand { font-size: 0.98rem; }
+      .brand span { display: none; }
+      .brand svg { width: 20px; height: 20px; }
+      .top-actions { gap: 6px; }
+      .utility-btn, #installBtn {
+        min-height: 28px;
+        padding: 5px 9px;
+        font-size: 0.65rem;
+        gap: 4px;
+      }
+
+      .tabs-wrapper { padding: 0 10px 8px; }
+      .tabs { padding: 3px; }
+      .tab-btn { height: 32px; font-size: 0.74rem; }
+
+      .wrap { padding: 10px 12px 8px; }
+      .player-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .art-col {
+        display: grid;
+        grid-template-columns: 36px clamp(112px, 24vw, 152px) minmax(0, 1fr);
+        grid-template-areas:
+          "vol art meta"
+          "vol art prog"
+          "vol art transport";
+        column-gap: 10px;
+        row-gap: 8px;
+        align-items: center;
+        padding: 0;
+      }
+
+      .art-frame {
+        grid-area: art;
+        width: clamp(112px, 24vw, 152px);
+        height: clamp(112px, 24vw, 152px);
+        margin-bottom: 0;
+        justify-self: center;
+      }
+
+      .song-meta {
+        grid-area: meta;
+        width: 100%;
+        text-align: left;
+        margin-bottom: 0;
+        align-self: end;
+      }
+      .song-t {
+        font-size: clamp(1rem, 2.3vw, 1.2rem);
+        margin-bottom: 2px;
+      }
+      .song-a { font-size: 0.82rem; }
+
+      .prog-wrap {
+        grid-area: prog;
+        width: 100%;
+        margin-bottom: 0;
+        align-self: center;
+      }
+      .range-container { height: 16px; }
+      input.range { height: 5px; }
+      .progress-fill { height: 5px; }
+      .time-row {
+        margin-top: 6px;
+        font-size: 0.68rem;
+      }
+
+      .transport {
+        grid-area: transport;
+        width: 100%;
+        margin-bottom: 0;
+        gap: 4px;
+        padding: 0;
+        justify-content: space-between;
+        align-self: start;
+      }
+      .ib {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+      }
+      .ib svg {
+        width: 15px;
+        height: 15px;
+      }
+      .play-btn {
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 1.45rem !important;
+        flex-shrink: 0;
+      }
+
+      .vol-grp {
+        grid-area: vol;
+        width: 36px;
+        height: clamp(112px, 24vw, 152px);
+        min-height: 112px;
+        padding: 6px 2px;
+        gap: 6px;
+        border-radius: 12px;
+      }
+      .vol-grp .vol-icon { font-size: 0.68rem; }
+      #volume {
+        width: calc(clamp(112px, 24vw, 152px) - 16px);
+        min-width: 98px;
+        max-width: 136px;
+      }
+
+      .lyrics-col {
+        min-height: 0;
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .lyrics-header {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        font-size: 0.76rem;
+      }
+      .lyrics-header-left span {
+        font-size: 0.72rem;
+        letter-spacing: 0.6px;
+      }
+      .lyrics-header-right {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      #lrcTrackName {
+        display: block;
+        max-width: 26vw;
+        font-size: 0.72rem;
+        color: var(--text-sub);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .lyrics-toggle-btn {
+        padding: 3px 8px;
+        font-size: 0.68rem;
+      }
+      .lyrics-viewport {
+        min-height: 0;
+      }
+      .lyric-line {
+        min-height: 28px;
+        padding: 3px 0;
+        font-size: 0.9rem;
+        line-height: 1.38;
+        text-align: left;
+      }
+      .lyric-line.active {
+        font-size: 1.08rem;
+        transform: none;
+        text-shadow: 0 0 12px rgba(229,169,169,0.22);
+      }
+
+      body.lyrics-expanded .lyrics-col {
+        left: 8px;
+        right: 8px;
+        top: calc(var(--topbar-h) + 48px);
+        bottom: calc(var(--bar-h) + 8px);
+        padding: 12px;
+      }
+      body.lyrics-expanded .lyrics-header {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+      }
+      body.lyrics-expanded .lyric-line {
+        min-height: 32px;
+        font-size: 0.98rem;
+      }
+      body.lyrics-expanded .lyric-line.active {
+        font-size: 1.16rem;
+      }
+    }
+
+    @media (max-width: 720px) and (orientation: landscape) and (max-height: 430px) {
+      .topbar { padding: 0 8px; }
+      .utility-btn span, #installBtn span { display: none; }
+      .utility-btn, #installBtn { padding: 5px 7px; }
+      .tabs-wrapper { padding: 0 8px 6px; }
+      .wrap { padding: 8px 10px 6px; }
+      .player-layout { gap: 10px; }
+      .art-col {
+        grid-template-columns: 32px clamp(96px, 22vw, 128px) minmax(0, 1fr);
+        column-gap: 8px;
+        row-gap: 6px;
+      }
+      .art-frame {
+        width: clamp(96px, 22vw, 128px);
+        height: clamp(96px, 22vw, 128px);
+      }
+      .song-t { font-size: 0.96rem; }
+      .song-a { font-size: 0.76rem; }
+      .time-row { font-size: 0.64rem; }
+      .ib { width: 26px; height: 26px; }
+      .play-btn {
+        width: 46px !important;
+        height: 46px !important;
+        font-size: 1.28rem !important;
+      }
+      .vol-grp {
+        width: 32px;
+        height: clamp(96px, 22vw, 128px);
+        min-height: 96px;
+        padding: 5px 1px;
+      }
+      #volume {
+        width: calc(clamp(96px, 22vw, 128px) - 14px);
+        min-width: 82px;
+        max-width: 114px;
+      }
+      .lyrics-col { padding: 10px; }
+      .lyrics-header { font-size: 0.72rem; }
+      #lrcTrackName { max-width: 22vw; font-size: 0.66rem; }
+      .lyrics-toggle-btn { padding: 2px 7px; font-size: 0.64rem; }
+      .lyric-line {
+        min-height: 24px;
+        font-size: 0.82rem;
+        line-height: 1.3;
+      }
+      .lyric-line.active { font-size: 0.98rem; }
+    }
