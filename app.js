@@ -189,6 +189,14 @@ function isMobileViewport() {
   return window.matchMedia('(max-width: 768px)').matches;
 }
 
+function isStandaloneDisplayMode() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches || window.navigator.standalone === true;
+}
+
+function syncDisplayModeClass() {
+  document.body.classList.toggle('is-standalone', isStandaloneDisplayMode());
+}
+
 function updateLyricsExpandButton() {
   if (!lyricsExpandBtn) return;
   const expanded = document.body.classList.contains('lyrics-expanded');
@@ -386,6 +394,9 @@ document.addEventListener('keydown', (event) => {
 window.addEventListener('resize', () => {
   if (!isMobileViewport()) closeLyricsExpanded();
 });
+
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change', syncDisplayModeClass);
+window.addEventListener('orientationchange', syncDisplayModeClass);
 
 
 /* ── 렌더링 ── */
@@ -907,6 +918,7 @@ function startSongsPolling() {
 }
 
 async function initializeApp() {
+  syncDisplayModeClass();
   updateLyricsExpandButton();
   setActiveTab('player');
   setToggleButtonState($('shuffleBtn'), state.shuffle);
