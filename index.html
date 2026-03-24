@@ -457,7 +457,7 @@
       <path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"/>
       <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212"/>
     </svg>
-    75<span>MINTON</span>
+    75<span>MINTON SONG v1</span>
   </div>
   
   <div class="top-actions">
@@ -956,16 +956,44 @@ function renderVolumeFill() {
   volFill.style.width = pct + '%';
 }
 
+function getRandomTrackIndex(excludeIndex = -1) {
+  if (!songs.length) return 0;
+  if (songs.length === 1) return 0;
+
+  let randomIndex = excludeIndex;
+  while (randomIndex === excludeIndex) {
+    randomIndex = Math.floor(Math.random() * songs.length);
+  }
+  return randomIndex;
+}
+
+function updateModeButtons() {
+  const shuffleBtn = $('shuffleBtn');
+  const repeatBtn = $('repeatBtn');
+
+  shuffleBtn.classList.toggle('lit', state.shuffle);
+  repeatBtn.classList.toggle('lit', state.repeat);
+
+  shuffleBtn.setAttribute('aria-pressed', String(state.shuffle));
+  repeatBtn.setAttribute('aria-pressed', String(state.repeat));
+}
+
 const toggle = () => audio.paused ? audio.play() : audio.pause();
 const next = () => {
   if (!songs.length) return;
   const nextIndex = state.shuffle
-    ? Math.floor(Math.random() * songs.length)
+    ? getRandomTrackIndex(state.cur)
     : (state.cur + 1) % songs.length;
   loadTrack(nextIndex, true);
 };
 const prev = () => {
   if (!songs.length) return;
+
+  if (state.shuffle) {
+    loadTrack(getRandomTrackIndex(state.cur), true);
+    return;
+  }
+
   loadTrack((state.cur - 1 + songs.length) % songs.length, true);
 };
 
@@ -975,13 +1003,13 @@ $('prevBtn').addEventListener('click', prev);
 $('nextBtn').addEventListener('click', next);
 $('miniNext').addEventListener('click', next);
 
-$('shuffleBtn').addEventListener('click', (e) => {
+$('shuffleBtn').addEventListener('click', () => {
   state.shuffle = !state.shuffle;
-  e.target.classList.toggle('lit', state.shuffle);
+  updateModeButtons();
 });
-$('repeatBtn').addEventListener('click', (e) => {
+$('repeatBtn').addEventListener('click', () => {
   state.repeat = !state.repeat;
-  e.target.classList.toggle('lit', state.repeat);
+  updateModeButtons();
 });
 
 progressEl.addEventListener('input', () => {
@@ -1031,9 +1059,19 @@ audio.addEventListener('timeupdate', () => {
   }
 });
 
-audio.addEventListener('ended', () => {
-  if (state.repeat) audio.play();
-  else next();
+audio.addEventListener('ended', async () => {
+  if (state.repeat) {
+    try {
+      audio.currentTime = 0;
+      await audio.play();
+    } catch (err) {
+      console.warn('반복 재생 재시작 실패', err);
+      setPlaying(false);
+    }
+    return;
+  }
+
+  next();
 });
 audio.addEventListener('pause', () => setPlaying(false));
 audio.addEventListener('play', () => setPlaying(true));
@@ -1290,6 +1328,7 @@ function startSongsPolling() {
 
 async function initializeApp() {
   updateLyricsExpandButton();
+  updateModeButtons();
   const initialAutoplay = shouldAutoplayFromUrl();
 
   await registerOfflinePwa();
