@@ -495,7 +495,8 @@
     .info-card-title { color: var(--accent); font-size: 1.1rem; }
 
 
-    @media (max-width: 900px) and (orientation: landscape) {
+    @media (max-width: 900px) and (orientation: landscape),
+           (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
       :root {
         --topbar-h: 52px;
         --bar-h: 68px;
@@ -698,7 +699,8 @@
       }
     }
 
-    @media (max-width: 720px) and (orientation: landscape) and (max-height: 430px) {
+    @media (max-width: 720px) and (orientation: landscape) and (max-height: 430px),
+           (orientation: landscape) and (max-height: 430px) and (pointer: coarse) {
       .topbar { padding: 0 8px; gap: 5px; }
       .brand {
         font-size: 0.88rem;
@@ -708,6 +710,7 @@
         max-width: min(42vw, 180px);
         font-size: 0.6rem;
       }
+      .brand { max-width: min(56vw, 260px); }
       .utility-btn span, #installBtn span { display: none; }
       .utility-btn, #installBtn { padding: 5px 7px; }
       .tabs-wrapper { padding: 0 8px 6px; }
