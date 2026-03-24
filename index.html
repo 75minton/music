@@ -485,7 +485,7 @@
   <nav class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="player" role="tab">NOW PLAYING</button>
     <button class="tab-btn" data-tab="playlist" role="tab">PLAYLIST</button>
-    <button class="tab-btn" data-tab="links" role="tab">DOWNLOAD</button>
+    <button class="tab-btn" data-tab="links" role="tab">DOWN & INFO</button>
   </nav>
 </div>
 
@@ -906,7 +906,7 @@ async function parseLRC(path) {
 
 /* ── 재생 제어 ── */
 function setPlaying(on) {
-  playBtn.textContent = $('miniPlay').textContent = on ? '⏸' : '▶';
+  playBtn.textContent = $('miniPlay').textContent = on ? '||' : '▶';
   if (on) artFrame.classList.add('playing');
   else artFrame.classList.remove('playing');
   renderPlaylist();
