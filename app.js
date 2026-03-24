@@ -10,12 +10,12 @@ const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 // songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
 const FALLBACK_SONGS = [
   {
-    id: 'seven-five-rabbits',
+    id: 'we-are-75-rabbits',
     title: "Seven Five Rabbits",
     artist: "Tony.Park",
-    cover: "./sound/Seven Five Rabbits.png",
-    url: "./sound/Seven Five Rabbits.mp3",
-    lrc: "./sound/Seven Five Rabbits.lrc",
+    cover: "./sound/함께하는 75 민턴 (Intro).png",
+    url: "./sound/함께하는 75 민턴 (Intro).mp3",
+    lrc: "./sound/함께하는 75 민턴 (Intro).lrc",
     youtube: "#"
   },
   {
