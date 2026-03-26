@@ -664,17 +664,19 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   }
 
   const lyrics = [];
+  const syncDetectRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/;
   const timeTagRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
-  const hasSync = timeTagRe.test(text);
+  const hasSync = syncDetectRe.test(text);
   const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
 
   if (hasSync) {
     for (const rawLine of lines) {
       const line = rawLine.trim();
-      const matches = [...line.matchAll(timeTagRe)];
+      const lineTimeTagRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+      const matches = [...line.matchAll(lineTimeTagRe)];
       if (!matches.length) continue;
 
-      const content = line.replace(timeTagRe, '').trim();
+      const content = line.replace(lineTimeTagRe, '').trim();
       if (!content) continue;
 
       for (const match of matches) {
