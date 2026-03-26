@@ -1,161 +1,205 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<meta content="#121212" name="theme-color"/>
-<meta content="75 Minton Music - 75년 토끼띠 배드민턴 동호회 - 함께하는 75민턴" name="description"/>
-<meta content="yes" name="apple-mobile-web-app-capable"/>
-<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
-<meta content="75 Music" name="apple-mobile-web-app-title"/>
-<link href="./manifest.json" rel="manifest"/>
-<title>75 Minton Music Player</title>
-<meta content="index,follow" name="robots"/>
-<link href="https://75minton.github.io/music/" rel="canonical"/>
-<meta content="website" property="og:type"/>
-<meta content="함께하는 75민턴 | 서울배드민턴" property="og:title"/>
-<meta content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" property="og:description"/>
-<meta content="https://75minton.github.io/music/" property="og:url"/>
-<meta content="https://75minton.github.io/music/icons/icon-512.png" property="og:image"/>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
+    <meta content="#121212" name="theme-color" />
+    <meta content="75 Minton Music - 75년 토끼띠 배드민턴 동호회 - 함께하는 75민턴" name="description" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="75 Music" name="apple-mobile-web-app-title" />
+    <link href="./manifest.json" rel="manifest" />
+    <title>75 Minton Music Player</title>
+    <meta content="index,follow" name="robots" />
+    <link href="https://75minton.github.io/music/" rel="canonical" />
+    <meta content="website" property="og:type" />
+    <meta content="함께하는 75민턴 | 서울배드민턴" property="og:title" />
+    <meta content="75민턴 공식 페이지 - 클럽 소개, 음악앨범, 영상, 음원 다운로드" property="og:description" />
+    <meta content="https://75minton.github.io/music/" property="og:url" />
+    <meta content="https://75minton.github.io/music/icons/icon-512.png" property="og:image" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Noto+Sans+KR:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
 
-<link href="./styles.css" rel="stylesheet"/></head>
+    <link href="./styles.css" rel="stylesheet" />
+</head>
+
 <body class="on-player-tab">
-<header class="topbar">
-<div class="brand">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z"></path>
-<path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212"></path>
-</svg>
-    75<span>MINTON SONG v1</span>
-</div>
-<div class="top-actions">
-<button aria-label="캐시 삭제" class="utility-btn" id="clearCacheBtn" type="button">
-<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" width="16">
-<polyline points="23 4 23 10 17 10"></polyline>
-<polyline points="1 20 1 14 7 14"></polyline>
-<path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
-<path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
-</svg>
-<span>캐시 정리</span>
-</button>
-<button hidden="" id="installBtn">
-<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24" width="16">
-<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-<polyline points="7 10 12 15 17 10"></polyline>
-<line x1="12" x2="12" y1="15" y2="3"></line>
-</svg>
-<span>앱 설치</span>
-</button>
-</div>
-</header>
-<div class="tabs-wrapper">
-<nav class="tabs" role="tablist">
-<button class="tab-btn active" data-tab="player" role="tab">NOW PLAYING</button>
-<button class="tab-btn" data-tab="playlist" role="tab">PLAYLIST</button>
-<button class="tab-btn" data-tab="links" role="tab">DOWN & INFO</button>
-</nav>
-</div>
-<div class="tab-panel active" id="tab-player" role="tabpanel">
-<div class="wrap">
-<div class="player-layout">
-<div class="art-col">
-<div class="art-frame" id="artFrame">
-<img alt="75 Minton Cover" class="art-img" id="cover" src=""/>
-</div>
-<div class="song-meta">
-<div class="song-t" id="title">음악을 불러오는 중</div>
-<div class="song-a" id="artist">75 Minton</div>
-</div>
-<div class="prog-wrap">
-<div class="range-container">
-<div class="progress-fill" id="progFill"></div>
-<input class="range" id="progress" max="100" min="0" step="0.1" type="range" value="0"/>
-</div>
-<div class="time-row">
-<span id="currentTime">0:00</span>
-<span id="duration">0:00</span>
-</div>
-</div>
-<div class="transport">
-<button aria-label="셔플" aria-pressed="false" class="ib" id="shuffleBtn" type="button"><svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" width="16">
-<polyline points="16 3 21 3 21 8"></polyline><line x1="4" x2="21" y1="20" y2="3"></line>
-<polyline points="21 16 21 21 16 21"></polyline><line x1="15" x2="21" y1="15" y2="21"></line><line x1="4" x2="9" y1="4" y2="9"></line>
-</svg></button>
-<button aria-label="이전곡" class="ib" id="prevBtn" type="button"><svg fill="currentColor" height="19" viewbox="0 0 24 24" width="19"><path d="M6 6h2v12H6V6zm3.5 6 8.5 6V6l-8.5 6z"></path></svg></button>
-<button aria-label="재생" class="ib play-btn" id="playBtn" type="button">▶</button>
-<button aria-label="다음곡" class="ib" id="nextBtn" type="button"><svg fill="currentColor" height="19" viewbox="0 0 24 24" width="19"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
-<button aria-label="반복" aria-pressed="false" class="ib" id="repeatBtn" type="button"><svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" width="16">
-<polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
-<polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
-</svg></button>
-</div>
-<div class="vol-grp">
-<span aria-hidden="true" class="vol-icon vol-down">🔈</span>
-<div class="range-container">
-<div class="progress-fill" id="volFill"></div>
-<input class="range" id="volume" max="1" min="0" step="0.01" type="range" value="0.65"/>
-</div>
-<span aria-hidden="true" class="vol-icon vol-up">🔊</span>
-</div>
-</div>
-<div class="lyrics-col">
-<div class="lyrics-header">
-<div class="lyrics-header-left">
-<span>LYRICS 가사</span>
-</div>
-<div class="lyrics-header-right">
-<span id="lrcTrackName">—</span>
-<button aria-expanded="false" aria-pressed="false" class="lyrics-toggle-btn" id="lyricsExpandBtn" type="button">가사 확대</button>
-</div>
-</div>
-<div class="lyrics-viewport">
-<div id="lyricsInner">
-<div class="lyric-line">재생을 시작하면 가사가 표시됩니다.</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="tab-panel" id="tab-playlist" role="tabpanel">
-<div class="wrap wrap-narrow">
-<div class="pl-hd">Playlist</div>
-<div class="track-list" id="playlist"></div>
-</div>
-</div>
-<div class="tab-panel" id="tab-links" role="tabpanel">
-<div class="wrap wrap-narrow">
-<div class="links-list" id="trackLinks"></div>
-<div class="info-card">
-<b class="info-card-title">함께하는 1975 Rabbit Badminton</b><br/><br/>
-      코트 위에서는 치열하게,<br/> 코트 밖에서는 다정하게!<br/>토끼띠 친구들을 위한,<br/> 전용 음악 공간입니다. <br/><br/>
-	  
-<b class="info-card-title">Tony.Park Music </b>
-<a class="lk-btn" download="" href="https://youtube.com/@tonyparkmusic?si=k0Y27MibS_-53pOB" rel="noopener" target="_blank">Youtube</a><br/><br/>
-친구들에게 Player와 곡들을 바칩니다. <br>2026년 4월 1일 토끼 친구 성우가.<br>
-</div>
-</div>
-</div>
-<div aria-atomic="true" aria-live="polite" class="player-status" id="playerStatus" role="status"></div>
-<div class="mini-bar">
-<div class="mini-prog-rail"><div class="mini-prog-fill" id="miniFill"></div></div>
-<div class="mini-left" id="miniGoPlayer">
-<img class="mini-art" id="miniCover" src=""/>
-<div class="mini-meta">
-<div class="mini-t" id="miniTitle">Title</div>
-<div class="mini-a" id="miniArtist">Artist</div>
-</div>
-</div>
-<div class="mini-ctrls">
-<button class="mb mplay" id="miniPlay" type="button">▶</button>
-<button class="mb" id="miniNext" type="button">⏭</button>
-</div>
-</div>
-<audio crossorigin="anonymous" id="audio" preload="metadata"></audio>
+    <header class="topbar">
+        <div class="brand">
+            <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12 22C10.5 22 9 21.5 8 20.5C5 18 4 15 4 12C4 10 4.5 7 5.5 5C6 4 7 3.5 8 4C9 4.5 9.5 5.5 9.5 6.5C9.5 8 10.5 9 12 9C13.5 9 14.5 8 14.5 6.5C14.5 5.5 15 4.5 16 4C17 3.5 18 4 18.5 5C19.5 7 20 10 20 12C20 15 19 18 16 20.5C15 21.5 13.5 22 12 22Z">
+                </path>
+                <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212">
+                </path>
+            </svg>
+            75<span>MINTON v1</span>
+        </div>
+        <div class="top-actions">
+            <button aria-label="캐시 삭제" class="utility-btn" id="clearCacheBtn" type="button">
+                <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2.2" viewbox="0 0 24 24" width="16">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+                    <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+                </svg>
+                <span>캐시 정리</span>
+            </button>
+            <button hidden="" id="installBtn">
+                <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2.5" viewbox="0 0 24 24" width="16">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" x2="12" y1="15" y2="3"></line>
+                </svg>
+                <span>앱 설치</span>
+            </button>
+        </div>
+    </header>
+    <div class="tabs-wrapper">
+        <nav class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="player" role="tab">NOW PLAYING</button>
+            <button class="tab-btn" data-tab="playlist" role="tab">PLAYLIST</button>
+            <button class="tab-btn" data-tab="links" role="tab">DOWN & INFO</button>
+        </nav>
+    </div>
+    <div class="tab-panel active" id="tab-player" role="tabpanel">
+        <div class="wrap">
+            <div class="player-layout">
+                <div class="art-col">
+                    <div class="art-frame" id="artFrame">
+                        <img alt="75 Minton Cover" class="art-img" id="cover" src="" />
+                    </div>
+                    <div class="song-meta">
+                        <div class="song-t" id="title">음악을 불러오는 중</div>
+                        <div class="song-a" id="artist">75 Minton</div>
+                    </div>
+                    <div class="prog-wrap">
+                        <div class="range-container">
+                            <div class="progress-fill" id="progFill"></div>
+                            <input class="range" id="progress" max="100" min="0" step="0.1" type="range" value="0" />
+                        </div>
+                        <div class="time-row">
+                            <span id="currentTime">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                    <div class="transport">
+                        <button aria-label="셔플" aria-pressed="false" class="ib" id="shuffleBtn" type="button"><svg
+                                fill="none" height="16" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" width="16">
+                                <polyline points="16 3 21 3 21 8"></polyline>
+                                <line x1="4" x2="21" y1="20" y2="3"></line>
+                                <polyline points="21 16 21 21 16 21"></polyline>
+                                <line x1="15" x2="21" y1="15" y2="21"></line>
+                                <line x1="4" x2="9" y1="4" y2="9"></line>
+                            </svg></button>
+                        <button aria-label="이전곡" class="ib" id="prevBtn" type="button"><svg fill="currentColor"
+                                height="19" viewbox="0 0 24 24" width="19">
+                                <path d="M6 6h2v12H6V6zm3.5 6 8.5 6V6l-8.5 6z"></path>
+                            </svg></button>
+                        <button aria-label="재생" class="ib play-btn" id="playBtn" type="button"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" style="transform: translateX(1.5px)"><path d="M8 5v14l11-7z"></path></svg></button>
+                        <button aria-label="다음곡" class="ib" id="nextBtn" type="button"><svg fill="currentColor"
+                                height="19" viewbox="0 0 24 24" width="19">
+                                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+                            </svg></button>
+                        <button aria-label="반복" aria-pressed="false" class="ib" id="repeatBtn" type="button"><svg
+                                fill="none" height="16" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24" width="16">
+                                <polyline points="17 1 21 5 17 9"></polyline>
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                <polyline points="7 23 3 19 7 15"></polyline>
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                            </svg></button>
+                    </div>
+                    <div class="vol-grp">
+                        <span aria-hidden="true" class="vol-icon vol-down">🔈</span>
+                        <div class="range-container">
+                            <div class="progress-fill" id="volFill"></div>
+                            <input class="range" id="volume" max="1" min="0" step="0.01" type="range" value="0.65" />
+                        </div>
+                        <span aria-hidden="true" class="vol-icon vol-up">🔊</span>
+                    </div>
+                </div>
+                <div class="lyrics-col">
+                    <div class="lyrics-header">
+                        <div class="lyrics-header-left">
+                            <span>LYRICS 가사</span>
+                        </div>
+                        <div class="lyrics-header-right">
+                            <span id="lrcTrackName">—</span>
+                            <button aria-expanded="false" aria-pressed="false" class="lyrics-toggle-btn"
+                                id="lyricsExpandBtn" type="button">가사 확대</button>
+                        </div>
+                    </div>
+                    <div class="lyrics-viewport">
+                        <div id="lyricsInner">
+                            <div class="lyric-line">재생을 시작하면 가사가 표시됩니다.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-panel" id="tab-playlist" role="tabpanel">
+        <div class="wrap wrap-narrow">
+            <div class="pl-hd" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Playlist</span>
+                <label aria-label="로컬 파일 추가" class="utility-btn" for="localFileInput" style="cursor: pointer; margin: 0; padding: 4px 8px;">
+                    <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2.2" viewBox="0 0 24 24" width="14">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" x2="12" y1="18" y2="12"></line>
+                        <line x1="9" x2="15" y1="15" y2="15"></line>
+                    </svg>
+                    <span style="font-size: 0.9em; margin-left: 4px;">파일 열기</span>
+                </label>
+                <input accept="audio/*,.lrc,.srt" id="localFileInput" multiple type="file" style="display: none;" />
+            </div>
+            <div class="track-list" id="playlist"></div>
+        </div>
+    </div>
+    <div class="tab-panel" id="tab-links" role="tabpanel">
+        <div class="wrap wrap-narrow">
+            <div class="links-list" id="trackLinks"></div>
+            <div class="info-card">
+                <b class="info-card-title">함께하는 1975 Rabbit Badminton</b><br /><br />
+                코트 위에서는 치열하게,<br /> 코트 밖에서는 다정하게!<br />토끼띠 친구들을 위한,<br /> 전용 음악 공간입니다. <br /><br />
 
-<script defer src="./app.js"></script>
+                <b class="info-card-title">Tony.Park Music </b>
+                <a class="lk-btn" download="" href="https://youtube.com/@tonyparkmusic?si=k0Y27MibS_-53pOB"
+                    rel="noopener" target="_blank">Youtube</a><br /><br />
+                친구들에게 Player와 곡들을 바칩니다. <br>2026년 4월 1일 토끼 친구 성우가.<br>
+            </div>
+        </div>
+    </div>
+    <div aria-atomic="true" aria-live="polite" class="player-status" id="playerStatus" role="status"></div>
+    <div class="mini-bar">
+        <div class="mini-prog-rail">
+            <div class="mini-prog-fill" id="miniFill"></div>
+        </div>
+        <div class="mini-left" id="miniGoPlayer">
+            <img class="mini-art" id="miniCover" src="" />
+            <div class="mini-meta">
+                <div class="mini-t" id="miniTitle">Title</div>
+                <div class="mini-a" id="miniArtist">Artist</div>
+            </div>
+        </div>
+        <div class="mini-ctrls">
+            <button aria-label="재생" class="mb mplay" id="miniPlay" type="button"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" style="transform: translateX(1.5px)"><path d="M8 5v14l11-7z"></path></svg></button>
+            <button aria-label="다음곡" class="mb" id="miniNext" type="button"><svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
+        </div>
+    </div>
+    <audio crossorigin="anonymous" id="audio" preload="metadata"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    <script defer src="./app.js"></script>
 </body>
+
 </html>
