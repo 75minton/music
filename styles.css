@@ -252,7 +252,9 @@
     .lk-num { font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;}
     .lk-title { font-size: 1.1rem; font-weight: 700; }
     .lk-btns { display: flex; gap: 8px; }
+    .links-list .lk-card .lk-btns { margin-left: auto; justify-content: flex-end; flex-wrap: wrap; row-gap: 6px; }
     .lk-btn { padding: 8px 16px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; text-decoration: none; border: 1px solid var(--accent); color: var(--accent); transition: 0.2s;}
+    .links-list .lk-card .lk-btn { padding: 5px 11px; font-size: 0.72rem; line-height: 1.15; min-height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .lk-btn:hover { background: var(--accent); color: #000; }
 
     /* ════════════════════════════
@@ -512,6 +514,25 @@
 
     #volFill { background: var(--text-base); }
     .info-card-title { color: var(--accent); font-size: 1.1rem; }
+
+    @media (max-width: 640px) {
+      .links-list .lk-card {
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .links-list .lk-card .lk-grow {
+        width: 100%;
+      }
+      .links-list .lk-card .lk-btns {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .links-list .lk-card .lk-btn {
+        padding: 4px 10px;
+        font-size: 0.68rem;
+        min-height: 26px;
+      }
+    }
 
 
     /* ════════════════════════════
