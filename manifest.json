@@ -1,13 +1,14 @@
 {
-  "name": "75 Minton Music Player",
+  "name": "75민턴 토끼 뮤직",
   "short_name": "75민턴송",
-  "description": "1975년 토끼띠 배드민턴 동호회 '함께하는 75민턴'을 위한 음악 플레이어",
-  "start_url": "./index.html",
+  "description": "75민턴 토끼 뮤직앨범 플레이어",
+  "lang": "ko",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "background_color": "#0a0b10",
+  "theme_color": "#0a0b10",
   "icons": [
     {
       "src": "./icons/icon-192.png",
@@ -20,12 +21,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
     }
   ]
 }
