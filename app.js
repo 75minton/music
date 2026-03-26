@@ -927,6 +927,8 @@ if (localFileInput) {
       
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const matchedLrcFile = lyricFiles.find(f => f.name.replace(/\.[^/.]+$/, "") === baseName);
+      const matchedLrcText = matchedLrcFile ? await matchedLrcFile.text() : '';
+      const resolvedLyrics = matchedLrcText || tags.embeddedLyrics || '';
 
       const songData = {
         id: songId,
@@ -934,7 +936,7 @@ if (localFileInput) {
         artist: tags.artist,
         audioBlob: file,
         coverBlob: tags.coverBlob,
-        embeddedLyrics: tags.embeddedLyrics,
+        embeddedLyrics: resolvedLyrics,
         lrcBlob: matchedLrcFile || null
       };
       
@@ -947,6 +949,7 @@ if (localFileInput) {
         url: url,
         cover: tags.cover,
         lrc: matchedLrcFile ? URL.createObjectURL(matchedLrcFile) : "",
+        embeddedLyrics: resolvedLyrics,
         youtube: "#"
       };
       songs.push(newSong);
