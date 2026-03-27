@@ -229,6 +229,71 @@ function renderLyricsMarkup(lines, emptyMessage = '가사가 없습니다') {
   resetLyricsViewportPosition();
 }
 
+
+function getLrcCandidates(lrcPath = '') {
+  if (!lrcPath) return [];
+
+  const trimmed = String(lrcPath).trim();
+  if (!trimmed) return [];
+
+  const absolute = new URL(trimmed, window.location.href).toString();
+  const encoded = encodeURI(absolute);
+  return [...new Set([absolute, encoded])];
+}
+
+function decodeLyricsBuffer(buffer) {
+  const decoders = ['utf-8', 'euc-kr'];
+
+  for (const encoding of decoders) {
+    try {
+      const decoded = new TextDecoder(encoding).decode(buffer).replace(/^\uFEFF/, '').trim();
+      if (!decoded) continue;
+
+      const looksBroken = decoded.includes('�') && encoding === 'utf-8';
+      if (!looksBroken || encoding === decoders[decoders.length - 1]) {
+        return decoded;
+      }
+    } catch (err) {
+      console.warn(`가사 디코딩 실패 (${encoding})`, err);
+    }
+  }
+
+  return '';
+}
+
+function isLikelyHtmlDocument(text) {
+  if (!text) return false;
+  const sample = text.slice(0, 300).toLowerCase();
+  return sample.includes('<!doctype html') || sample.includes('<html') || sample.includes('<body');
+}
+
+async function fetchLyricsText(song) {
+  const candidates = getLrcCandidates(song?.lrc);
+
+  for (const candidateUrl of candidates) {
+    try {
+      const response = await fetch(candidateUrl, { cache: 'no-store' });
+      if (!response.ok) {
+        console.warn('LRC 응답 오류', response.status, candidateUrl);
+        continue;
+      }
+
+      const buffer = await response.arrayBuffer();
+      const decoded = decodeLyricsBuffer(buffer);
+      if (!decoded || isLikelyHtmlDocument(decoded)) {
+        console.warn('LRC 응답이 가사 파일 형식이 아닙니다.', candidateUrl);
+        continue;
+      }
+
+      return decoded;
+    } catch (err) {
+      console.warn('LRC loading failed', candidateUrl, err);
+    }
+  }
+
+  return '';
+}
+
 function waitForMetadata() {
   if (Number.isFinite(audio.duration) && audio.duration > 0) {
     return Promise.resolve();
@@ -560,10 +625,7 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   let text = '';
 
   if (song.lrc) {
-    try {
-      const response = await fetch(song.lrc, { cache: 'no-store' });
-      if (response.ok) text = await response.text();
-    } catch (err) { console.warn('LRC loading failed', err); }
+    text = await fetchLyricsText(song);
   }
 
   if (!text) {
@@ -585,26 +647,30 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   if (requestToken !== currentLoadToken) return false;
 
   if (!text) {
-    renderLyricsMarkup([], '가사가 없습니다');
+    renderLyricsMarkup([], '가사를 불러오지 못했습니다');
+    if (song.lrc) {
+      showStatus(`가사 파일을 불러오지 못했습니다: ${song.lrc}`, { tone: 'error', duration: 4200 });
+    }
     return true;
   }
 
   const lyrics = [];
-  const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
-  const lines = text.split('\n');
-  const hasSync = re.test(text);
+  const syncTagRegex = /\[(\d{2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+  const lines = text.split(/\r?\n/);
+  const hasSync = syncTagRegex.test(text);
 
   if (hasSync) {
     for (const rawLine of lines) {
       const line = rawLine.trim();
-      const matches = [...line.matchAll(re)];
+      const matches = [...line.matchAll(syncTagRegex)];
       if (!matches.length) continue;
 
-      const content = line.replace(re, '').trim();
+      const content = line.replace(syncTagRegex, '').trim();
       if (!content) continue;
 
       for (const match of matches) {
-        const frac = match[3].length === 2 ? Number(match[3]) / 100 : Number(match[3]) / 1000;
+        const fraction = match[3] || '';
+        const frac = fraction ? Number(fraction) / (10 ** fraction.length) : 0;
         lyrics.push({
           time: Number(match[1]) * 60 + Number(match[2]) + frac,
           content
