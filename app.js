@@ -249,7 +249,7 @@ function decodeLyricsBuffer(buffer) {
       const decoded = new TextDecoder(encoding).decode(buffer).replace(/^\uFEFF/, '').trim();
       if (!decoded) continue;
 
-      const looksBroken = decoded.includes('�') && encoding === 'utf-8';
+      const looksBroken = decoded.includes(' ') && encoding === 'utf-8';
       if (!looksBroken || encoding === decoders[decoders.length - 1]) {
         return decoded;
       }
