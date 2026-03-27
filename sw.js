@@ -1,4 +1,4 @@
-const CACHE_VERSION = '75minton-pwa-v2.1';
+const CACHE_VERSION = '75minton-pwa-v1.2-lyricsfix';
 const APP_SHELL = [
   './',
   './index.html',
