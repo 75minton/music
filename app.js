@@ -298,10 +298,9 @@ function normalizeSongEntry(raw, index) {
   const lrc = raw.lrc ? String(raw.lrc).trim() : '';
   const cover = raw.cover ? String(raw.cover).trim() : '';
   const youtube = raw.youtube ? String(raw.youtube).trim() : '';
-  const embeddedLyrics = raw.embeddedLyrics ? String(raw.embeddedLyrics) : '';
   const id = raw.id ? String(raw.id).trim() : url;
 
-  return { id, title, artist, url, lrc, cover, youtube, embeddedLyrics };
+  return { id, title, artist, url, lrc, cover, youtube };
 }
 
 function normalizeSongsList(input) {
@@ -393,82 +392,6 @@ function resetProgressUi() {
   progFill.style.width = $('miniFill').style.width = '0%';
   $('currentTime').textContent = '0:00';
   $('duration').textContent = '0:00';
-}
-
-function toAbsoluteAssetUrl(value) {
-  if (!value) return '';
-  try {
-    return new URL(value, window.location.href).href;
-  } catch (err) {
-    return String(value).trim();
-  }
-}
-
-function buildLrcCandidateUrls(song) {
-  const candidates = [];
-  const pushCandidate = (value) => {
-    const trimmed = String(value || '').trim();
-    if (!trimmed) return;
-    const absolute = toAbsoluteAssetUrl(trimmed);
-    const variants = [trimmed, absolute];
-    for (const variant of variants) {
-      if (!variant) continue;
-      const normalized = encodeURI(variant);
-      if (!candidates.includes(normalized)) candidates.push(normalized);
-    }
-  };
-
-  pushCandidate(song?.lrc);
-
-  if (song?.url) {
-    const baseAudioUrl = String(song.url).trim();
-    const derivedLrcUrl = baseAudioUrl
-      .replace(/\.mp3(\?.*)?$/i, '.lrc$1')
-      .replace(/\.m4a(\?.*)?$/i, '.lrc$1')
-      .replace(/\.wav(\?.*)?$/i, '.lrc$1')
-      .replace(/\.flac(\?.*)?$/i, '.lrc$1')
-      .replace(/\.ogg(\?.*)?$/i, '.lrc$1');
-
-    if (derivedLrcUrl !== baseAudioUrl) {
-      pushCandidate(derivedLrcUrl);
-    }
-  }
-
-  return candidates;
-}
-
-async function fetchLyricsText(song) {
-  const candidates = buildLrcCandidateUrls(song);
-
-  for (const candidate of candidates) {
-    try {
-      const response = await fetch(candidate, {
-        cache: 'no-store',
-        credentials: 'same-origin',
-        headers: { 'Accept': 'text/plain,text/lrc,text/*,*/*;q=0.8' }
-      });
-
-      if (!response.ok) continue;
-
-      const text = await response.text();
-      const trimmed = text.trim();
-      if (!trimmed) continue;
-
-      const contentType = (response.headers.get('content-type') || '').toLowerCase();
-      const looksLikeHtml = contentType.includes('text/html') || /<!doctype html|<html[\s>]/i.test(trimmed);
-      if (looksLikeHtml) continue;
-
-      if (song) {
-        if (!song.lrc) song.lrc = candidate;
-        song.__lyricsText = trimmed;
-      }
-      return trimmed;
-    } catch (err) {
-      console.warn('LRC loading failed', candidate, err);
-    }
-  }
-
-  return '';
 }
 
 /* ── UI 탭 이동 로직 ── */
@@ -634,10 +557,13 @@ async function parseLRC(song, requestToken = currentLoadToken) {
     return true;
   }
 
-  let text = song.__lyricsText || '';
+  let text = '';
 
-  if (!text) {
-    text = await fetchLyricsText(song);
+  if (song.lrc) {
+    try {
+      const response = await fetch(song.lrc, { cache: 'no-store' });
+      if (response.ok) text = await response.text();
+    } catch (err) { console.warn('LRC loading failed', err); }
   }
 
   if (!text) {
@@ -664,33 +590,23 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   }
 
   const lyrics = [];
-  const syncDetectRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/;
-  const timeTagRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
-  const hasSync = syncDetectRe.test(text);
-  const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
+  const re = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/g;
+  const lines = text.split('\n');
+  const hasSync = re.test(text);
 
   if (hasSync) {
     for (const rawLine of lines) {
       const line = rawLine.trim();
-      const lineTimeTagRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
-      const matches = [...line.matchAll(lineTimeTagRe)];
+      const matches = [...line.matchAll(re)];
       if (!matches.length) continue;
 
-      const content = line.replace(lineTimeTagRe, '').trim();
+      const content = line.replace(re, '').trim();
       if (!content) continue;
 
       for (const match of matches) {
-        const fractionRaw = match[3] || '';
-        const fraction = !fractionRaw
-          ? 0
-          : fractionRaw.length === 1
-            ? Number(fractionRaw) / 10
-            : fractionRaw.length === 2
-              ? Number(fractionRaw) / 100
-              : Number(fractionRaw) / 1000;
-
+        const frac = match[3].length === 2 ? Number(match[3]) / 100 : Number(match[3]) / 1000;
         lyrics.push({
-          time: Number(match[1]) * 60 + Number(match[2]) + fraction,
+          time: Number(match[1]) * 60 + Number(match[2]) + frac,
           content
         });
       }
@@ -786,6 +702,7 @@ $('miniPlay').addEventListener('click', toggle);
 $('prevBtn').addEventListener('click', prev);
 $('nextBtn').addEventListener('click', next);
 $('miniNext').addEventListener('click', next);
+artFrame.addEventListener('click', () => artFrame.classList.toggle('square'));
 
 $('shuffleBtn').addEventListener('click', () => {
   state.shuffle = !state.shuffle;

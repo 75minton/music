@@ -72,8 +72,15 @@
         <div class="wrap">
             <div class="player-layout">
                 <div class="art-col">
-                    <div class="art-frame" id="artFrame">
+                    <div class="art-frame" id="artFrame" title="앨범 자켓 스타일 변경">
                         <img alt="75 Minton Cover" class="art-img" id="cover" src="" />
+                        <div class="visualizer" id="visualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
                     </div>
                     <div class="song-meta">
                         <div class="song-t" id="title">음악을 불러오는 중</div>
@@ -129,7 +136,7 @@
                 <div class="lyrics-col">
                     <div class="lyrics-header">
                         <div class="lyrics-header-left">
-                            <span>LYRICS 가사</span>
+                            <span>가사</span>
                         </div>
                         <div class="lyrics-header-right">
                             <span id="lrcTrackName">—</span>
@@ -158,7 +165,7 @@
                         <line x1="12" x2="12" y1="18" y2="12"></line>
                         <line x1="9" x2="15" y1="15" y2="15"></line>
                     </svg>
-                    <span style="font-size: 0.9em; margin-left: 4px;">파일 추가</span>
+                    <span style="font-size: 0.9em; margin-left: 4px;">파일 열기</span>
                 </label>
                 <input accept="audio/*,.lrc,.srt" id="localFileInput" multiple type="file" style="display: none;" />
             </div>
@@ -175,7 +182,7 @@
                 <b class="info-card-title">Tony.Park Music </b>
                 <a class="lk-btn" download="" href="https://youtube.com/@tonyparkmusic?si=k0Y27MibS_-53pOB"
                     rel="noopener" target="_blank">Youtube</a><br /><br />
-                친구들에게 Player와 곡들을 바칩니다. <br>2026년 4월 1일 토끼 친구 성우가.<br>
+                친구들에게 Player와 곡들을 선사합니다. <br>2026년 4월 1일 토끼 친구 성우.<br>
             </div>
         </div>
     </div>

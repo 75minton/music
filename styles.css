@@ -110,10 +110,48 @@
     /* LP Center Hole with Gold Ring */
     .art-frame::after {
       content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 12%; height: 12%; background: var(--bg); border-radius: 50%;
+      width: 4.8%; height: 4.8%; background: var(--bg); border-radius: 50%;
       border: 2px solid var(--accent); box-shadow: inset 0 4px 10px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.5);
+      transition: opacity 0.3s;
     }
-    .art-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .art-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; transition: border-radius 0.4s ease; }
+
+    /* Square Album Cover Mode */
+    .art-frame { cursor: pointer; transition: border-radius 0.4s ease, box-shadow 0.4s ease; }
+    .art-frame.square {
+      border-radius: 12px;
+      animation: none !important;
+      transform: scale(1);
+    }
+    .art-frame.square .art-img { border-radius: 12px; }
+    .art-frame.square::after { opacity: 0; visibility: hidden; }
+
+    /* Visualizer (EQ bars) overlay */
+    .visualizer {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: rgba(0, 0, 0, 0.45); border-radius: inherit;
+      opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+    }
+    .art-frame.square .visualizer { opacity: 1; }
+    
+    .visualizer .bar {
+      width: 6px; height: 6px; background: var(--accent); border-radius: 3px;
+      animation: visualize 1.2s ease-in-out infinite; animation-play-state: paused;
+    }
+    .art-frame.playing.square .visualizer .bar { animation-play-state: running; }
+    .art-frame:not(.playing).square .visualizer .bar { height: 6px; transition: height 0.3s; animation: none; }
+    
+    .visualizer .bar:nth-child(1) { animation-delay: 0.0s; }
+    .visualizer .bar:nth-child(2) { animation-delay: 0.2s; }
+    .visualizer .bar:nth-child(3) { animation-delay: 0.4s; }
+    .visualizer .bar:nth-child(4) { animation-delay: 0.1s; }
+    .visualizer .bar:nth-child(5) { animation-delay: 0.3s; }
+    
+    @keyframes visualize {
+      0%, 100% { height: 6px; }
+      50% { height: 32px; }
+    }
 
     /* — Meta & Progress — */
     .song-meta { width: 100%; text-align: center; margin-bottom: 24px; }
@@ -241,7 +279,7 @@
     .track-btn:hover { background: var(--bg-highlight); }
     .track-btn.active { border-color: var(--accent); background: rgba(212,175,55,0.05); }
     .track-btn.active .t-name { color: var(--accent); }
-    .t-thumb { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+    .t-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
     .t-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
     .t-by { font-size: 0.85rem; color: var(--text-sub); }
     .t-del { font-size: 0.95rem; padding: 8px; margin-right: -8px; border-radius: 50%; opacity: 0.5; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
@@ -666,6 +704,10 @@
         font-size: 1.45rem !important;
         display: flex; align-items: center; justify-content: center;
       }
+      .play-btn svg {
+        width: 56%;
+        height: 56%;
+      }
       .ib.lit::after {
         bottom: -3px;
       }
@@ -814,6 +856,10 @@
         height: 44px !important;
         font-size: 1.26rem !important;
         display: flex; align-items: center; justify-content: center;
+      }
+      .play-btn svg {
+        width: 56%;
+        height: 56%;
       }
       .lyrics-col {
         padding: 8px 8px 6px;
