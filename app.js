@@ -10,12 +10,12 @@ const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 // songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
 const FALLBACK_SONGS = [
   {
-    id: 'we-are-75-rabbits',
-    title: "함께하는 75 민턴 (Intro)",
+    id: 'seven-five-rabbits',
+    title: "Seven Five Rabbits",
     artist: "Tony.Park",
-    cover: "./sound/함께하는 75 민턴 (Intro).png",
-    url: "./sound/함께하는 75 민턴 (Intro).mp3",
-    lrc: "./sound/함께하는 75 민턴 (Intro).lrc",
+    cover: "./sound/Seven Five Rabbits.png",
+    url: "./sound/Seven Five Rabbits.mp3",
+    lrc: "./sound/Seven Five Rabbits.lrc",
     youtube: "#"
   },
   {
@@ -249,7 +249,7 @@ function decodeLyricsBuffer(buffer) {
       const decoded = new TextDecoder(encoding).decode(buffer).replace(/^\uFEFF/, '').trim();
       if (!decoded) continue;
 
-      const looksBroken = decoded.includes(' ') && encoding === 'utf-8';
+      const looksBroken = decoded.includes('�') && encoding === 'utf-8';
       if (!looksBroken || encoding === decoders[decoders.length - 1]) {
         return decoded;
       }
