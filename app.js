@@ -4,7 +4,7 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
-const SW_SCRIPT_URL = './sw.js?v=20260328-lyricsfix';
+const SW_SCRIPT_URL = './sw.js?v=20260328-lyricsfix2';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 
@@ -367,7 +367,7 @@ function getLrcCandidates(songOrPath = '') {
 }
 
 function decodeLyricsBuffer(buffer) {
-  const decoders = ['utf-8', 'euc-kr'];
+  const decoders = ['utf-8', 'euc-kr', 'utf-16le', 'utf-16be'];
 
   for (const encoding of decoders) {
     try {
@@ -794,16 +794,18 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   }
 
   const lyrics = [];
-  const syncTagRegex = /\[(\d{2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+  const syncTagRegex = /\[(\d{1,3}):(\d{2})(?:[.,](\d{1,3}))?\]/g;
   const lines = text.split(/\r?\n/);
-  const hasSync = syncTagRegex.test(text);
+  const hasSync = /\[\d{1,3}:\d{2}(?:[.,]\d{1,3})?\]/.test(text);
 
   if (hasSync) {
     for (const rawLine of lines) {
       const line = rawLine.trim();
+      syncTagRegex.lastIndex = 0;
       const matches = [...line.matchAll(syncTagRegex)];
       if (!matches.length) continue;
 
+      syncTagRegex.lastIndex = 0;
       const content = line.replace(syncTagRegex, '').trim();
       if (!content) continue;
 
