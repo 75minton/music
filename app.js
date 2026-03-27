@@ -4,18 +4,49 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
+const SW_SCRIPT_URL = './sw.js?v=20260328-lyricsfix';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
+
+function getAppBaseUrl() {
+  const scriptSrc = Array.from(document.scripts || [])
+    .map((script) => script?.src)
+    .find((src) => src && /(?:^|\/)app\.js(?:[?#].*)?$/i.test(src));
+
+  if (scriptSrc) {
+    try {
+      return new URL('./', scriptSrc);
+    } catch (err) {
+      console.warn('app.js 기준 경로 계산 실패', err);
+    }
+  }
+
+  const manifestHref = document.querySelector('link[rel="manifest"]')?.href;
+  if (manifestHref) {
+    try {
+      return new URL('./', manifestHref);
+    } catch (err) {
+      console.warn('manifest 기준 경로 계산 실패', err);
+    }
+  }
+
+  try {
+    return new URL('./', window.location.href);
+  } catch (err) {
+    console.warn('window.location 기준 경로 계산 실패', err);
+    return new URL(window.location.origin + '/');
+  }
+}
 
 // songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
 const FALLBACK_SONGS = [
   {
-    id: 'seven-five-rabbits',
-    title: "Seven Five Rabbits",
+    id: 'we-are-75-rabbits',
+    title: "함께하는 75 민턴 (Intro)",
     artist: "Tony.Park",
-    cover: "./sound/Seven Five Rabbits.png",
-    url: "./sound/Seven Five Rabbits.mp3",
-    lrc: "./sound/Seven Five Rabbits.lrc",
+    cover: "./sound/함께하는 75 민턴 (Intro).png",
+    url: "./sound/함께하는 75 민턴 (Intro).mp3",
+    lrc: "./sound/함께하는 75 민턴 (Intro).lrc",
     youtube: "#"
   },
   {
@@ -31,9 +62,44 @@ const FALLBACK_SONGS = [
 
 let songs = [...FALLBACK_SONGS];
 const DEFAULT_VOLUME = 0.8;
-const APP_SCOPE_URL = new URL('./', window.location.href);
+const APP_SCOPE_URL = getAppBaseUrl();
 const APP_SCOPE_PATH = APP_SCOPE_URL.pathname;
 const APP_STORAGE_KEYS = [STORAGE_SONGS_HASH_KEY, STORAGE_SONGS_SNAPSHOT_KEY];
+
+function isAbsoluteLikeUrl(value = '') {
+  return /^[a-z][a-z\d+.-]*:/i.test(value);
+}
+
+function resolveAssetUrl(assetPath = '') {
+  const raw = String(assetPath || '').trim();
+  if (!raw) return '';
+  if (raw.startsWith('blob:') || raw.startsWith('data:') || isAbsoluteLikeUrl(raw)) {
+    return raw;
+  }
+
+  try {
+    return new URL(raw, APP_SCOPE_URL).toString();
+  } catch (err) {
+    console.warn('에셋 경로 해석 실패', raw, err);
+    return raw;
+  }
+}
+
+function normalizeAssetPath(assetPath = '') {
+  const resolved = resolveAssetUrl(assetPath);
+  if (!resolved) return '';
+
+  try {
+    const url = new URL(resolved);
+    if (url.origin === window.location.origin) {
+      return `${url.pathname}${url.search}`;
+    }
+  } catch (err) {
+    console.warn('상대 경로 정규화 실패', resolved, err);
+  }
+
+  return resolved;
+}
 
 /* ── IndexedDB 설정 ── */
 const IDB_NAME = 'minton_rabbits_music';
@@ -230,15 +296,74 @@ function renderLyricsMarkup(lines, emptyMessage = '가사가 없습니다') {
 }
 
 
-function getLrcCandidates(lrcPath = '') {
-  if (!lrcPath) return [];
-
-  const trimmed = String(lrcPath).trim();
+function buildUrlVariants(assetPath = '') {
+  const trimmed = String(assetPath || '').trim();
   if (!trimmed) return [];
 
-  const absolute = new URL(trimmed, window.location.href).toString();
-  const encoded = encodeURI(absolute);
-  return [...new Set([absolute, encoded])];
+  const variants = new Set();
+  const pushVariant = (value) => {
+    const next = String(value || '').trim();
+    if (!next) return;
+    variants.add(next);
+    try {
+      variants.add(encodeURI(next));
+    } catch (err) {
+      console.warn('URL 인코딩 실패', next, err);
+    }
+  };
+
+  const resolved = resolveAssetUrl(trimmed);
+  pushVariant(resolved);
+
+  try {
+    const url = new URL(resolved, APP_SCOPE_URL);
+    const encodedPathname = url.pathname
+      .split('/')
+      .map((segment, index) => (index === 0 ? segment : encodeURIComponent(decodeURIComponent(segment))))
+      .join('/');
+
+    pushVariant(url.toString());
+    pushVariant(`${url.origin}${encodedPathname}${url.search}`);
+
+    if (url.search) {
+      pushVariant(`${url.origin}${url.pathname}`);
+      pushVariant(`${url.origin}${encodedPathname}`);
+    }
+  } catch (err) {
+    console.warn('가사 URL 후보 생성 실패', trimmed, err);
+  }
+
+  return [...variants];
+}
+
+function inferLrcPathFromSong(song) {
+  const audioUrl = String(song?.url || '').trim();
+  if (!audioUrl) return '';
+
+  const withoutQuery = audioUrl.split('#')[0].split('?')[0];
+  if (!withoutQuery) return '';
+
+  return withoutQuery.replace(/\.[a-z0-9]+$/i, '.lrc');
+}
+
+function getLrcCandidates(songOrPath = '') {
+  const song = songOrPath && typeof songOrPath === 'object' ? songOrPath : null;
+  const candidates = new Set();
+
+  const appendVariants = (value) => {
+    for (const variant of buildUrlVariants(value)) {
+      candidates.add(variant);
+    }
+  };
+
+  if (song) {
+    appendVariants(song.lrc);
+    appendVariants(inferLrcPathFromSong(song));
+  } else {
+    appendVariants(songOrPath);
+  }
+
+  return [...candidates];
 }
 
 function decodeLyricsBuffer(buffer) {
@@ -268,7 +393,7 @@ function isLikelyHtmlDocument(text) {
 }
 
 async function fetchLyricsText(song) {
-  const candidates = getLrcCandidates(song?.lrc);
+  const candidates = getLrcCandidates(song);
 
   for (const candidateUrl of candidates) {
     try {
@@ -357,11 +482,12 @@ function normalizeSongEntry(raw, index) {
 
   const title = String(raw.title || raw.name || `Track ${index + 1}`).trim();
   const artist = String(raw.artist || 'Unknown Artist').trim();
-  const url = String(raw.url || raw.src || '').trim();
-  if (!url) return null;
+  const rawUrl = String(raw.url || raw.src || '').trim();
+  if (!rawUrl) return null;
 
-  const lrc = raw.lrc ? String(raw.lrc).trim() : '';
-  const cover = raw.cover ? String(raw.cover).trim() : '';
+  const url = normalizeAssetPath(rawUrl);
+  const lrc = raw.lrc ? normalizeAssetPath(String(raw.lrc).trim()) : '';
+  const cover = raw.cover ? normalizeAssetPath(String(raw.cover).trim()) : '';
   const youtube = raw.youtube ? String(raw.youtube).trim() : '';
   const id = raw.id ? String(raw.id).trim() : url;
 
@@ -422,15 +548,28 @@ function shouldAutoplayFromUrl() {
 
 function updateUrlForCurrentTrack() {
   if (!songs.length) return;
-  const url = new URL(window.location.href);
+
+  let url;
+  try {
+    url = new URL(window.location.href);
+  } catch (err) {
+    url = new URL(resolveAssetUrl('./index.html'));
+  }
+
+  const expectedPath = new URL('./index.html', APP_SCOPE_URL).pathname;
+  if (!url.pathname.startsWith(APP_SCOPE_PATH)) {
+    url.pathname = expectedPath;
+  }
+
   url.searchParams.set('no', String(state.cur + 1));
   window.history.replaceState({}, '', url);
 }
 
 async function fetchSongsList({ forceNetwork = false } = {}) {
+  const baseSongsUrl = resolveAssetUrl(SONGS_JSON_URL);
   const requestUrl = forceNetwork
-    ? `${SONGS_JSON_URL}${SONGS_JSON_URL.includes('?') ? '&' : '?'}_=${Date.now()}`
-    : SONGS_JSON_URL;
+    ? `${baseSongsUrl}${baseSongsUrl.includes('?') ? '&' : '?'}_=${Date.now()}`
+    : baseSongsUrl;
 
   const response = await fetch(requestUrl, {
     cache: forceNetwork ? 'no-store' : 'default',
@@ -717,7 +856,7 @@ async function loadTrack(idx, auto = false) {
   syncSongMeta(song);
 
   audio.pause();
-  audio.src = song.url;
+  audio.src = resolveAssetUrl(song.url);
   audio.load();
   resetProgressUi();
 
@@ -1044,8 +1183,11 @@ function getWarmCacheAssets() {
     './icons/icon-180.png',
     './icons/icon-192.png',
     './icons/icon-512.png'
-  ];
-  const mediaAssets = songs.flatMap(song => [song.url, song.lrc, song.cover]).filter(Boolean);
+  ].map(resolveAssetUrl);
+  const mediaAssets = songs
+    .flatMap(song => [song.url, song.lrc, song.cover])
+    .filter(Boolean)
+    .map(resolveAssetUrl);
   return [...new Set([...shellAssets, ...mediaAssets])];
 }
 
@@ -1053,7 +1195,7 @@ async function registerOfflinePwa() {
   if (!('serviceWorker' in navigator)) return null;
   if (swRegistrationPromise) return swRegistrationPromise;
 
-  swRegistrationPromise = navigator.serviceWorker.register('./sw.js', { scope: './' })
+  swRegistrationPromise = navigator.serviceWorker.register(SW_SCRIPT_URL, { scope: './' })
     .then((registration) => {
       console.log('Service Worker 등록 완료', registration.scope);
 
