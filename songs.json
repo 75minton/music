@@ -1,6 +1,6 @@
 {
-  "version": "2026-03-28-5",
-  "updatedAt": "2026-03-28T22:00:00+09:00",
+  "version": "2026-03-29-1",
+  "updatedAt": "2026-03-29T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -39,14 +39,14 @@
       "youtube": ""
     },
     {
-      "id": "You-are-always-here-Part2",
-      "title": "언제나 네가 있어 - Part2",
+      "id": "You-are-always-here-Part1",
+      "title": "언제나 네가 있어 - Part1",
       "artist": "Tony.Park",
-      "cover": "./sound/언제나 네가 있어 - Part2.png?v=202603282",
-      "url": "./sound/언제나 네가 있어 - Part2.mp3?v=202603282",
-      "lrc": "./sound/언제나 네가 있어 - Part2.lrc?v=202603282",
+      "cover": "./sound/언제나 네가 있어 - Part1.png?v=20260329",
+      "url": "./sound/언제나 네가 있어 - Part1.mp3?v=20260329",
+      "lrc": "./sound/언제나 네가 있어 - Part1.lrc?v=20260329",
       "youtube": ""
-    },
+    }
     {
       "id": "seven-five-rabbits",
       "title": "Seven Five Rabbits",
@@ -54,6 +54,15 @@
       "cover": "./sound/Seven Five Rabbits.png?v=20260328",
       "url": "./sound/Seven Five Rabbits.mp3?v=20260328",
       "lrc": "./sound/Seven Five Rabbits.lrc?v=20260328",
+      "youtube": ""
+    },
+    {
+      "id": "You-are-always-here-Part2",
+      "title": "언제나 네가 있어 - Part2",
+      "artist": "Tony.Park",
+      "cover": "./sound/언제나 네가 있어 - Part2.png?v=202603282",
+      "url": "./sound/언제나 네가 있어 - Part2.mp3?v=202603282",
+      "lrc": "./sound/언제나 네가 있어 - Part2.lrc?v=202603282",
       "youtube": ""
     }
   ]
