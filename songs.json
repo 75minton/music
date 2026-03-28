@@ -1,5 +1,5 @@
 {
-  "version": "2026-03-28-3",
+  "version": "2026-03-28-4",
   "updatedAt": "2026-03-28T15:00:00+09:00",
   "songs": [
     {
@@ -33,9 +33,9 @@
       "id": "Smashing-My-Night",
       "title": "Smashing My Night",
       "artist": "Nia.Park",
-      "cover": "./sound/Smashing My Night.png?v=202603281",
-      "url": "./sound/Smashing My Night.mp3?v=202603281",
-      "lrc": "./sound/Smashing My Night.lrc?v=202603281",
+      "cover": "./sound/Smashing My Night.png?v=202603282",
+      "url": "./sound/Smashing My Night.mp3?v=202603282",
+      "lrc": "./sound/Smashing My Night.lrc?v=202603282",
       "youtube": ""
     },
     {
