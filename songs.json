@@ -1,6 +1,6 @@
 {
-  "version": "2026-03-28-4",
-  "updatedAt": "2026-03-28T15:00:00+09:00",
+  "version": "2026-03-28-5",
+  "updatedAt": "2026-03-28T22:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -36,6 +36,15 @@
       "cover": "./sound/Smashing My Night.png?v=202603282",
       "url": "./sound/Smashing My Night.mp3?v=202603282",
       "lrc": "./sound/Smashing My Night.lrc?v=202603282",
+      "youtube": ""
+    },
+    {
+      "id": "You-are-always-here-Part2",
+      "title": "언제나 네가 있어 - Part2",
+      "artist": "Tony.Park",
+      "cover": "./sound/언제나 네가 있어 - Part2.png?v=202603282",
+      "url": "./sound/언제나 네가 있어 - Part2.mp3?v=202603282",
+      "lrc": "./sound/언제나 네가 있어 - Part2.lrc?v=202603282",
       "youtube": ""
     },
     {
