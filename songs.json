@@ -1,6 +1,6 @@
 {
-  "version": "2026-03-28-1",
-  "updatedAt": "2026-03-28T00:00:00+09:00",
+  "version": "2026-03-28-2",
+  "updatedAt": "2026-03-28T15:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -28,6 +28,15 @@
       "url": "./sound/우리에게 남은 봄.mp3?v=20260328",
       "lrc": "./sound/우리에게 남은 봄.lrc?v=20260328",
       "youtube": "https://youtu.be/ATgsGn-bhkE"
+    },
+    {
+      "id": "Smashing-My-Night",
+      "title": "Smashing My Night",
+      "artist": "Tony.Park",
+      "cover": "./sound/Smashing My Night.png?v=20260328",
+      "url": "./sound/Smashing My Night.mp3?v=20260328",
+      "lrc": "./sound/Smashing My Night.lrc?v=20260328",
+      "youtube": ""
     },
     {
       "id": "seven-five-rabbits",
