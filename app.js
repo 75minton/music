@@ -4,7 +4,8 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
-const SW_SCRIPT_URL = './sw.js?v=20260328-lyricsfix2';
+const TRACK_GAP_MS = 2000;
+const SW_SCRIPT_URL = './sw.js?v=20260330-trackgap2-countdown1';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 
@@ -185,6 +186,8 @@ let currentLoadToken = 0;
 let songsUpdateInFlight = null;
 let lyricsLineElements = [];
 let statusTimer = null;
+let autoAdvanceTimer = null;
+let autoAdvanceCountdownTimer = null;
 
 const $  = id => document.getElementById(id);
 const audio = $('audio');
@@ -250,6 +253,49 @@ function showStatus(message, { tone = 'info', duration = 3200 } = {}) {
   } else {
     statusTimer = null;
   }
+}
+
+function clearAutoAdvanceTimer() {
+  if (autoAdvanceTimer) {
+    window.clearTimeout(autoAdvanceTimer);
+    autoAdvanceTimer = null;
+  }
+
+  if (autoAdvanceCountdownTimer) {
+    window.clearInterval(autoAdvanceCountdownTimer);
+    autoAdvanceCountdownTimer = null;
+  }
+}
+
+function formatAutoAdvanceMessage(baseMessage, remainingMs) {
+  const seconds = Math.max(0, remainingMs / 1000);
+  const spinnerFrames = ['⏳', '⌛'];
+  const spinner = spinnerFrames[Math.floor((TRACK_GAP_MS - remainingMs) / 250) % spinnerFrames.length];
+  return `${baseMessage} ${seconds.toFixed(1)}초 ${spinner}`;
+}
+
+function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재생합니다.' } = {}) {
+  clearAutoAdvanceTimer();
+
+  const startedAt = Date.now();
+  showStatus(formatAutoAdvanceMessage(message, TRACK_GAP_MS), { tone: 'info', duration: 0 });
+
+  autoAdvanceCountdownTimer = window.setInterval(() => {
+    const elapsed = Date.now() - startedAt;
+    const remainingMs = Math.max(0, TRACK_GAP_MS - elapsed);
+    showStatus(formatAutoAdvanceMessage(message, remainingMs), { tone: 'info', duration: 0 });
+
+    if (remainingMs <= 0) {
+      window.clearInterval(autoAdvanceCountdownTimer);
+      autoAdvanceCountdownTimer = null;
+    }
+  }, 100);
+
+  autoAdvanceTimer = window.setTimeout(async () => {
+    clearAutoAdvanceTimer();
+    hideStatus();
+    await callback();
+  }, TRACK_GAP_MS);
 }
 
 function getRandomTrackIndex(excludeIndex = state.cur) {
@@ -848,6 +894,8 @@ function setPlaying(on) {
 async function loadTrack(idx, auto = false) {
   if (!songs.length) return false;
 
+  clearAutoAdvanceTimer();
+
   const requestToken = ++currentLoadToken;
   hideStatus();
 
@@ -973,11 +1021,16 @@ audio.addEventListener('timeupdate', () => {
 
 audio.addEventListener('ended', () => {
   if (state.repeat) {
-    audio.currentTime = 0;
-    safePlay({ blockedMessage: '반복 재생을 이어가지 못했습니다. 다시 눌러주세요.', silent: true });
+    scheduleAutoAdvance(async () => {
+      audio.currentTime = 0;
+      await safePlay({ blockedMessage: '반복 재생을 이어가지 못했습니다. 다시 눌러주세요.', silent: true });
+    }, { message: '같은 곡 다시 재생까지' });
     return;
   }
-  next();
+
+  scheduleAutoAdvance(async () => {
+    next();
+  }, { message: '다음 곡 재생까지' });
 });
 
 audio.addEventListener('error', () => {
