@@ -1,4 +1,4 @@
-const CACHE_VERSION = '75minton-pwa-v1.5-trackgap2-countdown1';
+const CACHE_VERSION = '75minton-pwa-v1.6-backguard1-trackgap2';
 const APP_SHELL = [
   './',
   './index.html',

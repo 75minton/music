@@ -5,9 +5,12 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const TRACK_GAP_MS = 2000;
-const SW_SCRIPT_URL = './sw.js?v=20260330-trackgap2-countdown1';
+const SW_SCRIPT_URL = './sw.js?v=20260330-backguard1-trackgap2';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
+const BACK_GUARD_STATUS_MESSAGE = '백 버튼으로 앱이 종료되지 않도록 유지했습니다. 종료는 홈 버튼 또는 최근 앱 화면을 이용해주세요.';
+const BACK_GUARD_RETURN_PLAYER_MESSAGE = '백 버튼으로 플레이어 화면으로 돌아왔습니다.';
+const BACK_GUARD_CLOSE_LYRICS_MESSAGE = '백 버튼으로 가사 확대를 닫았습니다.';
 
 function getAppBaseUrl() {
   const scriptSrc = Array.from(document.scripts || [])
@@ -188,6 +191,12 @@ let lyricsLineElements = [];
 let statusTimer = null;
 let autoAdvanceTimer = null;
 let autoAdvanceCountdownTimer = null;
+
+const backGuardState = {
+  enabled: false,
+  seeded: false,
+  handlingPopstate: false
+};
 
 const $  = id => document.getElementById(id);
 const audio = $('audio');
@@ -498,6 +507,81 @@ async function safePlay({ blockedMessage = '브라우저 정책으로 자동 재
 
 function isMobileViewport() {
   return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function isStandaloneDisplayMode() {
+  try {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  } catch (err) {
+    console.warn('standalone display-mode 확인 실패', err);
+    return window.navigator.standalone === true;
+  }
+}
+
+function shouldEnableStandaloneBackGuard() {
+  if (!isStandaloneDisplayMode()) return false;
+
+  try {
+    return window.matchMedia('(pointer: coarse), (max-width: 1024px)').matches;
+  } catch (err) {
+    console.warn('백 버튼 가드 viewport 확인 실패', err);
+    return isMobileViewport();
+  }
+}
+
+function restoreStandaloneBackGuardEntry() {
+  if (!backGuardState.enabled) return;
+
+  try {
+    const currentUrl = new URL(window.location.href);
+    const currentState = history.state && typeof history.state === 'object' ? history.state : {};
+    history.replaceState({ ...currentState, __75BackBase: true }, '', currentUrl);
+    history.pushState({ __75BackTrap: true, at: Date.now() }, '', currentUrl);
+    backGuardState.seeded = true;
+  } catch (err) {
+    console.warn('백 버튼 가드 상태 복원 실패', err);
+  }
+}
+
+function handleStandaloneBackNavigation() {
+  if (document.body.classList.contains('lyrics-expanded')) {
+    closeLyricsExpanded();
+    showStatus(BACK_GUARD_CLOSE_LYRICS_MESSAGE, { tone: 'info' });
+    return;
+  }
+
+  const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab || 'player';
+  if (activeTab !== 'player') {
+    setActiveTab('player');
+    showStatus(BACK_GUARD_RETURN_PLAYER_MESSAGE, { tone: 'info' });
+    return;
+  }
+
+  showStatus(BACK_GUARD_STATUS_MESSAGE, { tone: 'info', duration: 2800 });
+}
+
+function setupStandaloneBackGuard() {
+  backGuardState.enabled = shouldEnableStandaloneBackGuard();
+  if (!backGuardState.enabled || backGuardState.seeded) return;
+
+  updateUrlForCurrentTrack();
+  restoreStandaloneBackGuardEntry();
+
+  window.addEventListener('popstate', () => {
+    if (!backGuardState.enabled || backGuardState.handlingPopstate) return;
+
+    backGuardState.handlingPopstate = true;
+
+    try {
+      handleStandaloneBackNavigation();
+      updateUrlForCurrentTrack();
+      restoreStandaloneBackGuardEntry();
+    } finally {
+      window.setTimeout(() => {
+        backGuardState.handlingPopstate = false;
+      }, 0);
+    }
+  });
 }
 
 function updateLyricsExpandButton() {
@@ -1443,6 +1527,7 @@ async function initializeApp() {
   await registerOfflinePwa();
   const initialSongs = await getInitialSongsList();
   await applySongsList(initialSongs, { initial: true, keepCurrent: false });
+  setupStandaloneBackGuard();
 
   if (initialAutoplay) {
     await safePlay({ blockedMessage: '브라우저 정책으로 자동 재생이 차단되었습니다. 재생 버튼을 눌러주세요.' });
