@@ -1,14 +1,14 @@
 {
-  "version": "2026-04-04-1",
+  "version": "2026-04-04-2",
   "updatedAt": "2026-04-04T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
       "title": "함께하는 75 민턴 (Intro)",
       "artist": "TONY / NIA",
-      "cover": "./sound/01.함께하는 75 민턴 (Intro).png?v=20260404",
-      "url": "./sound/01.함께하는 75 민턴 (Intro).mp3?v=20260404",
-      "lrc": "./sound/01.함께하는 75 민턴 (Intro).lrc?v=20260404",
+      "cover": "./sound/01.함께하는 75 민턴 (Intro).png?v=202604041",
+      "url": "./sound/01.함께하는 75 민턴 (Intro).mp3?v=202604041",
+      "lrc": "./sound/01.함께하는 75 민턴 (Intro).lrc?v=202604041",
       "youtube": ""
     },
     {
