@@ -4,8 +4,8 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
-const TRACK_GAP_MS = 2000;
-const SW_SCRIPT_URL = './sw.js?v=20260330-backguard1-trackgap2';
+const TRACK_GAP_MS = 1000;
+const SW_SCRIPT_URL = './sw.js?v=20260403-backguard1-trackgap3';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v1';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v1';
 const BACK_GUARD_STATUS_MESSAGE = '백 버튼으로 앱이 종료되지 않도록 유지했습니다. 종료는 홈 버튼 또는 최근 앱 화면을 이용해주세요.';
