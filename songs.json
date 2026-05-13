@@ -1,6 +1,6 @@
 {
-  "version": "2026-04-04-2",
-  "updatedAt": "2026-04-04T00:00:00+09:00",
+  "version": "2026-05-13-1",
+  "updatedAt": "2026-05-13T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -36,7 +36,7 @@
       "cover": "./sound/04.Smashing My Night.png?v=20260403",
       "url": "./sound/04.Smashing My Night.mp3?v=20260403",
       "lrc": "./sound/04.Smashing My Night.lrc?v=20260403",
-      "youtube": ""
+      "youtube": "https://youtu.be/lSiUCVuvMoI"
     },
     {
       "id": "You-are-always-here-Part1",
