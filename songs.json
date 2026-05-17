@@ -1,6 +1,6 @@
 {
-  "version": "2026-05-13-1",
-  "updatedAt": "2026-05-13T00:00:00+09:00",
+  "version": "2026-05-17-1",
+  "updatedAt": "2026-05-17T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -64,6 +64,24 @@
       "url": "./sound/07.Seven Five Rabbits.mp3?v=20260403",
       "lrc": "./sound/07.Seven Five Rabbits.lrc?v=20260403",
       "youtube": ""
+    },
+    {
+      "id": "Court-Light-Part1",
+      "title": "Court Light - Part1",
+      "artist": "TRINITY",
+      "cover": "./sound/08.Court Light - Part1.png?v=20260517",
+      "url": "./sound/08.Court Light - Part1.mp3?v=20260517",
+      "lrc": "./sound/08.Court Light - Part1.lrc?v=202604517",
+      "youtube": "https://youtu.be/MuJx_nuKm_g"
+    },
+    {
+      "id": "Court-Light-Part2",
+      "title": "Court Light - Part2",
+      "artist": "TRINITY",
+      "cover": "./sound/09.Court Light - Part2.png?v=20260517",
+      "url": "./sound/09.Court Light - Part2.mp3?v=20260517",
+      "lrc": "./sound/09.Court Light - Part2.lrc?v=202604517",
+      "youtube": "https://youtu.be/FfGDgFUEDlg"
     }
   ]
 }
