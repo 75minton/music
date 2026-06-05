@@ -1,6 +1,6 @@
 {
-  "version": "2026-06-06-1",
-  "updatedAt": "2026-06-06T00:00:00+09:00",
+  "version": "2026-06-06-2",
+  "updatedAt": "2026-06-06T01:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -85,7 +85,7 @@
     },
     {
       "id": "Light-Up-My-Day",
-      "title": "10.Light Up My Day",
+      "title": "Light Up My Day",
       "artist": "TRINITY",
       "cover": "./sound/10.Light Up My Day.png?v=20260606",
       "url": "./sound/10.Light Up My Day.mp3?v=20260606",
@@ -94,7 +94,7 @@
     },
     {
       "id": "Between-the-Light",
-      "title": "11.Between the Light",
+      "title": "Between the Light",
       "artist": "TRINITY",
       "cover": "./sound/11.Between the Light.png?v=20260606",
       "url": "./sound/11.Between the Light.mp3?v=20260606",
