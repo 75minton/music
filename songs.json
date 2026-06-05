@@ -1,6 +1,6 @@
 {
-  "version": "2026-05-18-2",
-  "updatedAt": "2026-05-18T00:00:00+09:00",
+  "version": "2026-06-06-1",
+  "updatedAt": "2026-06-06T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -82,6 +82,24 @@
       "url": "./sound/09.Court Light - Part2.mp3?v=20260518",
       "lrc": "./sound/09.Court Light - Part2.lrc?v=20260518",
       "youtube": "https://youtu.be/FfGDgFUEDlg"
+    },
+    {
+      "id": "Light-Up-My-Day",
+      "title": "10.Light Up My Day",
+      "artist": "TRINITY",
+      "cover": "./sound/10.Light Up My Day.png?v=20260606",
+      "url": "./sound/10.Light Up My Day.mp3?v=20260606",
+      "lrc": "./sound/10.Light Up My Day.lrc?v=20260606",
+      "youtube": "https://youtu.be/X1_WX8pW8z0"
+    },
+    {
+      "id": "Between-the-Light",
+      "title": "11.Between the Light",
+      "artist": "TRINITY",
+      "cover": "./sound/11.Between the Light.png?v=20260606",
+      "url": "./sound/11.Between the Light.mp3?v=20260606",
+      "lrc": "./sound/11.Between the Light.lrc?v=20260606",
+      "youtube": ""
     }
   ]
 }
