@@ -1,6 +1,6 @@
 {
-  "version": "2026-06-06-3",
-  "updatedAt": "2026-06-06T09:00:00+09:00",
+  "version": "2026-06-21-1",
+  "updatedAt": "2026-06-21T09:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -100,6 +100,15 @@
       "url": "./sound/11.Between the Light.mp3?v=20260606",
       "lrc": "./sound/11.Between the Light.lrc?v=20260606",
       "youtube": "https://youtu.be/icEyWVHpTjc"
+    },
+    {
+      "id": "The-voice-that-believes-in-you",
+      "title": "너를 믿는 목소리",
+      "artist": "TRINITY",
+      "cover": "./sound/12.너를 믿는 목소리.png?v=20260621",
+      "url": "./sound/12.너를 믿는 목소리.mp3?v=20260621",
+      "lrc": "./sound/12.너를 믿는 목소리.lrc?v=20260621",
+      "youtube": ""
     }
   ]
 }
