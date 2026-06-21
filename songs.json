@@ -1,5 +1,5 @@
 {
-  "version": "2026-06-21-1",
+  "version": "2026-06-21-2",
   "updatedAt": "2026-06-21T09:00:00+09:00",
   "songs": [
     {
@@ -86,7 +86,7 @@
     {
       "id": "Light-Up-My-Day",
       "title": "Light Up My Day",
-      "artist": "TRINITY",
+      "artist": "TRINITY - CHAERIN",
       "cover": "./sound/10.Light Up My Day.png?v=20260606",
       "url": "./sound/10.Light Up My Day.mp3?v=20260606",
       "lrc": "./sound/10.Light Up My Day.lrc?v=20260606",
@@ -104,7 +104,7 @@
     {
       "id": "The-voice-that-believes-in-you",
       "title": "너를 믿는 목소리",
-      "artist": "TRINITY",
+      "artist": "TRINITY - JIWOO",
       "cover": "./sound/12.너를 믿는 목소리.png?v=20260621",
       "url": "./sound/12.너를 믿는 목소리.mp3?v=20260621",
       "lrc": "./sound/12.너를 믿는 목소리.lrc?v=20260621",
