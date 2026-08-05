@@ -1,6 +1,6 @@
 {
-  "version": "2026-06-21-2",
-  "updatedAt": "2026-06-21T09:00:00+09:00",
+  "version": "2026-08-05-1",
+  "updatedAt": "2026-08-05T09:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -108,6 +108,15 @@
       "cover": "./sound/12.너를 믿는 목소리.png?v=20260621",
       "url": "./sound/12.너를 믿는 목소리.mp3?v=20260621",
       "lrc": "./sound/12.너를 믿는 목소리.lrc?v=20260621",
+      "youtube": ""
+    },
+    {
+      "id": "The-voice-that-believes-in-you",
+      "title": "우린 함께 간다",
+      "artist": "TONY PARK",
+      "cover": "./sound/13.우린 함께 간다.png?v=20260805",
+      "url": "./sound/13.우린 함께 간다.mp3?v=20260805",
+      "lrc": "./sound/13.우린 함께 간다.lrc?v=20260805",
       "youtube": ""
     }
   ]
