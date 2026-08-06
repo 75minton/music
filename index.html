@@ -38,7 +38,7 @@
                 <path d="M9 13A1 1 0 1 1 9 15A1 1 0 1 1 9 13M15 13A1 1 0 1 1 15 15A1 1 0 1 1 15 13" fill="#121212">
                 </path>
             </svg>
-            75<span>MINTON v1</span>
+            75<span>MINTON v1.1</span>
         </div>
         <div class="top-actions">
             <button aria-label="캐시 삭제" class="utility-btn" id="clearCacheBtn" type="button">
@@ -132,6 +132,24 @@
                             <input class="range" id="volume" max="1" min="0" step="0.01" type="range" value="0.65" />
                         </div>
                         <span aria-hidden="true" class="vol-icon vol-up">🔊</span>
+                    </div>
+                    <div class="eq-panel" id="eqPanel">
+                        <div class="eq-head">
+                            <button aria-pressed="false" class="eq-power" id="eqToggle" type="button">EQ</button>
+                            <div class="eq-presets" aria-label="EQ presets">
+                                <button class="eq-preset active" data-eq-preset="flat" type="button">Flat</button>
+                                <button class="eq-preset" data-eq-preset="pop" type="button">Pop</button>
+                                <button class="eq-preset" data-eq-preset="bass" type="button">Bass</button>
+                                <button class="eq-preset" data-eq-preset="vocal" type="button">Vocal</button>
+                            </div>
+                        </div>
+                        <div class="eq-bands" aria-label="Equalizer">
+                            <label class="eq-band"><span>60</span><input class="eq-slider" data-eq-band="0" max="12" min="-12" step="1" type="range" value="0"><output>0</output></label>
+                            <label class="eq-band"><span>230</span><input class="eq-slider" data-eq-band="1" max="12" min="-12" step="1" type="range" value="0"><output>0</output></label>
+                            <label class="eq-band"><span>910</span><input class="eq-slider" data-eq-band="2" max="12" min="-12" step="1" type="range" value="0"><output>0</output></label>
+                            <label class="eq-band"><span>3.6k</span><input class="eq-slider" data-eq-band="3" max="12" min="-12" step="1" type="range" value="0"><output>0</output></label>
+                            <label class="eq-band"><span>14k</span><input class="eq-slider" data-eq-band="4" max="12" min="-12" step="1" type="range" value="0"><output>0</output></label>
+                        </div>
                     </div>
                 </div>
                 <div class="lyrics-col">

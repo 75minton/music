@@ -5,7 +5,7 @@ const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const TRACK_GAP_MS = 1000;
-const SW_SCRIPT_URL = './sw.js?v=20260403-1';
+const SW_SCRIPT_URL = './sw.js?v=20260807-final';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v2';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v2';
 const BACK_GUARD_STATUS_MESSAGE = '백 버튼으로 앱이 종료되지 않도록 유지했습니다. 종료는 홈 버튼 또는 최근 앱 화면을 이용해주세요.';
@@ -180,7 +180,12 @@ const state = {
   lyrics: [],
   shuffle: false,
   repeat: false,
-  activeLyricIndex: -1
+  activeLyricIndex: -1,
+  shuffleQueue: [],
+  shuffleHistory: [],
+  eqEnabled: false,
+  eqGains: [0, 0, 0, 0, 0],
+  eqPreset: 'flat'
 };
 
 let songsPollTimer = null;
@@ -191,6 +196,9 @@ let lyricsLineElements = [];
 let statusTimer = null;
 let autoAdvanceTimer = null;
 let autoAdvanceCountdownTimer = null;
+let eqAudioContext = null;
+let eqSourceNode = null;
+let eqFilters = [];
 
 const backGuardState = {
   enabled: false,
@@ -215,6 +223,17 @@ const lyricsViewport = document.querySelector('.lyrics-viewport');
 const lyricsExpandBtn = $('lyricsExpandBtn');
 const statusEl = $('playerStatus');
 const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+const eqToggle = $('eqToggle');
+const eqSliders = Array.from(document.querySelectorAll('.eq-slider'));
+const eqPresetButtons = Array.from(document.querySelectorAll('.eq-preset'));
+
+const EQ_FREQUENCIES = [60, 230, 910, 3600, 14000];
+const EQ_PRESETS = {
+  flat: [0, 0, 0, 0, 0],
+  pop: [-1, 3, 4, 2, 3],
+  bass: [6, 4, 1, 0, 2],
+  vocal: [-2, 0, 4, 3, 1]
+};
 
 const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -264,6 +283,111 @@ function showStatus(message, { tone = 'info', duration = 3200 } = {}) {
   }
 }
 
+function setEqUiEnabled(isEnabled) {
+  if (!eqToggle) return;
+  eqToggle.classList.toggle('lit', isEnabled);
+  eqToggle.setAttribute('aria-pressed', String(isEnabled));
+}
+
+function updateEqPresetButtons(activePreset = state.eqPreset) {
+  eqPresetButtons.forEach((button) => {
+    button.classList.toggle('active', button.dataset.eqPreset === activePreset);
+  });
+}
+
+function renderEqControls() {
+  eqSliders.forEach((slider, index) => {
+    const gain = Number(state.eqGains[index] || 0);
+    slider.value = String(gain);
+    const output = slider.closest('.eq-band')?.querySelector('output');
+    if (output) output.textContent = gain > 0 ? `+${gain}` : String(gain);
+  });
+  setEqUiEnabled(state.eqEnabled);
+  updateEqPresetButtons();
+}
+
+function applyEqGains() {
+  if (!eqFilters.length) return;
+  const now = eqAudioContext?.currentTime || 0;
+  eqFilters.forEach((filter, index) => {
+    const nextGain = state.eqEnabled ? Number(state.eqGains[index] || 0) : 0;
+    try {
+      filter.gain.cancelScheduledValues(now);
+      filter.gain.setTargetAtTime(nextGain, now, 0.015);
+    } catch (err) {
+      filter.gain.value = nextGain;
+    }
+  });
+}
+
+async function ensureEqAudioGraph() {
+  if (eqFilters.length) {
+    if (eqAudioContext?.state === 'suspended') await eqAudioContext.resume();
+    return true;
+  }
+
+  const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextCtor) {
+    showStatus('이 브라우저는 EQ 기능을 지원하지 않습니다.', { tone: 'error' });
+    return false;
+  }
+
+  try {
+    eqAudioContext = eqAudioContext || new AudioContextCtor();
+    eqSourceNode = eqSourceNode || eqAudioContext.createMediaElementSource(audio);
+    eqFilters = EQ_FREQUENCIES.map((frequency) => {
+      const filter = eqAudioContext.createBiquadFilter();
+      filter.type = 'peaking';
+      filter.frequency.value = frequency;
+      filter.Q.value = 1;
+      filter.gain.value = 0;
+      return filter;
+    });
+
+    eqSourceNode.connect(eqFilters[0]);
+    for (let i = 0; i < eqFilters.length - 1; i += 1) {
+      eqFilters[i].connect(eqFilters[i + 1]);
+    }
+    eqFilters[eqFilters.length - 1].connect(eqAudioContext.destination);
+
+    if (eqAudioContext.state === 'suspended') await eqAudioContext.resume();
+    applyEqGains();
+    return true;
+  } catch (err) {
+    console.warn('EQ 초기화 실패', err);
+    state.eqEnabled = false;
+    setEqUiEnabled(false);
+    showStatus('EQ를 초기화하지 못했습니다. 음원 출처 또는 브라우저 제한을 확인해주세요.', { tone: 'error', duration: 5200 });
+    return false;
+  }
+}
+
+async function setEqEnabled(isEnabled) {
+  state.eqEnabled = Boolean(isEnabled);
+  setEqUiEnabled(state.eqEnabled);
+
+  if (state.eqEnabled) {
+    const ready = await ensureEqAudioGraph();
+    if (!ready) return false;
+  }
+
+  applyEqGains();
+  return true;
+}
+
+async function setEqPreset(presetName) {
+  const preset = EQ_PRESETS[presetName] || EQ_PRESETS.flat;
+  state.eqPreset = EQ_PRESETS[presetName] ? presetName : 'flat';
+  state.eqGains = [...preset];
+  renderEqControls();
+
+  if (state.eqPreset !== 'flat') {
+    await setEqEnabled(true);
+  } else {
+    applyEqGains();
+  }
+}
+
 function clearAutoAdvanceTimer() {
   if (autoAdvanceTimer) {
     window.clearTimeout(autoAdvanceTimer);
@@ -307,13 +431,45 @@ function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재
   }, TRACK_GAP_MS);
 }
 
-function getRandomTrackIndex(excludeIndex = state.cur) {
-  if (songs.length <= 1) return 0;
-
-  let nextIndex = excludeIndex;
-  while (nextIndex === excludeIndex) {
-    nextIndex = Math.floor(Math.random() * songs.length);
+function shuffleArray(list) {
+  const shuffled = [...list];
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
+  return shuffled;
+}
+
+function buildShuffleQueue(excludeIndex = state.cur) {
+  return shuffleArray(
+    songs
+      .map((_, index) => index)
+      .filter((index) => index !== excludeIndex)
+  );
+}
+
+function resetShufflePlaybackState(currentIndex = state.cur) {
+  state.shuffleHistory = [];
+  state.shuffleQueue = state.shuffle ? buildShuffleQueue(currentIndex) : [];
+}
+
+function getNextSequentialIndex({ allowWrap = true } = {}) {
+  if (!songs.length) return null;
+  if (state.cur < songs.length - 1) return state.cur + 1;
+  return allowWrap ? 0 : null;
+}
+
+function getNextShuffleIndex({ allowWrap = true } = {}) {
+  if (!songs.length) return null;
+  if (songs.length === 1) return allowWrap ? 0 : null;
+
+  if (!state.shuffleQueue.length) {
+    if (!allowWrap) return null;
+    state.shuffleQueue = buildShuffleQueue(state.cur);
+  }
+
+  const nextIndex = state.shuffleQueue.shift();
+  state.shuffleHistory.push(state.cur);
   return nextIndex;
 }
 
@@ -493,6 +649,9 @@ function waitForMetadata() {
 
 async function safePlay({ blockedMessage = '브라우저 정책으로 자동 재생이 차단되었습니다. 재생 버튼을 눌러주세요.', silent = false } = {}) {
   try {
+    if (state.eqEnabled) {
+      await ensureEqAudioGraph();
+    }
     await audio.play();
     return true;
   } catch (err) {
@@ -847,6 +1006,7 @@ async function deleteLocalTrack(id) {
     }
   } else if (state.cur > idx) {
     state.cur--;
+    resetShufflePlaybackState(state.cur);
     updateUrlForCurrentTrack();
   }
   
@@ -975,7 +1135,7 @@ function setPlaying(on) {
   renderPlaylist();
 }
 
-async function loadTrack(idx, auto = false) {
+async function loadTrack(idx, auto = false, { keepShuffleState = false } = {}) {
   if (!songs.length) return false;
 
   clearAutoAdvanceTimer();
@@ -985,6 +1145,7 @@ async function loadTrack(idx, auto = false) {
 
   state.cur = Math.max(0, Math.min(idx, songs.length - 1));
   const song = songs[state.cur];
+  if (!keepShuffleState) resetShufflePlaybackState(state.cur);
 
   updateUrlForCurrentTrack();
   syncSongMeta(song);
@@ -1020,20 +1181,28 @@ const toggle = () => {
   else audio.pause();
 };
 
-const next = () => {
+const next = ({ autoAdvance = false } = {}) => {
   if (!songs.length) return;
   const nextIndex = state.shuffle
-    ? getRandomTrackIndex(state.cur)
-    : (state.cur + 1) % songs.length;
-  loadTrack(nextIndex, true);
+    ? getNextShuffleIndex({ allowWrap: !autoAdvance || state.repeat })
+    : getNextSequentialIndex({ allowWrap: !autoAdvance || state.repeat });
+
+  if (nextIndex === null || nextIndex === undefined) {
+    audio.currentTime = 0;
+    resetProgressUi();
+    setPlaying(false);
+    return;
+  }
+
+  loadTrack(nextIndex, true, { keepShuffleState: true });
 };
 
 const prev = () => {
   if (!songs.length) return;
-  const prevIndex = state.shuffle
-    ? getRandomTrackIndex(state.cur)
+  const prevIndex = state.shuffle && state.shuffleHistory.length
+    ? state.shuffleHistory.pop()
     : (state.cur - 1 + songs.length) % songs.length;
-  loadTrack(prevIndex, true);
+  loadTrack(prevIndex, true, { keepShuffleState: state.shuffle });
 };
 
 playBtn.addEventListener('click', toggle);
@@ -1045,6 +1214,7 @@ artFrame.addEventListener('click', () => artFrame.classList.toggle('square'));
 
 $('shuffleBtn').addEventListener('click', () => {
   state.shuffle = !state.shuffle;
+  resetShufflePlaybackState(state.cur);
   setToggleButtonState($('shuffleBtn'), state.shuffle);
 });
 $('repeatBtn').addEventListener('click', () => {
@@ -1060,6 +1230,29 @@ progressEl.addEventListener('input', () => {
 
 volumeEl.addEventListener('input', () => {
   applyVolume(volumeEl.value);
+});
+
+eqToggle?.addEventListener('click', async () => {
+  await setEqEnabled(!state.eqEnabled);
+});
+
+eqPresetButtons.forEach((button) => {
+  button.addEventListener('click', async () => {
+    await setEqPreset(button.dataset.eqPreset || 'flat');
+  });
+});
+
+eqSliders.forEach((slider) => {
+  slider.addEventListener('input', async () => {
+    const index = Number(slider.dataset.eqBand);
+    if (!Number.isInteger(index)) return;
+
+    state.eqGains[index] = Number(slider.value);
+    state.eqPreset = 'custom';
+    updateEqPresetButtons('custom');
+    renderEqControls();
+    await setEqEnabled(true);
+  });
 });
 
 audio.addEventListener('loadedmetadata', () => {
@@ -1113,7 +1306,7 @@ audio.addEventListener('ended', () => {
   }
 
   scheduleAutoAdvance(async () => {
-    next();
+    next({ autoAdvance: true });
   }, { message: '다음 곡 재생까지' });
 });
 
@@ -1410,6 +1603,7 @@ async function applySongsList(nextSongs, { initial = false, keepCurrent = true }
   }
 
   songs = [...normalized, ...localSongs];
+  resetShufflePlaybackState(Math.min(state.cur, songs.length - 1));
   persistSongsSnapshot(songs);
 
   let nextIndex = getTrackIndexFromUrl(songs.length);
@@ -1520,6 +1714,7 @@ async function initializeApp() {
   setActiveTab('player');
   setToggleButtonState($('shuffleBtn'), state.shuffle);
   setToggleButtonState($('repeatBtn'), state.repeat);
+  renderEqControls();
   applyVolume(DEFAULT_VOLUME);
 
   const initialAutoplay = shouldAutoplayFromUrl();

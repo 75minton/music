@@ -1,4 +1,4 @@
-const CACHE_VERSION = '75minton-pwa-v1.7-1';
+const CACHE_VERSION = '75minton-pwa-v1.1-20260807-final';
 const APP_SHELL = [
   './',
   './index.html',
