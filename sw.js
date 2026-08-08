@@ -1,11 +1,12 @@
-const CACHE_VERSION = '75minton-pwa-v1.5-20260809-v15-home-menu-fix';
-const ASSET_VERSION = '20260809-v15-home-menu-fix';
+const CACHE_VERSION = '75minton-pwa-v1.5-20260809-v15-share-player';
+const ASSET_VERSION = '20260809-v15-share-player';
 const APP_SHELL = [
   './',
   './index.html',
   `./styles.css?v=${ASSET_VERSION}`,
   `./home-content.js?v=${ASSET_VERSION}`,
   `./app.js?v=${ASSET_VERSION}`,
+  './share/player.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-08-09-v1.5-home-menu-fix / assets: 20260809-v15-home-menu-fix */
+    /* 75 Minton Music build: 2026-08-09-v1.5-share-player / assets: 20260809-v15-share-player */
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -297,12 +297,26 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
+    .home-card:not(.notice-card) {
+      display: grid;
+      grid-template-columns: 152px minmax(0, 1fr);
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "label label"
+        "cover song"
+        "cover artist"
+        "cover desc"
+        "cover action";
+      align-items: start;
+      column-gap: 18px;
+    }
     .feature-card {
       background:
         linear-gradient(145deg, rgba(122,167,255,0.22), rgba(255,122,168,0.08)),
         var(--bg-elevated);
     }
     .home-card-label {
+      grid-area: label;
       color: var(--accent);
       font-size: 0.75rem;
       font-weight: 900;
@@ -311,10 +325,11 @@
       margin-bottom: 18px;
     }
     .home-track-cover {
+      grid-area: cover;
       display: block;
-      width: 76px;
-      height: 76px;
-      margin-bottom: 16px;
+      width: 152px;
+      height: 152px;
+      margin-bottom: 0;
       border-radius: 18px;
       object-fit: cover;
       background: rgba(255,255,255,0.08);
@@ -322,22 +337,29 @@
       box-shadow: 0 14px 32px rgba(0,0,0,0.28), 0 0 24px rgba(122,167,255,0.12);
     }
     .home-song {
+      grid-area: song;
       font-size: 1.28rem;
       font-weight: 900;
       line-height: 1.25;
       margin-bottom: 8px;
     }
     .home-artist {
+      grid-area: artist;
       color: var(--text-sub);
       font-size: 0.9rem;
       margin-bottom: 10px;
     }
     .home-desc {
+      grid-area: desc;
       min-height: 2.7em;
       color: var(--text-sub);
       font-size: 0.82rem;
       line-height: 1.45;
       margin-bottom: 18px;
+    }
+    .home-card:not(.notice-card) .home-card-btn {
+      grid-area: action;
+      justify-self: start;
     }
     .notice-list {
       display: grid;
@@ -851,10 +873,14 @@
         min-height: 150px;
         padding: 18px;
       }
+      .home-card:not(.notice-card) {
+        grid-template-columns: 136px minmax(0, 1fr);
+        column-gap: 14px;
+      }
       .home-track-cover {
-        width: 68px;
-        height: 68px;
-        margin-bottom: 14px;
+        width: 136px;
+        height: 136px;
+        margin-bottom: 0;
         border-radius: 16px;
       }
       .player-layout { display: flex; flex-direction: column; gap: 16px; }
@@ -1346,14 +1372,18 @@
         padding: 14px;
         border-radius: 16px;
       }
+      .home-card:not(.notice-card) {
+        grid-template-columns: 112px minmax(0, 1fr);
+        column-gap: 12px;
+      }
       .home-card-label {
         margin-bottom: 10px;
         font-size: 0.66rem;
       }
       .home-track-cover {
-        width: 56px;
-        height: 56px;
-        margin-bottom: 10px;
+        width: 112px;
+        height: 112px;
+        margin-bottom: 0;
         border-radius: 14px;
       }
       .home-song {
