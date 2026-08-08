@@ -1,5 +1,5 @@
-
-// 🐰 외부 이미지 파일 없이 HTML 자체에서 그려내는 75+토끼+셔틀콕 고화질 SVG 이미지 리소스입니다.
+﻿
+// ?맧 ?몃? ?대?吏 ?뚯씪 ?놁씠 HTML ?먯껜?먯꽌 洹몃젮?대뒗 75+?좊겮+?뷀?肄?怨좏솕吏?SVG ?대?吏 由ъ냼?ㅼ엯?덈떎.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
 const SONGS_JSON_URL = './songs.json';
@@ -8,9 +8,11 @@ const TRACK_GAP_MS = 1000;
 const SW_SCRIPT_URL = './sw.js?v=20260807-final';
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v2';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v2';
-const BACK_GUARD_STATUS_MESSAGE = '백 버튼으로 앱이 종료되지 않도록 유지했습니다. 종료는 홈 버튼 또는 최근 앱 화면을 이용해주세요.';
-const BACK_GUARD_RETURN_PLAYER_MESSAGE = '백 버튼으로 플레이어 화면으로 돌아왔습니다.';
-const BACK_GUARD_CLOSE_LYRICS_MESSAGE = '백 버튼으로 가사 확대를 닫았습니다.';
+const STORAGE_PLAYER_STATE_KEY = '75minton_player_state_v1_1';
+const STORAGE_FAVORITES_KEY = '75minton_favorites_v1_1';
+const BACK_GUARD_STATUS_MESSAGE = '뒤로가기 버튼으로 앱이 바로 종료되지 않도록 보호 중입니다. 종료하려면 홈 버튼이나 최근 앱 화면을 이용해주세요.';
+const BACK_GUARD_RETURN_PLAYER_MESSAGE = '뒤로가기 버튼으로 플레이어 화면으로 돌아왔습니다.';
+const BACK_GUARD_CLOSE_LYRICS_MESSAGE = '뒤로가기 버튼으로 가사 확대 화면을 닫았습니다.';
 
 function getAppBaseUrl() {
   const scriptSrc = Array.from(document.scripts || [])
@@ -21,7 +23,7 @@ function getAppBaseUrl() {
     try {
       return new URL('./', scriptSrc);
     } catch (err) {
-      console.warn('app.js 기준 경로 계산 실패', err);
+      console.warn('app.js 湲곗? 寃쎈줈 怨꾩궛 ?ㅽ뙣', err);
     }
   }
 
@@ -30,36 +32,36 @@ function getAppBaseUrl() {
     try {
       return new URL('./', manifestHref);
     } catch (err) {
-      console.warn('manifest 기준 경로 계산 실패', err);
+      console.warn('manifest 湲곗? 寃쎈줈 怨꾩궛 ?ㅽ뙣', err);
     }
   }
 
   try {
     return new URL('./', window.location.href);
   } catch (err) {
-    console.warn('window.location 기준 경로 계산 실패', err);
+    console.warn('window.location 湲곗? 寃쎈줈 怨꾩궛 ?ㅽ뙣', err);
     return new URL(window.location.origin + '/');
   }
 }
 
-// songs.json 이 없거나 읽기 실패할 때를 위한 기본 곡 목록
+// songs.json을 불러오지 못했을 때 사용할 기본 곡 목록
 const FALLBACK_SONGS = [
   {
     id: 'we-are-75-rabbits',
     title: "함께하는 75 민턴 (Intro)",
-    artist: "Tony.Park",
-    cover: "./sound/함께하는 75 민턴 (Intro).png",
-    url: "./sound/함께하는 75 민턴 (Intro).mp3",
-    lrc: "./sound/함께하는 75 민턴 (Intro).lrc",
+    artist: "TONY / NIA",
+    cover: "./sound/01.함께하는 75 민턴 (Intro).png",
+    url: "./sound/01.함께하는 75 민턴 (Intro).mp3",
+    lrc: "./sound/01.함께하는 75 민턴 (Intro).lrc",
     youtube: "#"
   },
   {
     id: 'we-are-one-teen-days',
     title: "우리는 하나 (10대 그 시절)",
-    artist: "Tony.Park",
-    cover: "./sound/우리는 하나 (10대 그 시절).png",
-    url: "./sound/우리는 하나 (10대 그 시절).mp3",
-    lrc: "./sound/우리는 하나 (10대 그 시절).lrc",
+    artist: "TONY / NIA",
+    cover: "./sound/02.우리는 하나 (10대 그 시절).png",
+    url: "./sound/02.우리는 하나 (10대 그 시절).mp3",
+    lrc: "./sound/02.우리는 하나 (10대 그 시절).lrc",
     youtube: "#"
   }
 ];
@@ -84,7 +86,7 @@ function resolveAssetUrl(assetPath = '') {
   try {
     return new URL(raw, APP_SCOPE_URL).toString();
   } catch (err) {
-    console.warn('에셋 경로 해석 실패', raw, err);
+    console.warn('?먯뀑 寃쎈줈 ?댁꽍 ?ㅽ뙣', raw, err);
     return raw;
   }
 }
@@ -99,13 +101,13 @@ function normalizeAssetPath(assetPath = '') {
       return `${url.pathname}${url.search}`;
     }
   } catch (err) {
-    console.warn('상대 경로 정규화 실패', resolved, err);
+    console.warn('?곷? 寃쎈줈 ?뺢퇋???ㅽ뙣', resolved, err);
   }
 
   return resolved;
 }
 
-/* ── IndexedDB 설정 ── */
+/* ?? IndexedDB ?ㅼ젙 ?? */
 const IDB_NAME = 'minton_rabbits_music';
 const IDB_VERSION = 1;
 const IDB_STORE = 'local_songs';
@@ -180,12 +182,17 @@ const state = {
   lyrics: [],
   shuffle: false,
   repeat: false,
+  repeatMode: 'off',
+  playlistQuery: '',
+  favoritesOnly: false,
+  favorites: new Set(),
   activeLyricIndex: -1,
   shuffleQueue: [],
   shuffleHistory: [],
   eqEnabled: false,
   eqGains: [0, 0, 0, 0, 0],
-  eqPreset: 'flat'
+  eqPreset: 'flat',
+  eqPanelOpen: false
 };
 
 let songsPollTimer = null;
@@ -199,6 +206,7 @@ let autoAdvanceCountdownTimer = null;
 let eqAudioContext = null;
 let eqSourceNode = null;
 let eqFilters = [];
+let lastPlayerStatePersistedAt = 0;
 
 const backGuardState = {
   enabled: false,
@@ -216,6 +224,8 @@ const progFill = $('progFill');
 const playBtn = $('playBtn');
 const volumeEl = $('volume');
 const volFill = $('volFill');
+const playlistSearchEl = $('playlistSearch');
+const favoritesFilterBtn = $('favoritesFilterBtn');
 const lyricsInner = $('lyricsInner');
 const artFrame = $('artFrame');
 const lyricsCol = document.querySelector('.lyrics-col');
@@ -223,7 +233,9 @@ const lyricsViewport = document.querySelector('.lyrics-viewport');
 const lyricsExpandBtn = $('lyricsExpandBtn');
 const statusEl = $('playerStatus');
 const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+const eqPanel = $('eqPanel');
 const eqToggle = $('eqToggle');
+const eqClose = $('eqClose');
 const eqSliders = Array.from(document.querySelectorAll('.eq-slider'));
 const eqPresetButtons = Array.from(document.querySelectorAll('.eq-preset'));
 
@@ -232,7 +244,23 @@ const EQ_PRESETS = {
   flat: [0, 0, 0, 0, 0],
   pop: [-1, 3, 4, 2, 3],
   bass: [6, 4, 1, 0, 2],
-  vocal: [-2, 0, 4, 3, 1]
+  vocal: [-2, 0, 4, 3, 1],
+  rock: [4, 2, -1, 3, 5],
+  dance: [5, 3, -2, 2, 4],
+  acoustic: [2, 3, 2, 1, 3],
+  night: [-3, -1, 1, -1, -3]
+};
+
+const EQ_PRESET_LABELS = {
+  flat: 'Flat',
+  pop: 'Pop',
+  bass: 'Bass',
+  vocal: 'Vocal',
+  rock: 'Rock',
+  dance: 'Dance',
+  acoustic: 'Acoustic',
+  night: 'Night',
+  custom: 'Custom'
 };
 
 const fmt = s => !Number.isFinite(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
@@ -248,12 +276,132 @@ function applyVolume(value) {
   audio.volume = safeValue;
   volumeEl.value = String(safeValue);
   renderVolumeFill();
+  persistPlayerState();
 }
 
 function setToggleButtonState(button, isOn) {
   if (!button) return;
   button.classList.toggle('lit', isOn);
   button.setAttribute('aria-pressed', String(isOn));
+}
+
+function loadStoredPreferences() {
+  try {
+    const favoriteList = JSON.parse(localStorage.getItem(STORAGE_FAVORITES_KEY) || '[]');
+    state.favorites = new Set(Array.isArray(favoriteList) ? favoriteList : []);
+  } catch (err) {
+    console.warn('利먭꺼李얘린 蹂듭썝 ?ㅽ뙣', err);
+    state.favorites = new Set();
+  }
+
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_PLAYER_STATE_KEY) || '{}');
+    state.shuffle = Boolean(stored.shuffle);
+    state.repeatMode = ['off', 'all', 'one'].includes(stored.repeatMode) ? stored.repeatMode : 'off';
+    state.repeat = state.repeatMode !== 'off';
+    state.eqEnabled = Boolean(stored.eqEnabled);
+    state.eqPreset = EQ_PRESETS[stored.eqPreset] || stored.eqPreset === 'custom' ? stored.eqPreset : 'flat';
+    if (Array.isArray(stored.eqGains) && stored.eqGains.length === state.eqGains.length) {
+      state.eqGains = stored.eqGains.map((value) => Math.min(12, Math.max(-12, Number(value) || 0)));
+    }
+    if (Number.isFinite(stored.volume)) {
+      volumeEl.dataset.restoreVolume = String(Math.min(1, Math.max(0, stored.volume)));
+    }
+    if (Number.isFinite(stored.currentTime)) {
+      audio.dataset.restoreTime = String(Math.max(0, stored.currentTime));
+    }
+    if (stored.trackSig) {
+      audio.dataset.restoreTrackSig = String(stored.trackSig);
+    }
+  } catch (err) {
+    console.warn('?뚮젅?댁뼱 ?곹깭 蹂듭썝 ?ㅽ뙣', err);
+  }
+}
+
+function persistFavorites() {
+  try {
+    localStorage.setItem(STORAGE_FAVORITES_KEY, JSON.stringify([...state.favorites]));
+  } catch (err) {
+    console.warn('利먭꺼李얘린 ????ㅽ뙣', err);
+  }
+}
+
+function persistPlayerState() {
+  try {
+    const currentSong = songs[state.cur];
+    localStorage.setItem(STORAGE_PLAYER_STATE_KEY, JSON.stringify({
+      trackSig: getTrackSignature(currentSong),
+      currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+      volume: Number.isFinite(audio.volume) ? audio.volume : DEFAULT_VOLUME,
+      shuffle: state.shuffle,
+      repeatMode: state.repeatMode,
+      eqEnabled: state.eqEnabled,
+      eqPreset: state.eqPreset,
+      eqGains: state.eqGains
+    }));
+  } catch (err) {
+    console.warn('?뚮젅?댁뼱 ?곹깭 ????ㅽ뙣', err);
+  }
+}
+
+function updateRepeatButtonState() {
+  const button = $('repeatBtn');
+  const labels = {
+    off: '반복 끔',
+    all: '전체 반복',
+    one: '한 곡 반복'
+  };
+  const isOn = state.repeatMode !== 'off';
+  setToggleButtonState(button, isOn);
+  button?.setAttribute('aria-label', labels[state.repeatMode] || labels.off);
+  button?.setAttribute('title', labels[state.repeatMode] || labels.off);
+  button?.setAttribute('data-repeat-mode', state.repeatMode);
+}
+
+function toggleFavorite(song) {
+  const sig = getTrackSignature(song);
+  if (!sig) return;
+
+  if (state.favorites.has(sig)) state.favorites.delete(sig);
+  else state.favorites.add(sig);
+
+  persistFavorites();
+  renderPlaylist();
+}
+
+function updateFavoritesFilterButton() {
+  if (!favoritesFilterBtn) return;
+  favoritesFilterBtn.classList.toggle('active', state.favoritesOnly);
+  favoritesFilterBtn.setAttribute('aria-pressed', String(state.favoritesOnly));
+}
+
+function setupMediaSession(song) {
+  if (!('mediaSession' in navigator) || !song) return;
+
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: song.title,
+      artist: song.artist,
+      artwork: [
+        { src: song.cover || defaultCover, sizes: '512x512', type: 'image/png' }
+      ]
+    });
+
+    navigator.mediaSession.setActionHandler('play', () => safePlay({ silent: true }));
+    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', prev);
+    navigator.mediaSession.setActionHandler('nexttrack', next);
+    navigator.mediaSession.setActionHandler('seekbackward', () => seekBy(-10));
+    navigator.mediaSession.setActionHandler('seekforward', () => seekBy(10));
+  } catch (err) {
+    console.warn('Media Session ?ㅼ젙 ?ㅽ뙣', err);
+  }
+}
+
+function seekBy(seconds) {
+  if (!Number.isFinite(audio.duration)) return;
+  audio.currentTime = Math.min(audio.duration, Math.max(0, audio.currentTime + seconds));
+  persistPlayerState();
 }
 
 function hideStatus() {
@@ -289,6 +437,36 @@ function setEqUiEnabled(isEnabled) {
   eqToggle.setAttribute('aria-pressed', String(isEnabled));
 }
 
+function isMobileEqLayout() {
+  try {
+    return window.matchMedia('(max-width: 768px), (max-height: 520px) and (pointer: coarse)').matches;
+  } catch (err) {
+    return window.innerWidth <= 768 || (window.innerHeight <= 520 && window.matchMedia('(pointer: coarse)').matches);
+  }
+}
+
+function getEqDisplayName() {
+  return EQ_PRESET_LABELS[state.eqPreset] || EQ_PRESET_LABELS.custom;
+}
+
+function updateEqToggleLabel() {
+  if (!eqToggle) return;
+  const displayName = getEqDisplayName();
+  eqToggle.textContent = isMobileEqLayout() ? `EQ · ${displayName}` : 'EQ';
+  eqToggle.setAttribute('aria-label', `EQ ${displayName}`);
+  if (eqPanel) {
+    eqPanel.setAttribute('data-eq-preset-label', displayName);
+  }
+}
+
+function setEqPanelOpen(isOpen) {
+  state.eqPanelOpen = Boolean(isOpen);
+  if (!eqPanel) return;
+  eqPanel.classList.toggle('expanded', state.eqPanelOpen);
+  eqToggle?.setAttribute('aria-expanded', String(state.eqPanelOpen));
+  eqClose?.toggleAttribute('hidden', !state.eqPanelOpen);
+}
+
 function updateEqPresetButtons(activePreset = state.eqPreset) {
   eqPresetButtons.forEach((button) => {
     button.classList.toggle('active', button.dataset.eqPreset === activePreset);
@@ -304,6 +482,7 @@ function renderEqControls() {
   });
   setEqUiEnabled(state.eqEnabled);
   updateEqPresetButtons();
+  updateEqToggleLabel();
 }
 
 function applyEqGains() {
@@ -402,12 +581,12 @@ function clearAutoAdvanceTimer() {
 
 function formatAutoAdvanceMessage(baseMessage, remainingMs) {
   const seconds = Math.max(0, remainingMs / 1000);
-  const spinnerFrames = ['⏳', '⌛'];
+  const spinnerFrames = ['.', '..', '...'];
   const spinner = spinnerFrames[Math.floor((TRACK_GAP_MS - remainingMs) / 250) % spinnerFrames.length];
-  return `${baseMessage} ${seconds.toFixed(1)}초 ${spinner}`;
+  return `${baseMessage} ${seconds.toFixed(1)}s ${spinner}`;
 }
 
-function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재생합니다.' } = {}) {
+function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재생합니다' } = {}) {
   clearAutoAdvanceTimer();
 
   const startedAt = Date.now();
@@ -519,7 +698,7 @@ function buildUrlVariants(assetPath = '') {
     try {
       variants.add(encodeURI(next));
     } catch (err) {
-      console.warn('URL 인코딩 실패', next, err);
+      console.warn('URL ?몄퐫???ㅽ뙣', next, err);
     }
   };
 
@@ -541,7 +720,7 @@ function buildUrlVariants(assetPath = '') {
       pushVariant(`${url.origin}${encodedPathname}`);
     }
   } catch (err) {
-    console.warn('가사 URL 후보 생성 실패', trimmed, err);
+    console.warn('媛??URL ?꾨낫 ?앹꽦 ?ㅽ뙣', trimmed, err);
   }
 
   return [...variants];
@@ -585,12 +764,12 @@ function decodeLyricsBuffer(buffer) {
       const decoded = new TextDecoder(encoding).decode(buffer).replace(/^\uFEFF/, '').trim();
       if (!decoded) continue;
 
-      const looksBroken = decoded.includes('�') && encoding === 'utf-8';
+      const looksBroken = decoded.includes('\uFFFD') && encoding === 'utf-8';
       if (!looksBroken || encoding === decoders[decoders.length - 1]) {
         return decoded;
       }
     } catch (err) {
-      console.warn(`가사 디코딩 실패 (${encoding})`, err);
+      console.warn(`媛???붿퐫???ㅽ뙣 (${encoding})`, err);
     }
   }
 
@@ -610,14 +789,14 @@ async function fetchLyricsText(song) {
     try {
       const response = await fetch(candidateUrl, { cache: 'no-store' });
       if (!response.ok) {
-        console.warn('LRC 응답 오류', response.status, candidateUrl);
+        console.warn('LRC ?묐떟 ?ㅻ쪟', response.status, candidateUrl);
         continue;
       }
 
       const buffer = await response.arrayBuffer();
       const decoded = decodeLyricsBuffer(buffer);
       if (!decoded || isLikelyHtmlDocument(decoded)) {
-        console.warn('LRC 응답이 가사 파일 형식이 아닙니다.', candidateUrl);
+        console.warn('LRC ?묐떟??媛???뚯씪 ?뺤떇???꾨떃?덈떎.', candidateUrl);
         continue;
       }
 
@@ -672,7 +851,7 @@ function isStandaloneDisplayMode() {
   try {
     return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   } catch (err) {
-    console.warn('standalone display-mode 확인 실패', err);
+    console.warn('standalone display-mode ?뺤씤 ?ㅽ뙣', err);
     return window.navigator.standalone === true;
   }
 }
@@ -683,7 +862,7 @@ function shouldEnableStandaloneBackGuard() {
   try {
     return window.matchMedia('(pointer: coarse), (max-width: 1024px)').matches;
   } catch (err) {
-    console.warn('백 버튼 가드 viewport 확인 실패', err);
+    console.warn('諛?踰꾪듉 媛??viewport ?뺤씤 ?ㅽ뙣', err);
     return isMobileViewport();
   }
 }
@@ -698,7 +877,7 @@ function restoreStandaloneBackGuardEntry() {
     history.pushState({ __75BackTrap: true, at: Date.now() }, '', currentUrl);
     backGuardState.seeded = true;
   } catch (err) {
-    console.warn('백 버튼 가드 상태 복원 실패', err);
+    console.warn('諛?踰꾪듉 媛???곹깭 蹂듭썝 ?ㅽ뙣', err);
   }
 }
 
@@ -758,6 +937,7 @@ function closeLyricsExpanded() {
 
 function toggleLyricsExpanded() {
   if (!isMobileViewport()) return;
+  if (state.eqPanelOpen) setEqPanelOpen(false);
   document.body.classList.toggle('lyrics-expanded');
   updateLyricsExpandButton();
 }
@@ -803,7 +983,7 @@ function getStoredSongsSnapshot() {
     if (!raw) return null;
     return normalizeSongsList(JSON.parse(raw));
   } catch (err) {
-    console.warn('저장된 곡 스냅샷을 읽지 못했습니다.', err);
+    console.warn('??λ맂 怨??ㅻ깄?룹쓣 ?쎌? 紐삵뻽?듬땲??', err);
     return null;
   }
 }
@@ -814,7 +994,7 @@ function persistSongsSnapshot(list) {
     localStorage.setItem(STORAGE_SONGS_HASH_KEY, getSongsFingerprint(safeList));
     localStorage.setItem(STORAGE_SONGS_SNAPSHOT_KEY, JSON.stringify(safeList));
   } catch (err) {
-    console.warn('곡 스냅샷 저장 실패', err);
+    console.warn('怨??ㅻ깄??????ㅽ뙣', err);
   }
 }
 
@@ -866,7 +1046,7 @@ async function fetchSongsList({ forceNetwork = false } = {}) {
   });
 
   if (!response.ok) {
-    throw new Error(`songs.json 응답 오류: ${response.status}`);
+    throw new Error(`songs.json ?묐떟 ?ㅻ쪟: ${response.status}`);
   }
 
   const data = await response.json();
@@ -878,6 +1058,8 @@ function syncSongMeta(song) {
   artistEl.textContent = $('miniArtist').textContent = song.artist;
   $('lrcTrackName').textContent = song.title;
   coverEl.src = $('miniCover').src = song.cover || defaultCover;
+  setupMediaSession(song);
+  persistPlayerState();
 }
 
 function resetProgressUi() {
@@ -887,7 +1069,7 @@ function resetProgressUi() {
   $('duration').textContent = '0:00';
 }
 
-/* ── UI 탭 이동 로직 ── */
+/* ?? UI ???대룞 濡쒖쭅 ?? */
 function setActiveTab(tabName, { focus = false } = {}) {
   tabButtons.forEach((button) => {
     const isActive = button.dataset.tab === tabName;
@@ -957,12 +1139,21 @@ window.addEventListener('resize', () => {
 });
 
 
-/* ── 렌더링 ── */
+/* ?? ?뚮뜑留??? */
 function renderPlaylist() {
   const pl = $('playlist');
   pl.innerHTML = '';
 
+  const query = state.playlistQuery.trim().toLowerCase();
+  let renderedCount = 0;
+
   songs.forEach((song, index) => {
+    const sig = getTrackSignature(song);
+    const isFavorite = state.favorites.has(sig);
+    const haystack = `${song.title} ${song.artist}`.toLowerCase();
+    if (query && !haystack.includes(query)) return;
+    if (state.favoritesOnly && !isFavorite) return;
+
     const btn = document.createElement('button');
     btn.className = 'track-btn' + (index === state.cur ? ' active' : '');
     const isLocal = song.id && song.id.startsWith('local-');
@@ -972,19 +1163,37 @@ function renderPlaylist() {
         <div class="t-name">${esc(song.title)}</div>
         <div class="t-by">${esc(song.artist)}</div>
       </div>
-      ${isLocal ? `<div class="t-del" data-id="${song.id}" aria-label="삭제">❌</div>` : ''}`;
-      
+      ${isLocal ? `<span class="t-del" data-id="${song.id}" aria-label="삭제">×</span>` : ''}`;
+    const favoriteToggle = document.createElement('span');
+    favoriteToggle.className = 'fav-toggle' + (isFavorite ? ' active' : '');
+    favoriteToggle.setAttribute('aria-label', isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가');
+    favoriteToggle.textContent = isFavorite ? '★' : '☆';
+    btn.appendChild(favoriteToggle);
+
     btn.addEventListener('click', (e) => {
       if (e.target.closest('.t-del')) {
         e.stopPropagation();
         deleteLocalTrack(song.id);
+      } else if (e.target.closest('.fav-toggle')) {
+        e.stopPropagation();
+        toggleFavorite(song);
       } else {
         loadTrack(index, true);
       }
     });
 
     pl.appendChild(btn);
+    renderedCount += 1;
   });
+
+  if (!renderedCount) {
+    const empty = document.createElement('div');
+    empty.className = 'playlist-empty';
+    empty.textContent = state.favoritesOnly ? '즐겨찾기한 곡이 없습니다.' : '검색 결과가 없습니다.';
+    pl.appendChild(empty);
+  }
+
+  updateFavoritesFilterButton();
 }
 
 async function deleteLocalTrack(id) {
@@ -1037,11 +1246,11 @@ function renderLinks() {
   });
 }
 
-/* ── 가사 파싱 ── */
+/* ?? 媛???뚯떛 ?? */
 async function parseLRC(song, requestToken = currentLoadToken) {
   if (requestToken !== currentLoadToken) return false;
 
-  lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중…</div>';
+  lyricsInner.innerHTML = '<div class="lyric-line">가사를 불러오는 중...</div>';
   lyricsLineElements = [];
   resetLyricsViewportPosition();
   document.body.classList.remove('lyrics-unsynced');
@@ -1076,7 +1285,7 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   if (requestToken !== currentLoadToken) return false;
 
   if (!text) {
-    renderLyricsMarkup([], '가사를 불러오지 못했습니다');
+    renderLyricsMarkup([], '가사를 불러오지 못했습니다.');
     if (song.lrc) {
       showStatus(`가사 파일을 불러오지 못했습니다: ${song.lrc}`, { tone: 'error', duration: 4200 });
     }
@@ -1121,7 +1330,7 @@ async function parseLRC(song, requestToken = currentLoadToken) {
   return true;
 }
 
-/* ── 재생 제어 ── */
+/* 재생 제어 */
 function setPlaying(on) {
   const playSvg = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="transform: translateX(1.5px)"><path d="M8 5v14l11-7z"></path></svg>';
   const pauseSvg = '<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>';
@@ -1164,7 +1373,7 @@ async function loadTrack(idx, auto = false, { keepShuffleState = false } = {}) {
   setPlaying(false);
 
   if (auto) {
-    await safePlay({ blockedMessage: '재생을 시작하지 못했습니다. 다시 한 번 눌러주세요.' });
+    await safePlay({ blockedMessage: '재생을 시작하지 못했습니다. 다시 재생 버튼을 눌러주세요.' });
   }
 
   await lyricsPromise;
@@ -1216,10 +1425,24 @@ $('shuffleBtn').addEventListener('click', () => {
   state.shuffle = !state.shuffle;
   resetShufflePlaybackState(state.cur);
   setToggleButtonState($('shuffleBtn'), state.shuffle);
+  persistPlayerState();
 });
 $('repeatBtn').addEventListener('click', () => {
-  state.repeat = !state.repeat;
-  setToggleButtonState($('repeatBtn'), state.repeat);
+  const modes = ['off', 'all', 'one'];
+  state.repeatMode = modes[(modes.indexOf(state.repeatMode) + 1) % modes.length];
+  state.repeat = state.repeatMode !== 'off';
+  updateRepeatButtonState();
+  persistPlayerState();
+});
+
+playlistSearchEl?.addEventListener('input', () => {
+  state.playlistQuery = playlistSearchEl.value;
+  renderPlaylist();
+});
+
+favoritesFilterBtn?.addEventListener('click', () => {
+  state.favoritesOnly = !state.favoritesOnly;
+  renderPlaylist();
 });
 
 progressEl.addEventListener('input', () => {
@@ -1233,7 +1456,17 @@ volumeEl.addEventListener('input', () => {
 });
 
 eqToggle?.addEventListener('click', async () => {
+  if (isMobileEqLayout()) {
+    setEqPanelOpen(!state.eqPanelOpen);
+    return;
+  }
+
   await setEqEnabled(!state.eqEnabled);
+});
+
+eqClose?.addEventListener('click', () => {
+  setEqPanelOpen(false);
+  eqToggle?.focus();
 });
 
 eqPresetButtons.forEach((button) => {
@@ -1255,6 +1488,13 @@ eqSliders.forEach((slider) => {
   });
 });
 
+window.addEventListener('resize', () => {
+  if (!isMobileEqLayout()) {
+    setEqPanelOpen(false);
+  }
+  updateEqToggleLabel();
+});
+
 audio.addEventListener('loadedmetadata', () => {
   $('duration').textContent = fmt(audio.duration);
 });
@@ -1264,6 +1504,12 @@ audio.addEventListener('timeupdate', () => {
   progressEl.value = pct;
   progFill.style.width = $('miniFill').style.width = pct + '%';
   $('currentTime').textContent = fmt(audio.currentTime);
+
+  const now = Date.now();
+  if (now - lastPlayerStatePersistedAt > 5000) {
+    lastPlayerStatePersistedAt = now;
+    persistPlayerState();
+  }
 
   if (!state.lyrics.length || !lyricsLineElements.length) return;
   if (state.lyrics[0].time === -1) return;
@@ -1297,7 +1543,7 @@ audio.addEventListener('timeupdate', () => {
 });
 
 audio.addEventListener('ended', () => {
-  if (state.repeat) {
+  if (state.repeatMode === 'one') {
     scheduleAutoAdvance(async () => {
       audio.currentTime = 0;
       await safePlay({ blockedMessage: '반복 재생을 이어가지 못했습니다. 다시 눌러주세요.', silent: true });
@@ -1317,13 +1563,16 @@ audio.addEventListener('error', () => {
   setPlaying(false);
 });
 
-audio.addEventListener('pause', () => setPlaying(false));
+audio.addEventListener('pause', () => {
+  setPlaying(false);
+  persistPlayerState();
+});
 audio.addEventListener('play', () => {
   hideStatus();
   setPlaying(true);
 });
 
-/* ── PWA 설치 로직 ── */
+/* ?? PWA ?ㅼ튂 濡쒖쭅 ?? */
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 const clearCacheBtn = document.getElementById('clearCacheBtn');
@@ -1350,12 +1599,12 @@ window.addEventListener('appinstalled', () => {
 });
 
 async function clearPwaCaches() {
-  const ok = window.confirm('앱 캐시와 저장 데이터를 정리한 뒤 새로고침합니다. 계속할까요?');
+  const ok = window.confirm('앱 캐시와 저장 데이터를 정리하고 새로고침합니다. 계속할까요?');
   if (!ok) return;
 
   clearCacheBtn.disabled = true;
   const originalLabel = clearCacheBtn.innerHTML;
-  clearCacheBtn.innerHTML = '<span>정리 중…</span>';
+  clearCacheBtn.innerHTML = '<span>정리 중...</span>';
 
   try {
     if ('serviceWorker' in navigator) {
@@ -1395,13 +1644,13 @@ async function clearPwaCaches() {
 
     try { await clearLocalSongsInDB(); } catch(err) { console.warn('IDB purge err', err); }
 
-    showStatus('이 플레이어의 캐시를 정리했습니다. 새로고침합니다.', { tone: 'info' });
+    showStatus('앱 플레이어 캐시를 정리했습니다. 새로고침합니다.', { tone: 'info' });
     const url = new URL(window.location.href);
     url.searchParams.set('cacheReset', Date.now().toString());
     window.location.replace(url.toString());
   } catch (err) {
     console.error(err);
-    showStatus('캐시 정리 중 오류가 발생했습니다. 브라우저 설정에서도 확인해주세요.', { tone: 'error', duration: 0 });
+    showStatus('캐시 정리 중 오류가 발생했습니다. 브라우저 설정에서 다시 확인해주세요.', { tone: 'error', duration: 0 });
     clearCacheBtn.disabled = false;
     clearCacheBtn.innerHTML = originalLabel;
   }
@@ -1529,7 +1778,7 @@ async function registerOfflinePwa() {
 
   swRegistrationPromise = navigator.serviceWorker.register(SW_SCRIPT_URL, { scope: './' })
     .then((registration) => {
-      console.log('Service Worker 등록 완료', registration.scope);
+      console.log('Service Worker ?깅줉 ?꾨즺', registration.scope);
 
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         warmCacheWithCurrentAssets();
@@ -1538,7 +1787,7 @@ async function registerOfflinePwa() {
       return registration;
     })
     .catch((err) => {
-      console.warn('Service Worker 등록 실패', err);
+      console.warn('Service Worker ?깅줉 ?ㅽ뙣', err);
       swRegistrationPromise = null;
       return null;
     });
@@ -1571,7 +1820,7 @@ async function updateServiceWorkerIfPossible() {
   try {
     await registration.update();
   } catch (err) {
-    console.warn('Service Worker 업데이트 확인 실패', err);
+    console.warn('Service Worker ?낅뜲?댄듃 ?뺤씤 ?ㅽ뙣', err);
   }
 }
 
@@ -1664,7 +1913,7 @@ async function getInitialSongsList() {
     try {
       return await fetchSongsList({ forceNetwork: false });
     } catch (cacheErr) {
-      console.warn('캐시된 songs.json 로딩 실패, 저장된 스냅샷을 확인합니다.', cacheErr);
+      console.warn('캐시 songs.json 로딩 실패, 저장된 곡 목록을 확인합니다.', cacheErr);
       return getStoredSongsSnapshot() || [...FALLBACK_SONGS];
     }
   }
@@ -1710,18 +1959,35 @@ function startSongsPolling() {
 }
 
 async function initializeApp() {
+  loadStoredPreferences();
   updateLyricsExpandButton();
   setActiveTab('player');
   setToggleButtonState($('shuffleBtn'), state.shuffle);
-  setToggleButtonState($('repeatBtn'), state.repeat);
+  updateRepeatButtonState();
   renderEqControls();
-  applyVolume(DEFAULT_VOLUME);
+  applyVolume(Number(volumeEl.dataset.restoreVolume || DEFAULT_VOLUME));
 
   const initialAutoplay = shouldAutoplayFromUrl();
 
   await registerOfflinePwa();
   const initialSongs = await getInitialSongsList();
   await applySongsList(initialSongs, { initial: true, keepCurrent: false });
+
+  if (!initialAutoplay && audio.dataset.restoreTrackSig) {
+    const restoredIndex = songs.findIndex((song) => getTrackSignature(song) === audio.dataset.restoreTrackSig);
+    if (restoredIndex >= 0 && restoredIndex !== state.cur) {
+      await loadTrack(restoredIndex, false);
+    }
+  }
+
+  if (!initialAutoplay && audio.dataset.restoreTime) {
+    await waitForMetadata();
+    const restoreTime = Number(audio.dataset.restoreTime);
+    if (Number.isFinite(restoreTime) && restoreTime > 0 && Number.isFinite(audio.duration)) {
+      audio.currentTime = Math.min(audio.duration - 0.2, restoreTime);
+    }
+  }
+
   setupStandaloneBackGuard();
 
   if (initialAutoplay) {

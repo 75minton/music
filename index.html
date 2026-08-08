@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport" />
     <meta content="#121212" name="theme-color" />
-    <meta content="75 Minton Music - 75년 토끼띠 배드민턴 동호회 - 함께하는 75민턴" name="description" />
+    <meta content="75 Minton Music - 75민턴 배드민턴 동호회 음악 플레이어" name="description" />
     <meta content="yes" name="apple-mobile-web-app-capable" />
     <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
     <meta content="75 Music" name="apple-mobile-web-app-title" />
@@ -14,8 +14,8 @@
     <meta content="index,follow" name="robots" />
     <link href="https://75minton.github.io/music/" rel="canonical" />
     <meta content="website" property="og:type" />
-    <meta content="함께하는 75민턴 | 서울배드민턴" property="og:title" />
-    <meta content="75민턴 공식 페이지 - 모임 소개, 음악앨범, 영상, 음원 다운로드" property="og:description" />
+    <meta content="함께하는 75민턴 | 서울 배드민턴" property="og:title" />
+    <meta content="75민턴 공식 페이지 - 모임 소개, 음악 앨범, 영상, 음원 다운로드" property="og:description" />
     <meta content="https://75minton.github.io/music/" property="og:url" />
     <meta content="https://75minton.github.io/music/icons/icon-512.png" property="og:image" />
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -73,7 +73,7 @@
         <div class="wrap">
             <div class="player-layout">
                 <div class="art-col">
-                    <div class="art-frame" id="artFrame" title="앨범 자켓 스타일 변경">
+                    <div class="art-frame" id="artFrame" title="앨범 아트 스타일 변경">
                         <img alt="75 Minton Cover" class="art-img" id="cover" src="" />
                         <div class="visualizer" id="visualizer">
                             <div class="bar"></div>
@@ -107,12 +107,12 @@
                                 <line x1="15" x2="21" y1="15" y2="21"></line>
                                 <line x1="4" x2="9" y1="4" y2="9"></line>
                             </svg></button>
-                        <button aria-label="이전곡" class="ib" id="prevBtn" type="button"><svg fill="currentColor"
+                        <button aria-label="이전 곡" class="ib" id="prevBtn" type="button"><svg fill="currentColor"
                                 height="19" viewbox="0 0 24 24" width="19">
                                 <path d="M6 6h2v12H6V6zm3.5 6 8.5 6V6l-8.5 6z"></path>
                             </svg></button>
                         <button aria-label="재생" class="ib play-btn" id="playBtn" type="button"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" style="transform: translateX(1.5px)"><path d="M8 5v14l11-7z"></path></svg></button>
-                        <button aria-label="다음곡" class="ib" id="nextBtn" type="button"><svg fill="currentColor"
+                        <button aria-label="다음 곡" class="ib" id="nextBtn" type="button"><svg fill="currentColor"
                                 height="19" viewbox="0 0 24 24" width="19">
                                 <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
                             </svg></button>
@@ -126,21 +126,26 @@
                             </svg></button>
                     </div>
                     <div class="vol-grp">
-                        <span aria-hidden="true" class="vol-icon vol-down">🔈</span>
+                        <span aria-hidden="true" class="vol-icon vol-down">VOL</span>
                         <div class="range-container">
                             <div class="progress-fill" id="volFill"></div>
                             <input class="range" id="volume" max="1" min="0" step="0.01" type="range" value="0.65" />
                         </div>
-                        <span aria-hidden="true" class="vol-icon vol-up">🔊</span>
+                        <span aria-hidden="true" class="vol-icon vol-up">MAX</span>
                     </div>
                     <div class="eq-panel" id="eqPanel">
                         <div class="eq-head">
                             <button aria-pressed="false" class="eq-power" id="eqToggle" type="button">EQ</button>
+                            <button aria-label="EQ 닫기" class="eq-close" id="eqClose" type="button" hidden>닫기</button>
                             <div class="eq-presets" aria-label="EQ presets">
                                 <button class="eq-preset active" data-eq-preset="flat" type="button">Flat</button>
                                 <button class="eq-preset" data-eq-preset="pop" type="button">Pop</button>
                                 <button class="eq-preset" data-eq-preset="bass" type="button">Bass</button>
                                 <button class="eq-preset" data-eq-preset="vocal" type="button">Vocal</button>
+                                <button class="eq-preset" data-eq-preset="rock" type="button">Rock</button>
+                                <button class="eq-preset" data-eq-preset="dance" type="button">Dance</button>
+                                <button class="eq-preset" data-eq-preset="acoustic" type="button">Acoustic</button>
+                                <button class="eq-preset" data-eq-preset="night" type="button">Night</button>
                             </div>
                         </div>
                         <div class="eq-bands" aria-label="Equalizer">
@@ -158,7 +163,7 @@
                             <span>가사</span>
                         </div>
                         <div class="lyrics-header-right">
-                            <span id="lrcTrackName">—</span>
+                            <span id="lrcTrackName">-</span>
                             <button aria-expanded="false" aria-pressed="false" class="lyrics-toggle-btn"
                                 id="lyricsExpandBtn" type="button">가사 확대</button>
                         </div>
@@ -188,6 +193,10 @@
                 </label>
                 <input accept="audio/*,.lrc,.srt" id="localFileInput" multiple type="file" style="display: none;" />
             </div>
+            <div class="playlist-tools">
+                <input aria-label="플레이리스트 검색" class="playlist-search" id="playlistSearch" placeholder="곡 제목, 아티스트 검색" type="search" />
+                <button aria-pressed="false" class="fav-filter-btn" id="favoritesFilterBtn" type="button">Favorites</button>
+            </div>
             <div class="track-list" id="playlist"></div>
         </div>
     </div>
@@ -196,12 +205,12 @@
             <div class="links-list" id="trackLinks"></div>
             <div class="info-card">
                 <b class="info-card-title">함께하는 1975 Rabbit Badminton</b><br /><br />
-                코트 위에서는 치열하게,<br /> 코트 밖에서는 다정하게!<br />토끼띠 친구들을 위한,<br /> 전용 음악 공간입니다. <br /><br />
+                코트 안에서는 치열하게,<br /> 코트 밖에서는 다정하게!<br />민턴 친구들을 위한,<br />전용 음악 공간입니다. <br /><br />
 
                 <b class="info-card-title">Tony.Park Music </b>
                 <a class="lk-btn" download="" href="https://youtube.com/@tonyparkmusic?si=k0Y27MibS_-53pOB"
                     rel="noopener" target="_blank">Youtube</a><br /><br />
-                친구들에게 Player와 곡들을 선사합니다. <br>2026년 4월 1일 토끼 친구 성우.<br>
+                친구들에게 Player와 곡들을 선사합니다. <br>2026년 4월 1일 민턴 친구 성우.<br>
             </div>
 			<br>
 			<div class="info-card">
@@ -223,7 +232,7 @@
         </div>
         <div class="mini-ctrls">
             <button aria-label="재생" class="mb mplay" id="miniPlay" type="button"><svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor" style="transform: translateX(1.5px)"><path d="M8 5v14l11-7z"></path></svg></button>
-            <button aria-label="다음곡" class="mb" id="miniNext" type="button"><svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
+            <button aria-label="다음 곡" class="mb" id="miniNext" type="button"><svg fill="currentColor" height="20" viewBox="0 0 24 24" width="20"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg></button>
         </div>
     </div>
     <audio crossorigin="anonymous" id="audio" preload="metadata"></audio>
