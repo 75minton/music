@@ -206,6 +206,14 @@ let autoAdvanceCountdownTimer = null;
 let eqAudioContext = null;
 let eqSourceNode = null;
 let eqFilters = [];
+let reactiveAudioContext = null;
+let reactiveAnalyser = null;
+let reactiveStreamSource = null;
+let reactiveSilentGain = null;
+let reactiveDataArray = null;
+let reactiveAnimationFrame = null;
+let reactiveHues = { a: 220, b: 335, c: 42 };
+let reactiveLevels = { energy: 0, bass: 0, mid: 0, high: 0 };
 let lastPlayerStatePersistedAt = 0;
 
 const backGuardState = {
@@ -402,6 +410,134 @@ function seekBy(seconds) {
   if (!Number.isFinite(audio.duration)) return;
   audio.currentTime = Math.min(audio.duration, Math.max(0, audio.currentTime + seconds));
   persistPlayerState();
+}
+
+function hashString(value = '') {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+function updateMusicBackdrop(song) {
+  const seed = hashString(`${song?.title || ''}|${song?.artist || ''}|${song?.id || ''}`);
+  const hueA = seed % 360;
+  const hueB = (hueA + 92 + (seed % 34)) % 360;
+  const hueC = (hueA + 178 + (seed % 48)) % 360;
+  reactiveHues = { a: hueA, b: hueB, c: hueC };
+
+  document.documentElement.style.setProperty('--music-hue-a', String(hueA));
+  document.documentElement.style.setProperty('--music-hue-b', String(hueB));
+  document.documentElement.style.setProperty('--music-hue-c', String(hueC));
+}
+
+async function ensureReactiveBackdropAnalyzer() {
+  if (reactiveAnalyser) {
+    if (reactiveAudioContext?.state === 'suspended') await reactiveAudioContext.resume();
+    return true;
+  }
+
+  const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+  const captureStream = audio.captureStream || audio.mozCaptureStream;
+  if (!AudioContextCtor || !captureStream) return false;
+
+  try {
+    reactiveAudioContext = reactiveAudioContext || new AudioContextCtor();
+    const stream = captureStream.call(audio);
+    reactiveStreamSource = reactiveAudioContext.createMediaStreamSource(stream);
+    reactiveAnalyser = reactiveAudioContext.createAnalyser();
+    reactiveAnalyser.fftSize = 128;
+    reactiveAnalyser.smoothingTimeConstant = 0.72;
+    reactiveDataArray = new Uint8Array(reactiveAnalyser.frequencyBinCount);
+
+    reactiveSilentGain = reactiveAudioContext.createGain();
+    reactiveSilentGain.gain.value = 0;
+    reactiveStreamSource.connect(reactiveAnalyser);
+    reactiveAnalyser.connect(reactiveSilentGain);
+    reactiveSilentGain.connect(reactiveAudioContext.destination);
+
+    if (reactiveAudioContext.state === 'suspended') await reactiveAudioContext.resume();
+    return true;
+  } catch (err) {
+    console.warn('음악 반응형 배경 초기화 실패', err);
+    reactiveAnalyser = null;
+    return false;
+  }
+}
+
+function setReactiveBackdropVars({ energy = 0, bass = 0, mid = 0, high = 0 } = {}) {
+  const root = document.documentElement;
+  root.style.setProperty('--music-energy', energy.toFixed(3));
+  root.style.setProperty('--music-bass', bass.toFixed(3));
+  root.style.setProperty('--music-mid', mid.toFixed(3));
+  root.style.setProperty('--music-high', high.toFixed(3));
+  root.style.setProperty('--music-alpha-a', (0.18 + bass * 0.34).toFixed(3));
+  root.style.setProperty('--music-alpha-b', (0.13 + mid * 0.28).toFixed(3));
+  root.style.setProperty('--music-alpha-c', (0.10 + high * 0.24).toFixed(3));
+}
+
+function averageFrequencyRange(data, startRatio, endRatio) {
+  if (!data?.length) return 0;
+  const start = Math.max(0, Math.floor(data.length * startRatio));
+  const end = Math.max(start + 1, Math.floor(data.length * endRatio));
+  let total = 0;
+  for (let i = start; i < Math.min(end, data.length); i += 1) total += data[i];
+  return total / ((Math.min(end, data.length) - start) * 255);
+}
+
+function tickReactiveBackdrop() {
+  if (!reactiveAnalyser || audio.paused || audio.ended) {
+    reactiveAnimationFrame = null;
+    return;
+  }
+
+  reactiveAnalyser.getByteFrequencyData(reactiveDataArray);
+  const bass = averageFrequencyRange(reactiveDataArray, 0.02, 0.18);
+  const mid = averageFrequencyRange(reactiveDataArray, 0.18, 0.55);
+  const high = averageFrequencyRange(reactiveDataArray, 0.55, 0.92);
+  const energy = Math.min(1, bass * 0.48 + mid * 0.34 + high * 0.28);
+
+  reactiveLevels = {
+    energy: reactiveLevels.energy * 0.72 + energy * 0.28,
+    bass: reactiveLevels.bass * 0.68 + bass * 0.32,
+    mid: reactiveLevels.mid * 0.74 + mid * 0.26,
+    high: reactiveLevels.high * 0.76 + high * 0.24
+  };
+
+  const pulse = reactiveLevels.energy;
+  const drift = performance.now() / 1000;
+  const root = document.documentElement;
+  root.style.setProperty('--music-hue-a', String(Math.round((reactiveHues.a + reactiveLevels.bass * 22 + drift * 1.4) % 360)));
+  root.style.setProperty('--music-hue-b', String(Math.round((reactiveHues.b + reactiveLevels.mid * 18 + drift * 0.9) % 360)));
+  root.style.setProperty('--music-hue-c', String(Math.round((reactiveHues.c + reactiveLevels.high * 26 + drift * 1.8) % 360)));
+  setReactiveBackdropVars(reactiveLevels);
+  document.body.classList.toggle('is-audio-reactive', pulse > 0.015);
+
+  reactiveAnimationFrame = requestAnimationFrame(tickReactiveBackdrop);
+}
+
+async function startReactiveBackdrop() {
+  const ready = await ensureReactiveBackdropAnalyzer();
+  if (!ready) {
+    document.body.classList.add('is-audio-reactive');
+    setReactiveBackdropVars({ energy: 0.38, bass: 0.26, mid: 0.18, high: 0.14 });
+    return;
+  }
+
+  if (!reactiveAnimationFrame) {
+    reactiveAnimationFrame = requestAnimationFrame(tickReactiveBackdrop);
+  }
+}
+
+function stopReactiveBackdrop() {
+  if (reactiveAnimationFrame) {
+    cancelAnimationFrame(reactiveAnimationFrame);
+    reactiveAnimationFrame = null;
+  }
+  reactiveLevels = { energy: 0, bass: 0, mid: 0, high: 0 };
+  setReactiveBackdropVars(reactiveLevels);
+  document.body.classList.remove('is-audio-reactive');
 }
 
 function hideStatus() {
@@ -828,6 +964,7 @@ function waitForMetadata() {
 
 async function safePlay({ blockedMessage = '브라우저 정책으로 자동 재생이 차단되었습니다. 재생 버튼을 눌러주세요.', silent = false } = {}) {
   try {
+    await ensureReactiveBackdropAnalyzer();
     if (state.eqEnabled) {
       await ensureEqAudioGraph();
     }
@@ -1058,6 +1195,7 @@ function syncSongMeta(song) {
   artistEl.textContent = $('miniArtist').textContent = song.artist;
   $('lrcTrackName').textContent = song.title;
   coverEl.src = $('miniCover').src = song.cover || defaultCover;
+  updateMusicBackdrop(song);
   setupMediaSession(song);
   persistPlayerState();
 }
@@ -1338,6 +1476,8 @@ function setPlaying(on) {
   playBtn.setAttribute('aria-label', on ? '일시정지' : '재생');
   $('miniPlay').setAttribute('aria-label', on ? '일시정지' : '재생');
 
+  document.body.classList.toggle('is-playing', on);
+  if (!on) stopReactiveBackdrop();
   if (on) artFrame.classList.add('playing');
   else artFrame.classList.remove('playing');
 
@@ -1570,6 +1710,7 @@ audio.addEventListener('pause', () => {
 audio.addEventListener('play', () => {
   hideStatus();
   setPlaying(true);
+  startReactiveBackdrop();
 });
 
 /* ?? PWA ?ㅼ튂 濡쒖쭅 ?? */
