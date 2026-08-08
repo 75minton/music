@@ -1,5 +1,5 @@
-const CACHE_VERSION = '75minton-pwa-v1.1-20260808-final';
-const ASSET_VERSION = '20260808-final';
+const CACHE_VERSION = '75minton-pwa-v1.2-20260809-share';
+const ASSET_VERSION = '20260809-share';
 const APP_SHELL = [
   './',
   './index.html',
