@@ -1,10 +1,10 @@
 ﻿
-// 75 Minton Music build: 2026-08-09-share / assets: 20260809-share
+// 75 Minton Music build: 2026-08-09-v1.5-home-menu-fix / assets: 20260809-v15-home-menu-fix
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-const APP_BUILD_VERSION = '2026-08-09-share';
-const ASSET_VERSION = '20260809-share';
+const APP_BUILD_VERSION = '2026-08-09-v1.5-home-menu-fix';
+const ASSET_VERSION = '20260809-v15-home-menu-fix';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const TRACK_GAP_MS = 1000;
@@ -241,12 +241,17 @@ const lyricsInner = $('lyricsInner');
 const artFrame = $('artFrame');
 const homeGoPlayBtn = $('homeGoPlay');
 const homeGoPlaylistBtn = $('homeGoPlaylist');
+const homeMonthlyCoverEl = $('homeMonthlyCover');
 const homeMonthlySongEl = $('homeMonthlySong');
 const homeMonthlyArtistEl = $('homeMonthlyArtist');
+const homeMonthlyDescEl = $('homeMonthlyDesc');
 const homeMonthlyPlayBtn = $('homeMonthlyPlay');
+const homeRecommendedCoverEl = $('homeRecommendedCover');
 const homeRecommendedSongEl = $('homeRecommendedSong');
 const homeRecommendedArtistEl = $('homeRecommendedArtist');
+const homeRecommendedDescEl = $('homeRecommendedDesc');
 const homeRecommendedPlayBtn = $('homeRecommendedPlay');
+const homeNoticeListEl = $('homeNoticeList');
 const lyricsCol = document.querySelector('.lyrics-col');
 const lyricsViewport = document.querySelector('.lyrics-viewport');
 const lyricsExpandBtn = $('lyricsExpandBtn');
@@ -386,6 +391,41 @@ function toggleFavorite(song) {
 
   persistFavorites();
   renderPlaylist();
+}
+
+function closeTrackActionMenus(exceptMenu = null) {
+  document.querySelectorAll('.track-action-menu').forEach((menu) => {
+    if (menu === exceptMenu) return;
+    menu.hidden = true;
+    menu.style.left = '';
+    menu.style.top = '';
+    const toggle = menu._trackToggle || menu.closest('.track-btn')?.querySelector('.track-more');
+    toggle?.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function positionTrackActionMenu(menu, toggle) {
+  if (!menu || !toggle) return;
+
+  const toggleRect = toggle.getBoundingClientRect();
+  const menuRect = menu.getBoundingClientRect();
+  const viewportPadding = 10;
+  const bottomSafeArea = 92;
+  const width = menuRect.width || 150;
+  const height = menuRect.height || 96;
+  const left = Math.min(
+    window.innerWidth - width - viewportPadding,
+    Math.max(viewportPadding, toggleRect.right - width)
+  );
+  const belowTop = toggleRect.bottom + 8;
+  const aboveTop = toggleRect.top - height - 8;
+  const maxBottom = window.innerHeight - bottomSafeArea;
+  const top = belowTop + height <= maxBottom
+    ? belowTop
+    : Math.max(viewportPadding, aboveTop);
+
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
 }
 
 function getTrackShareUrl(index = state.cur) {
@@ -1327,29 +1367,30 @@ lyricsExpandBtn?.addEventListener('click', toggleLyricsExpanded);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
     closeLyricsExpanded();
-    document.querySelectorAll('.track-action-menu').forEach((menu) => {
-      menu.hidden = true;
-      menu.closest('.track-btn')?.querySelector('.track-more')?.setAttribute('aria-expanded', 'false');
-    });
+    closeTrackActionMenus();
   }
 });
 
 document.addEventListener('click', (event) => {
   if (event.target.closest('.track-btn')) return;
-  document.querySelectorAll('.track-action-menu').forEach((menu) => {
-    menu.hidden = true;
-    menu.closest('.track-btn')?.querySelector('.track-more')?.setAttribute('aria-expanded', 'false');
-  });
+  closeTrackActionMenus();
 });
 
 window.addEventListener('resize', () => {
+  closeTrackActionMenus();
   if (!isMobileViewport()) closeLyricsExpanded();
+});
+
+document.querySelectorAll('.tab-panel').forEach((panel) => {
+  panel.addEventListener('scroll', () => closeTrackActionMenus(), { passive: true });
 });
 
 
 /* ?? ?뚮뜑留??? */
 function renderPlaylist() {
   const pl = $('playlist');
+  closeTrackActionMenus();
+  document.querySelectorAll('.track-action-menu').forEach((menu) => menu.remove());
   pl.innerHTML = '';
 
   const query = state.playlistQuery.trim().toLowerCase();
@@ -1362,8 +1403,10 @@ function renderPlaylist() {
     if (query && !haystack.includes(query)) return;
     if (state.favoritesOnly && !isFavorite) return;
 
-    const btn = document.createElement('button');
+    const btn = document.createElement('div');
     btn.className = 'track-btn' + (index === state.cur ? ' active' : '');
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
     const isLocal = song.id && song.id.startsWith('local-');
 
     btn.innerHTML = `<img class="t-thumb" src="${escAttr(song.cover || defaultCover)}" alt="">
@@ -1372,54 +1415,78 @@ function renderPlaylist() {
         <div class="t-by">${esc(song.artist)}</div>
       </div>
       ${isLocal ? `<span class="t-del" data-id="${song.id}" aria-label="삭제">×</span>` : ''}`;
-    const favoriteToggle = document.createElement('span');
+    const favoriteToggle = document.createElement('button');
+    favoriteToggle.type = 'button';
     favoriteToggle.className = 'fav-toggle' + (isFavorite ? ' active' : '');
     favoriteToggle.setAttribute('aria-label', isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가');
     favoriteToggle.textContent = isFavorite ? '★' : '☆';
+    favoriteToggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeTrackActionMenus();
+      toggleFavorite(song);
+    });
     btn.appendChild(favoriteToggle);
 
-    const moreToggle = document.createElement('span');
+    const moreToggle = document.createElement('button');
+    moreToggle.type = 'button';
     moreToggle.className = 'track-more';
     moreToggle.setAttribute('aria-label', '상세 메뉴');
     moreToggle.setAttribute('aria-expanded', 'false');
     moreToggle.textContent = '⋮';
+    moreToggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const willOpen = actionMenu.hidden;
+      closeTrackActionMenus(actionMenu);
+      actionMenu.hidden = !willOpen;
+      if (willOpen) positionTrackActionMenu(actionMenu, moreToggle);
+      moreToggle.setAttribute('aria-expanded', String(willOpen));
+    });
     btn.appendChild(moreToggle);
 
-    const actionMenu = document.createElement('span');
+    const actionMenu = document.createElement('div');
     actionMenu.className = 'track-action-menu';
     actionMenu.setAttribute('role', 'menu');
+    actionMenu.id = `trackActionMenu-${index}`;
     actionMenu.hidden = true;
+    actionMenu._trackToggle = moreToggle;
+    moreToggle.setAttribute('aria-controls', actionMenu.id);
     actionMenu.innerHTML = `
-      <span class="track-action-item" data-action="download" role="menuitem">MP3 다운로드</span>
-      <span class="track-action-item" data-action="share" role="menuitem">공유하기</span>`;
-    btn.appendChild(actionMenu);
+      <button class="track-action-item" data-action="download" role="menuitem" type="button">MP3 다운로드</button>
+      <button class="track-action-item" data-action="share" role="menuitem" type="button">공유하기</button>`;
+    actionMenu.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const action = event.target.closest('.track-action-item')?.dataset.action;
+      if (!action) return;
+
+      actionMenu.hidden = true;
+      actionMenu.style.left = '';
+      actionMenu.style.top = '';
+      moreToggle.setAttribute('aria-expanded', 'false');
+      if (action === 'download') downloadTrack(song);
+      if (action === 'share') shareTrack(song, index);
+    });
+    document.body.appendChild(actionMenu);
 
     btn.addEventListener('click', (e) => {
       if (e.target.closest('.t-del')) {
         e.stopPropagation();
         deleteLocalTrack(song.id);
-      } else if (e.target.closest('.fav-toggle')) {
+      } else if (e.target.closest('.fav-toggle, .track-more, .track-action-menu')) {
         e.stopPropagation();
-        toggleFavorite(song);
-      } else if (e.target.closest('.track-more')) {
-        e.stopPropagation();
-        const willOpen = actionMenu.hidden;
-        document.querySelectorAll('.track-action-menu').forEach((menu) => {
-          menu.hidden = true;
-          menu.closest('.track-btn')?.querySelector('.track-more')?.setAttribute('aria-expanded', 'false');
-        });
-        actionMenu.hidden = !willOpen;
-        moreToggle.setAttribute('aria-expanded', String(willOpen));
-      } else if (e.target.closest('.track-action-item')) {
-        e.stopPropagation();
-        const action = e.target.closest('.track-action-item')?.dataset.action;
-        actionMenu.hidden = true;
-        moreToggle.setAttribute('aria-expanded', 'false');
-        if (action === 'download') downloadTrack(song);
-        if (action === 'share') shareTrack(song, index);
       } else {
+        closeTrackActionMenus();
         loadTrack(index, true);
       }
+    });
+
+    btn.addEventListener('keydown', (e) => {
+      if (e.target !== btn) return;
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      loadTrack(index, true);
     });
 
     pl.appendChild(btn);
@@ -1444,23 +1511,101 @@ function getHomeSongIndexes() {
   return { monthly, recommended };
 }
 
+function getHomeContentConfig() {
+  const config = window.MINTON_HOME_CONTENT && typeof window.MINTON_HOME_CONTENT === 'object'
+    ? window.MINTON_HOME_CONTENT
+    : {};
+
+  return {
+    monthly: config.monthly || { title: '' },
+    recommended: config.recommended || { title: '' },
+    notices: Array.isArray(config.notices) ? config.notices : []
+  };
+}
+
+function normalizeHomeTitle(value = '') {
+  return String(value)
+    .normalize('NFKC')
+    .replace(/\s+/g, '')
+    .toLowerCase();
+}
+
+function findHomeSongByTitle(title) {
+  const target = normalizeHomeTitle(title);
+  if (!target) return null;
+
+  const exactIndex = songs.findIndex((song) => normalizeHomeTitle(song.title) === target);
+  if (exactIndex >= 0) return { song: songs[exactIndex], index: exactIndex };
+
+  const partialIndex = songs.findIndex((song) => {
+    const normalizedTitle = normalizeHomeTitle(song.title);
+    return normalizedTitle.includes(target) || target.includes(normalizedTitle);
+  });
+  if (partialIndex >= 0) return { song: songs[partialIndex], index: partialIndex };
+
+  return null;
+}
+
+function setHomeTrackCard({ titleEl, artistEl, descEl, coverEl, playBtn, config, fallback }) {
+  if (!titleEl || !artistEl || !coverEl || !playBtn) return;
+  const matched = findHomeSongByTitle(config?.title) || fallback;
+  const song = matched?.song;
+
+  if (!song) {
+    titleEl.textContent = config?.title || '곡 목록을 불러오는 중';
+    artistEl.textContent = '75 Minton';
+    if (descEl) descEl.textContent = config?.description || '';
+    coverEl.src = defaultCover;
+    coverEl.alt = config?.title || '75 Minton cover';
+    playBtn.disabled = true;
+    delete playBtn.dataset.trackIndex;
+    return;
+  }
+
+  titleEl.textContent = song.title;
+  artistEl.textContent = song.artist;
+  if (descEl) descEl.textContent = config?.description || '';
+  coverEl.src = song.cover || defaultCover;
+  coverEl.alt = `${song.title} cover`;
+  playBtn.disabled = false;
+  playBtn.dataset.trackIndex = String(matched.index);
+}
+
+function renderHomeNotices(notices = []) {
+  if (!homeNoticeListEl || !notices.length) return;
+  homeNoticeListEl.innerHTML = notices
+    .map((notice) => `<span>${esc(notice)}</span>`)
+    .join('');
+}
+
 function renderHome() {
   if (!homeMonthlySongEl || !homeRecommendedSongEl) return;
+  const homeContent = getHomeContentConfig();
   const { monthly, recommended } = getHomeSongIndexes();
   const monthlySong = songs[monthly];
   const recommendedSong = songs[recommended];
 
-  if (monthlySong) {
-    homeMonthlySongEl.textContent = monthlySong.title;
-    homeMonthlyArtistEl.textContent = monthlySong.artist;
-    homeMonthlyPlayBtn.dataset.trackIndex = String(monthly);
-  }
+  setHomeTrackCard({
+    titleEl: homeMonthlySongEl,
+    artistEl: homeMonthlyArtistEl,
+    descEl: homeMonthlyDescEl,
+    coverEl: homeMonthlyCoverEl,
+    playBtn: homeMonthlyPlayBtn,
+    config: homeContent.monthly,
+    fallback: monthlySong ? { song: monthlySong, index: monthly } : null
+  });
 
-  if (recommendedSong) {
-    homeRecommendedSongEl.textContent = recommendedSong.title;
-    homeRecommendedArtistEl.textContent = recommendedSong.artist;
-    homeRecommendedPlayBtn.dataset.trackIndex = String(recommended);
-  }
+  setHomeTrackCard({
+    titleEl: homeRecommendedSongEl,
+    artistEl: homeRecommendedArtistEl,
+    descEl: homeRecommendedDescEl,
+    coverEl: homeRecommendedCoverEl,
+    playBtn: homeRecommendedPlayBtn,
+    config: homeContent.recommended,
+    fallback: recommendedSong ? { song: recommendedSong, index: recommended } : null
+  });
+
+  renderHomeNotices(homeContent.notices);
 }
 
 async function playHomeTrack(button) {
@@ -2036,6 +2181,7 @@ function getWarmCacheAssets() {
     './',
     './index.html',
     `./styles.css?v=${ASSET_VERSION}`,
+    `./home-content.js?v=${ASSET_VERSION}`,
     `./app.js?v=${ASSET_VERSION}`,
     './manifest.json',
     './songs.json',
@@ -2150,6 +2296,7 @@ async function applySongsList(nextSongs, { initial = false, keepCurrent = true }
   );
 
   renderPlaylist();
+  renderHome();
   renderLinks();
   applyVolume(prevVolume);
 
@@ -2243,6 +2390,7 @@ async function initializeApp() {
   updateLyricsExpandButton();
   const initialAutoplay = shouldAutoplayFromUrl();
   setActiveTab(initialAutoplay ? 'player' : 'home');
+  renderHome();
   setToggleButtonState($('shuffleBtn'), state.shuffle);
   updateRepeatButtonState();
   renderEqControls();

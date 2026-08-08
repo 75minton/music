@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-08-09-share / assets: 20260809-share */
+    /* 75 Minton Music build: 2026-08-09-v1.5-home-menu-fix / assets: 20260809-v15-home-menu-fix */
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -310,6 +310,17 @@
       text-transform: uppercase;
       margin-bottom: 18px;
     }
+    .home-track-cover {
+      display: block;
+      width: 76px;
+      height: 76px;
+      margin-bottom: 16px;
+      border-radius: 18px;
+      object-fit: cover;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.28), 0 0 24px rgba(122,167,255,0.12);
+    }
     .home-song {
       font-size: 1.28rem;
       font-weight: 900;
@@ -319,7 +330,14 @@
     .home-artist {
       color: var(--text-sub);
       font-size: 0.9rem;
-      margin-bottom: 22px;
+      margin-bottom: 10px;
+    }
+    .home-desc {
+      min-height: 2.7em;
+      color: var(--text-sub);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      margin-bottom: 18px;
     }
     .notice-list {
       display: grid;
@@ -676,6 +694,9 @@
     .t-del { font-size: 0.95rem; padding: 8px; margin-right: -8px; border-radius: 50%; opacity: 0.5; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
     .t-del:hover { opacity: 1; background: rgba(255, 107, 138, 0.16); }
     .fav-toggle {
+      appearance: none;
+      position: relative;
+      z-index: 2;
       width: 34px;
       height: 34px;
       display: inline-flex;
@@ -686,11 +707,15 @@
       border: 1px solid rgba(255,255,255,0.07);
       background: rgba(255,255,255,0.04);
       font-size: 1rem;
+      cursor: pointer;
       transition: 0.2s;
     }
     .fav-toggle:hover,
     .fav-toggle.active { color: var(--rose); border-color: rgba(255,107,138,0.35); background: rgba(255,107,138,0.12); }
     .track-more {
+      appearance: none;
+      position: relative;
+      z-index: 2;
       width: 34px;
       height: 34px;
       display: inline-flex;
@@ -703,6 +728,7 @@
       font-size: 1.2rem;
       font-weight: 900;
       line-height: 1;
+      cursor: pointer;
       transition: 0.2s;
     }
     .track-more:hover,
@@ -712,10 +738,10 @@
       background: rgba(122,167,255,0.12);
     }
     .track-action-menu {
-      position: absolute;
-      right: 10px;
-      top: calc(100% - 4px);
-      z-index: 60;
+      position: fixed;
+      right: auto;
+      top: auto;
+      z-index: 1200;
       min-width: 150px;
       padding: 8px;
       border-radius: 14px;
@@ -724,9 +750,14 @@
       box-shadow: 0 18px 44px rgba(0,0,0,0.45);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      pointer-events: auto;
     }
     .track-action-menu[hidden] { display: none !important; }
     .track-action-item {
+      appearance: none;
+      width: 100%;
+      border: 0;
+      background: transparent;
       display: block;
       padding: 10px 12px;
       border-radius: 10px;
@@ -734,6 +765,8 @@
       font-size: 0.82rem;
       font-weight: 800;
       white-space: nowrap;
+      text-align: left;
+      cursor: pointer;
     }
     .track-action-item:hover {
       background: rgba(122,167,255,0.14);
@@ -817,6 +850,12 @@
       .home-card {
         min-height: 150px;
         padding: 18px;
+      }
+      .home-track-cover {
+        width: 68px;
+        height: 68px;
+        margin-bottom: 14px;
+        border-radius: 16px;
       }
       .player-layout { display: flex; flex-direction: column; gap: 16px; }
 
@@ -1072,7 +1111,6 @@
         font-size: 1.05rem;
       }
       .track-action-menu {
-        right: 8px;
         min-width: 142px;
       }
       #lrcTrackName { display: none; }
@@ -1312,10 +1350,17 @@
         margin-bottom: 10px;
         font-size: 0.66rem;
       }
+      .home-track-cover {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 10px;
+        border-radius: 14px;
+      }
       .home-song {
         font-size: 1rem;
       }
       .home-artist,
+      .home-desc,
       .notice-list {
         font-size: 0.76rem;
       }
