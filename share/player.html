@@ -181,8 +181,21 @@
       }
     ];
 
-    function resolveAsset(path) {
-      return new URL(path || '../icons/icon-512.png', window.location.href).toString();
+    function resolveSongAsset(path, fallback = '../icons/icon-512.png') {
+      const raw = String(path || fallback).trim();
+      if (!raw) return new URL(fallback, window.location.href).toString();
+      if (/^[a-z][a-z\d+.-]*:/i.test(raw) || raw.startsWith('//')) return raw;
+
+      // songs.json은 앱 루트 기준("./sound/...")이고, 이 페이지는 share/ 하위에 있습니다.
+      if (raw.startsWith('./')) {
+        return new URL(`../${raw.slice(2)}`, window.location.href).toString();
+      }
+
+      if (raw.startsWith('sound/') || raw.startsWith('icons/')) {
+        return new URL(`../${raw}`, window.location.href).toString();
+      }
+
+      return new URL(raw, window.location.href).toString();
     }
 
     function normalizeSong(song) {
@@ -190,8 +203,8 @@
       return {
         title: song.title || '75 Minton Music',
         artist: song.artist || '75 Minton',
-        cover: resolveAsset(song.cover || '../icons/icon-512.png'),
-        url: resolveAsset(song.url || ''),
+        cover: resolveSongAsset(song.cover, '../icons/icon-512.png'),
+        url: resolveSongAsset(song.url, ''),
         downloadName: `${song.title || '75minton-track'}.mp3`
       };
     }
