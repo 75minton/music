@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-08-09-v1.5-share-player / assets: 20260809-v15-share-player */
+    /* 75 Minton Music build: 2026-08-09-v1.5-landscape-home / assets: 20260809-v15-landscape-home */
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -1332,11 +1332,17 @@
         font-size: 0.62rem;
       }
       .tabs-wrapper {
-        padding: 0 10px 6px;
+        padding: 0 14px 8px;
+      }
+      .tabs {
+        padding: 4px;
+        gap: 2px;
+        border-radius: 10px;
       }
       .tab-btn {
-        height: 30px;
+        height: 32px;
         font-size: 0.72rem;
+        border-radius: 7px;
       }
       .wrap {
         padding: 8px 10px 10px;
@@ -1373,21 +1379,45 @@
         border-radius: 16px;
       }
       .home-card:not(.notice-card) {
-        grid-template-columns: 112px minmax(0, 1fr);
-        column-gap: 12px;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "label"
+          "cover"
+          "song"
+          "artist"
+          "desc"
+          "action";
+        justify-items: start;
+        row-gap: 0;
       }
       .home-card-label {
         margin-bottom: 10px;
         font-size: 0.66rem;
       }
       .home-track-cover {
-        width: 112px;
-        height: 112px;
-        margin-bottom: 0;
+        width: min(100%, 132px);
+        height: auto;
+        aspect-ratio: 1;
+        margin-bottom: 12px;
         border-radius: 14px;
       }
       .home-song {
         font-size: 1rem;
+        margin-bottom: 6px;
+      }
+      .home-desc {
+        min-height: 0;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .home-card:not(.notice-card) .home-card-btn {
+        min-height: 34px;
+        padding: 0 12px;
+        font-size: 0.72rem;
       }
       .home-artist,
       .home-desc,
@@ -1698,11 +1728,25 @@
         display: none;
       }
       .tabs-wrapper {
-        padding-bottom: 4px;
+        padding: 0 12px 5px;
+      }
+      .tabs {
+        padding: 3px;
+      }
+      .tab-btn {
+        height: 29px;
+        font-size: 0.68rem;
       }
       .wrap {
         padding-top: 6px;
         padding-bottom: 8px;
+      }
+      .home-track-cover {
+        width: min(100%, 108px);
+        margin-bottom: 9px;
+      }
+      .home-desc {
+        -webkit-line-clamp: 2;
       }
       .player-layout {
         gap: 8px;
