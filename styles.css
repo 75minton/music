@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-08-09-v1.5-static-share / assets: 20260809-v15-static-share */
+﻿    /* 75 Minton Music build: 2026-08-09-v1.5-desktop-home-card / assets: 20260809-v15-desktop-home-card */
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -36,9 +36,9 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* ════════════════════════════
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        APP LAYOUT (NO SCROLL)
-    ════════════════════════════ */
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     html, body {
       height: 100dvh; 
       overflow: hidden; 
@@ -143,9 +143,9 @@
       }
     }
 
-    /* ════════════════════════════
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        TOP NAV & TABS
-    ════════════════════════════ */
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     .topbar {
       flex-shrink: 0; height: var(--topbar-h);
       display: flex; align-items: center; justify-content: space-between;
@@ -185,9 +185,9 @@
     }
     .tab-btn.active { background: rgba(122,167,255,0.14); color: var(--accent); box-shadow: 0 6px 18px rgba(122,167,255,0.14); }
 
-    /* ════════════════════════════
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        PANELS CONTAINER
-    ════════════════════════════ */
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     .tab-panel { flex: 1; overflow-y: auto; display: none; padding-bottom: 90px; }
     .tab-panel.active { display: block; }
     #tab-player.active { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
@@ -299,16 +299,17 @@
     }
     .home-card:not(.notice-card) {
       display: grid;
-      grid-template-columns: 152px minmax(0, 1fr);
-      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
       grid-template-areas:
-        "label label"
-        "cover song"
-        "cover artist"
-        "cover desc"
-        "cover action";
+        "label"
+        "cover"
+        "song"
+        "artist"
+        "desc"
+        "action";
       align-items: start;
-      column-gap: 18px;
+      justify-items: start;
     }
     .feature-card {
       background:
@@ -329,7 +330,7 @@
       display: block;
       width: 152px;
       height: 152px;
-      margin-bottom: 0;
+      margin-bottom: 16px;
       border-radius: 18px;
       object-fit: cover;
       background: rgba(255,255,255,0.08);
@@ -374,12 +375,12 @@
       border-left: 2px solid rgba(122,167,255,0.36);
     }
 
-    /* ════════════════════════════
-       ① PLAYER TAB
-    ════════════════════════════ */
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
+       ??PLAYER TAB
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     .player-layout { flex: 1; display: grid; grid-template-columns: 240px 1fr; gap: 34px; min-height: 0; }
 
-    /* — Album Art (Animated LP/CD Style) — */
+    /* ??Album Art (Animated LP/CD Style) ??*/
     .art-col { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
     
     @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -444,7 +445,7 @@
       50% { height: 32px; }
     }
 
-    /* — Meta & Progress — */
+    /* ??Meta & Progress ??*/
     .song-meta { width: 100%; text-align: center; margin-bottom: 12px; }
     .song-t { font-size: 1.35rem; font-weight: 800; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.5px; }
     .song-a { font-size: 1rem; color: var(--accent); font-weight: 500; }
@@ -501,7 +502,7 @@
     
     .time-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-top: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
-    /* — Transport Controls — */
+    /* ??Transport Controls ??*/
     .transport { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 12px; }
     .ib { appearance: none; border: 0; background: transparent; color: var(--text-sub); width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; justify-content: center; padding: 0;}
     .ib:hover { color: var(--accent); }
@@ -637,7 +638,7 @@
       align-self: end;
     }
 
-    /* — Lyrics Box — */
+    /* ??Lyrics Box ??*/
     .lyrics-col { background: var(--bg-elevated); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; min-height: 0; border: 1px solid rgba(255,255,255,0.07); box-shadow: var(--surface-shadow); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
     .lyrics-header { font-size: 0.85rem; font-weight: 800; margin-bottom: 16px; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 12px; color: var(--accent); letter-spacing: 1px;}
     
@@ -669,9 +670,9 @@
       cursor: default;
     }
 
-    /* ════════════════════════════
-       ② LIST / ③ INFO 
-    ════════════════════════════ */
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
+       ??LIST / ??INFO 
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     .pl-hd { margin-bottom: 20px; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
     .playlist-tools { display: flex; gap: 10px; margin-bottom: 14px; }
     .playlist-search {
@@ -813,9 +814,9 @@
     .links-list .lk-card .lk-btn { padding: 5px 11px; font-size: 0.72rem; line-height: 1.15; min-height: 28px; display: inline-flex; align-items: center; justify-content: center; }
     .lk-btn:hover { background: var(--accent); color: #07090d; }
 
-    /* ════════════════════════════
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        MINI PLAYER
-    ════════════════════════════ */
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     .mini-bar {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; height: var(--bar-h);
       background: rgba(7, 9, 13, 0.86); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
@@ -841,9 +842,9 @@
       .lyrics-toggle-btn { display: none; }
     }
 
-    /* ════════════════════════════
-       🔥 MOBILE OPTIMIZATION 🔥
-    ════════════════════════════ */
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
+       ?뵦 MOBILE OPTIMIZATION ?뵦
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     @media (max-width: 768px) {
       .topbar { padding: 0 12px; gap: 8px; }
       .brand { font-size: 1.05rem; gap: 6px; }
@@ -875,7 +876,15 @@
       }
       .home-card:not(.notice-card) {
         grid-template-columns: 136px minmax(0, 1fr);
+        grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "label label"
+          "cover song"
+          "cover artist"
+          "cover desc"
+          "cover action";
         column-gap: 14px;
+        justify-items: start;
       }
       .home-track-cover {
         width: 136px;
@@ -1293,9 +1302,9 @@
     }
 
 
-    /* ════════════════════════════
+    /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        MOBILE LANDSCAPE TUNING
-    ════════════════════════════ */
+    ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
     @media (orientation: landscape) and (max-height: 620px) {
       .topbar {
         height: 52px;
@@ -1815,3 +1824,5 @@
         font-size: 0.98rem;
       }
     }
+
+

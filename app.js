@@ -1,10 +1,10 @@
 ﻿
-// 75 Minton Music build: 2026-08-09-v1.5-static-share / assets: 20260809-v15-static-share
+// 75 Minton Music build: 2026-08-09-v1.5-desktop-home-card / assets: 20260809-v15-desktop-home-card
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-const APP_BUILD_VERSION = '2026-08-09-v1.5-static-share';
-const ASSET_VERSION = '20260809-v15-static-share';
+const APP_BUILD_VERSION = '2026-08-09-v1.5-desktop-home-card';
+const ASSET_VERSION = '20260809-v15-desktop-home-card';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const TRACK_GAP_MS = 1000;
@@ -433,8 +433,21 @@ function getTrackShareUrl(index = state.cur) {
   return shareUrl.toString();
 }
 
+function trackAnalyticsEvent(eventName, params = {}) {
+  try {
+    window.trackMintonEvent?.(eventName, params);
+  } catch (err) {
+    console.warn('Analytics event failed', eventName, err);
+  }
+}
+
 function downloadTrack(song) {
   if (!song?.url) return;
+  trackAnalyticsEvent('track_download', {
+    track_title: song.title || '',
+    track_artist: song.artist || '',
+    track_index: songs.findIndex((item) => item === song) + 1
+  });
   const link = document.createElement('a');
   link.href = resolveAssetUrl(song.url);
   link.download = `${song.title || '75minton-track'}.mp3`;
@@ -448,6 +461,11 @@ async function shareTrack(song, index) {
   const url = getTrackShareUrl(index);
   const title = `${song.title} - ${song.artist}`;
   const text = `75민턴 추천곡: ${title}`;
+  trackAnalyticsEvent('track_share', {
+    track_title: song.title || '',
+    track_artist: song.artist || '',
+    track_index: index + 1
+  });
 
   try {
     if (navigator.share) {
@@ -1060,6 +1078,12 @@ async function safePlay({ blockedMessage = '브라우저 정책으로 자동 재
       await ensureEqAudioGraph();
     }
     await audio.play();
+    const song = songs[state.cur];
+    trackAnalyticsEvent('track_play', {
+      track_title: song?.title || '',
+      track_artist: song?.artist || '',
+      track_index: state.cur + 1
+    });
     return true;
   } catch (err) {
     console.warn('오디오 재생 실패', err);
@@ -1300,6 +1324,7 @@ function resetProgressUi() {
 
 /* ?? UI ???대룞 濡쒖쭅 ?? */
 function setActiveTab(tabName, { focus = false } = {}) {
+  const prevTabName = document.querySelector('.tab-btn.active')?.dataset.tab || '';
   tabButtons.forEach((button) => {
     const isActive = button.dataset.tab === tabName;
     const panel = document.getElementById('tab-' + button.dataset.tab);
@@ -1318,6 +1343,9 @@ function setActiveTab(tabName, { focus = false } = {}) {
 
   document.body.classList.toggle('on-player-tab', tabName === 'player');
   if (tabName !== 'player') closeLyricsExpanded();
+  if (prevTabName !== tabName) {
+    trackAnalyticsEvent('tab_view', { tab_name: tabName });
+  }
 }
 
 tabButtons.forEach((button, index) => {
@@ -2181,6 +2209,8 @@ function getWarmCacheAssets() {
     './index.html',
     `./styles.css?v=${ASSET_VERSION}`,
     `./home-content.js?v=${ASSET_VERSION}`,
+    `./analytics-config.js?v=${ASSET_VERSION}`,
+    `./analytics.js?v=${ASSET_VERSION}`,
     `./app.js?v=${ASSET_VERSION}`,
     './manifest.json',
     './songs.json',

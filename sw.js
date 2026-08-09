@@ -1,10 +1,12 @@
-const CACHE_VERSION = '75minton-pwa-v1.5-20260809-v15-static-share';
-const ASSET_VERSION = '20260809-v15-static-share';
+﻿const CACHE_VERSION = '75minton-pwa-v1.5-20260809-v15-desktop-home-card';
+const ASSET_VERSION = '20260809-v15-desktop-home-card';
 const APP_SHELL = [
   './',
   './index.html',
   `./styles.css?v=${ASSET_VERSION}`,
   `./home-content.js?v=${ASSET_VERSION}`,
+  `./analytics-config.js?v=${ASSET_VERSION}`,
+  `./analytics.js?v=${ASSET_VERSION}`,
   `./app.js?v=${ASSET_VERSION}`,
   './share/player.html',
   './manifest.json',
@@ -63,13 +65,13 @@ self.addEventListener('fetch', event => {
 
   const requestUrl = new URL(request.url);
 
-  // 오디오 seek(Range 요청)는 서비스워커가 건드리지 않도록 그대로 네트워크로 보냄
+  // ?ㅻ뵒??seek(Range ?붿껌)???쒕퉬?ㅼ썙而ㅺ? 嫄대뱶由ъ? ?딅룄濡?洹몃?濡??ㅽ듃?뚰겕濡?蹂대깂
   if (isRangeRequest(request)) {
     event.respondWith(fetch(request));
     return;
   }
 
-  // HTML 문서 이동만 index.html fallback 허용
+  // HTML 臾몄꽌 ?대룞留?index.html fallback ?덉슜
   if (isNavigationRequest(request) && requestUrl.origin === self.location.origin) {
     event.respondWith(
       fetch(request).catch(() => caches.match('./index.html'))
@@ -79,7 +81,7 @@ self.addEventListener('fetch', event => {
 
   if (!isRuntimeCacheable(request.url)) return;
 
-  // 미디어/가사/JSON은 절대 index.html로 대체하지 않음
+  // 誘몃뵒??媛??JSON? ?덈? index.html濡??泥댄븯吏 ?딆쓬
   if (isMediaOrDataRequest(request)) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_VERSION);
@@ -126,3 +128,5 @@ self.addEventListener('fetch', event => {
     }
   })());
 });
+
+
