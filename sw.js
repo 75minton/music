@@ -1,5 +1,5 @@
-﻿const CACHE_VERSION = '75minton-pwa-v1.5-20260809-v15-desktop-home-card';
-const ASSET_VERSION = '20260809-v15-desktop-home-card';
+﻿const CACHE_VERSION = '75minton-pwa-v2.0-20260809-v20-pwa-verify';
+const ASSET_VERSION = '20260809-v20-pwa-verify';
 const APP_SHELL = [
   './',
   './index.html',

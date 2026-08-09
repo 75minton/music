@@ -1,4 +1,4 @@
-﻿    /* 75 Minton Music build: 2026-08-09-v1.5-desktop-home-card / assets: 20260809-v15-desktop-home-card */
+﻿    /* 75 Minton Music build: 2026-08-09-v2.0-pwa-verify / assets: 20260809-v20-pwa-verify */
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -175,10 +175,10 @@
     #installBtn[hidden] { display: none !important; }
 
     .tabs-wrapper {
-      flex-shrink: 0; padding: 0 20px 12px;
-      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      padding: 10px 20px;
     }
-    .tabs { display: flex; background: rgba(255,255,255,0.055); border-radius: 8px; padding: 4px; border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
+    .tabs { display: flex; background: rgba(255,255,255,0.055); border-radius: 10px; padding: 4px; border: 1px solid rgba(255,255,255,0.07); box-shadow: 0 10px 30px rgba(0,0,0,0.18); }
     .tab-btn {
       flex: 1; height: 36px; background: transparent; border: none; border-radius: 6px;
       color: var(--text-sub); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s;
@@ -195,7 +195,7 @@
 
     .home-wrap {
       gap: 18px;
-      padding-top: 24px;
+      padding-top: 14px;
       padding-bottom: 24px;
     }
     .home-hero {
@@ -1341,7 +1341,7 @@
         font-size: 0.62rem;
       }
       .tabs-wrapper {
-        padding: 0 14px 8px;
+        padding: 7px 14px;
       }
       .tabs {
         padding: 4px;
@@ -1379,8 +1379,11 @@
         margin-top: 14px;
       }
       .home-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
+      }
+      .notice-card {
+        grid-column: 1 / -1;
       }
       .home-card {
         min-height: 136px;
@@ -1737,7 +1740,7 @@
         display: none;
       }
       .tabs-wrapper {
-        padding: 0 12px 5px;
+        padding: 5px 12px;
       }
       .tabs {
         padding: 3px;

@@ -1,6 +1,7 @@
 {
   "name": "75민턴 토끼 뮤직",
   "short_name": "75민턴송",
+  "id": "./",
   "description": "75민턴 토끼 뮤직앨범 플레이어",
   "lang": "ko",
   "start_url": "./",
@@ -9,6 +10,7 @@
   "orientation": "any",
   "background_color": "#0a0b10",
   "theme_color": "#0a0b10",
+  "categories": ["music", "entertainment"],
   "icons": [
     {
       "src": "./icons/icon-192.png",
