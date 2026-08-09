@@ -1,8 +1,9 @@
-﻿const CACHE_VERSION = '75minton-pwa-v2.0-20260809-v20-pwa-verify';
-const ASSET_VERSION = '20260809-v20-pwa-verify';
+﻿const CACHE_VERSION = '75minton-pwa-v2.0-20260809-v20-guide';
+const ASSET_VERSION = '20260809-v20-guide';
 const APP_SHELL = [
   './',
   './index.html',
+  './guide.html',
   `./styles.css?v=${ASSET_VERSION}`,
   `./home-content.js?v=${ASSET_VERSION}`,
   `./analytics-config.js?v=${ASSET_VERSION}`,

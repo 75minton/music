@@ -1,7 +1,7 @@
 // 75 Minton Music HOME content
 // 운영 업데이트는 이 파일의 title/label/description 값을 바꾸면 됩니다.
 window.MINTON_HOME_CONTENT = {
-  version: '2026-08-09-v2.0-pwa-verify',
+  version: '2026-08-09-v2.0-guide',
   monthly: {
     label: '이달의 곡',
     title: '우린 함께 간다',

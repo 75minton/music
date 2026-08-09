@@ -1,10 +1,10 @@
 ﻿
-// 75 Minton Music build: 2026-08-09-v2.0-pwa-verify / assets: 20260809-v20-pwa-verify
+// 75 Minton Music build: 2026-08-09-v2.0-guide / assets: 20260809-v20-guide
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-const APP_BUILD_VERSION = '2026-08-09-v2.0-pwa-verify';
-const ASSET_VERSION = '20260809-v20-pwa-verify';
+const APP_BUILD_VERSION = '2026-08-09-v2.0-guide';
+const ASSET_VERSION = '20260809-v20-guide';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const TRACK_GAP_MS = 1000;
@@ -2207,6 +2207,7 @@ function getWarmCacheAssets() {
   const shellAssets = [
     './',
     './index.html',
+    './guide.html',
     `./styles.css?v=${ASSET_VERSION}`,
     `./home-content.js?v=${ASSET_VERSION}`,
     `./analytics-config.js?v=${ASSET_VERSION}`,
