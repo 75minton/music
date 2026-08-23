@@ -1,6 +1,6 @@
 {
   "version": "2026-08-09-v2.0-guide",
-  "updatedAt": "2026-08-09T23:59:59+09:00",
+  "updatedAt": "2026-08-24T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -78,7 +78,7 @@
       "id": "Court-Light-Part2",
       "title": "Court Light - Part2",
       "artist": "TRINITY",
-      "cover": "./sound/09.Court Light - Part2.png?v=20260518",
+      "cover": "./sound/09.Court Light - Part2.png?v=20260824",
       "url": "./sound/09.Court Light - Part2.mp3?v=20260518",
       "lrc": "./sound/09.Court Light - Part2.lrc?v=20260518",
       "youtube": "https://youtu.be/FfGDgFUEDlg"
