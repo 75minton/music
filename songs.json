@@ -118,6 +118,16 @@
       "url": "./sound/13.우린 함께 간다.mp3?v=20260805",
       "lrc": "./sound/13.우린 함께 간다.lrc?v=20260805",
       "youtube": ""
+    },
+   {
+      "id": "the-tenth-season",
+      "title": "THE TENTH SEASON",
+      "artist": "YOUA",
+      "cover": "./sound/THE TENTH SEASON.png?v=20260923",
+      "url": "./sound/THE TENTH SEASON.mp3?v=20260923",
+      "lrc": "./sound/THE TENTH SEASON.lrc?v=20260923",
+      "youtube": ""
     }
+
   ]
 }
