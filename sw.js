@@ -1,5 +1,5 @@
-﻿const CACHE_VERSION = '75minton-pwa-v2.0-20260809-v20-guide';
-const ASSET_VERSION = '20260809-v20-guide';
+const CACHE_VERSION = '75minton-pwa-20260923-v31-pwa';
+const ASSET_VERSION = '20260923-v31-pwa';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,7 +27,7 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(
-      keys.filter(key => key !== CACHE_VERSION).map(key => caches.delete(key))
+      keys.filter(key => key.startsWith('75minton-pwa-') && key !== CACHE_VERSION).map(key => caches.delete(key))
     );
     await self.clients.claim();
   })());
@@ -49,6 +49,39 @@ function isNavigationRequest(request) {
 function isRangeRequest(request) {
   return request.headers.has('range');
 }
+
+function isImageRequest(request) {
+  return request.destination === 'image' || /\.(png|jpe?g|webp|gif|svg|ico|avif)$/i.test(new URL(request.url).pathname);
+}
+
+async function storeResponse(cache, request, response) {
+  if (response && (response.ok || response.type === 'opaque') && response.status !== 206) {
+    try { await cache.put(request, response.clone()); } catch (error) {
+      console.warn('Cache write failed', error);
+    }
+  }
+}
+
+self.addEventListener('message', event => {
+  if (event.data?.type !== 'WARM_CACHE' || !Array.isArray(event.data.assets)) return;
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_VERSION);
+    const assets = [...new Set(event.data.assets)].filter(value => {
+      try {
+        const url = new URL(value, self.location.href);
+        return url.origin === self.location.origin && isImageRequest({ url: url.href });
+      } catch { return false; }
+    });
+    await Promise.all(Array.from({ length: 3 }, async () => {
+      while (assets.length) {
+        const url = assets.shift();
+        try {
+          if (!await cache.match(url)) await storeResponse(cache, url, await fetch(url));
+        } catch { /* Missing images can be retried on the next visit. */ }
+      }
+    }));
+  })());
+});
 
 function isMediaOrDataRequest(request) {
   const url = new URL(request.url);
@@ -75,12 +108,16 @@ self.addEventListener('fetch', event => {
   // HTML 臾몄꽌 ?대룞留?index.html fallback ?덉슜
   if (isNavigationRequest(request) && requestUrl.origin === self.location.origin) {
     event.respondWith(
-      fetch(request).catch(() => caches.match('./index.html'))
+      fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_VERSION);
+        return await cache.match(request, { ignoreSearch: true }) || await cache.match('./index.html');
+      })
     );
     return;
   }
 
-  if (!isRuntimeCacheable(request.url)) return;
+  if (!isRuntimeCacheable(request.url) && !isImageRequest(request)) return;
+  if (!['http:', 'https:'].includes(requestUrl.protocol)) return;
 
   // 誘몃뵒??媛??JSON? ?덈? index.html濡??泥댄븯吏 ?딆쓬
   if (isMediaOrDataRequest(request)) {
@@ -91,7 +128,7 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request);
         if (response && response.ok) {
-          cache.put(request, response.clone());
+          await storeResponse(cache, request, response);
         }
         return response;
       } catch (error) {
@@ -106,11 +143,12 @@ self.addEventListener('fetch', event => {
     const cache = await caches.open(CACHE_VERSION);
     const cached = await cache.match(request);
     if (cached) {
+      if (isImageRequest(request)) return cached;
       event.waitUntil(
         fetch(request)
           .then(response => {
             if (response && (response.ok || response.type === 'opaque')) {
-              cache.put(request, response.clone());
+              return storeResponse(cache, request, response);
             }
           })
           .catch(() => {})
@@ -121,7 +159,7 @@ self.addEventListener('fetch', event => {
     try {
       const response = await fetch(request);
       if (response && (response.ok || response.type === 'opaque')) {
-        cache.put(request, response.clone());
+        await storeResponse(cache, request, response);
       }
       return response;
     } catch (error) {
