@@ -1,193 +1,225 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>우린 함께 간다</title>
-  <meta name="description" content="우린 함께 간다 - TONY PARK" />
-  <meta name="share-build-version" content="2026-08-09-v1.5-static-share" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0b14" />
+  <meta name="color-scheme" content="dark" />
+  <!-- Google Analytics 4: use the shared site configuration. -->
+  <script defer src="../analytics-config.js?v=20260923-v31-pwa"></script>
+  <script defer src="../analytics.js?v=20260923-v31-pwa"></script>
+  <title>우린 함께 간다 – TONY PARK | Official Audio</title>
+  <meta name="description" content="우린 함께 간다 — TONY PARK. 익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다." />
+  <link rel="canonical" href="https://75minton.github.io/music/share/13.html" />
+
+  <!-- Social preview -->
   <meta property="og:type" content="music.song" />
-  <meta property="og:title" content="13.우린 함께 간다 - TONY PARK" />
-  <meta property="og:description" content="75민턴 음악 공유 미리보기" />
-  <meta property="og:image" content="https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.png?v=20260805" />
+  <meta property="og:title" content="우린 함께 간다 – TONY PARK" />
+  <meta property="og:description" content="우린 함께 간다 — TONY PARK. 익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다." />
   <meta property="og:url" content="https://75minton.github.io/music/share/13.html" />
-  <meta property="music:musician" content="TONY PARK" />
-  <meta property="music:song" content="https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.mp3?v=20260805" />
-  <meta name="theme-color" content="#07090d" />
+  <meta property="og:image" content="https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.png?v=20260805" />
+  <meta property="og:audio" content="https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.mp3?v=20260805" />
+  <meta property="og:audio:type" content="audio/mpeg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="우린 함께 간다 – TONY PARK" />
+  <meta name="twitter:description" content="우린 함께 간다 — TONY PARK. 익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다." />
+  <meta name="twitter:image" content="https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.png?v=20260805" />
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"MusicRecording","name":"우린 함께 간다","byArtist":{"@type":"MusicGroup","name":"TONY PARK"},"url":"https://75minton.github.io/music/share/13.html","audio":{"@type":"AudioObject","contentUrl":"https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.mp3?v=20260805","encodingFormat":"audio/mpeg"},"image":"https://75minton.github.io/music/sound/13.%EC%9A%B0%EB%A6%B0%20%ED%95%A8%EA%BB%98%20%EA%B0%84%EB%8B%A4.png?v=20260805"}</script>
+
   <style>
-    :root {
-      --bg: #07090d;
-      --panel: rgba(18, 22, 31, 0.92);
-      --line: rgba(255, 255, 255, 0.1);
-      --text: #f7fafc;
-      --sub: #a6b0bd;
-      --accent: #7aa7ff;
-      --rose: #ff7aa8;
+    :root{
+      --bg:#070812; --panel:rgba(18,19,33,.72); --panel2:rgba(255,255,255,.055);
+      --line:rgba(255,255,255,.11); --text:#f7f7fb; --muted:#aaaabd;
+      --accent:#d5b9ff; --accent2:#9d8cff; --warm:#ffc9a2;
+      --shadow:0 30px 100px rgba(0,0,0,.45); --r:28px;
     }
-
-    * { box-sizing: border-box; }
-
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
-      font-family: "Noto Sans KR", "Inter", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 14% 12%, rgba(122, 167, 255, 0.28), transparent 32%),
-        radial-gradient(circle at 86% 8%, rgba(255, 122, 168, 0.18), transparent 28%),
-        linear-gradient(135deg, #05070a, #0c111a 52%, #10131c);
-    }
-
-    body {
-      display: grid;
-      place-items: center;
-      padding: 28px 16px;
-    }
-
-    .share-card {
-      width: min(920px, 100%);
-      display: grid;
-      grid-template-columns: minmax(220px, 340px) minmax(0, 1fr);
-      gap: 28px;
-      padding: 28px;
-      border: 1px solid var(--line);
-      border-radius: 30px;
-      background: var(--panel);
-      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.46);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-    }
-
-    .cover {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 26px;
-      object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.36), 0 0 42px rgba(122, 167, 255, 0.16);
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .kicker {
-      color: var(--accent);
-      font-size: 0.78rem;
-      font-weight: 900;
-      letter-spacing: 0.18em;
-      margin-bottom: 14px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: clamp(2rem, 6vw, 4rem);
-      line-height: 1.03;
-      letter-spacing: -0.06em;
-    }
-
-    .artist {
-      margin-bottom: 22px;
-      color: var(--sub);
-      font-weight: 800;
-    }
-
-    audio {
-      width: 100%;
-      margin: 12px 0 22px;
-      accent-color: var(--accent);
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .btn {
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.06);
-      text-decoration: none;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .btn.primary {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #07090d;
-    }
-
-    .status {
-      margin-top: 16px;
-      color: var(--sub);
-      font-size: 0.86rem;
-      line-height: 1.5;
-    }
-
-    @media (max-width: 720px) {
-      body { place-items: start center; }
-
-      .share-card {
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 20px;
-        border-radius: 24px;
-      }
-
-      .cover {
-        width: min(100%, 360px);
-        margin: 0 auto;
-      }
-    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:
+      radial-gradient(circle at 18% 8%,rgba(137,97,255,.22),transparent 34%),
+      radial-gradient(circle at 88% 12%,rgba(255,155,112,.15),transparent 28%),
+      linear-gradient(145deg,#070812 0%,#0b0d19 46%,#10101b 100%);overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+    button,a{font:inherit}
+    button{color:inherit}
+    .wrap{width:min(1120px,calc(100% - 34px));margin:0 auto;padding:28px 0 42px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:10px;color:#e9e6f2;text-decoration:none;font-size:12px;font-weight:750;letter-spacing:.2em;text-transform:uppercase}
+    .brand-dot{width:9px;height:9px;border-radius:99px;background:linear-gradient(135deg,var(--warm),var(--accent2));box-shadow:0 0 18px rgba(188,144,255,.75)}
+    .edition{font-size:11px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;border:1px solid var(--line);padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.03)}
+    .hero{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(360px,.98fr);gap:42px;align-items:center;background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:36px;padding:38px;box-shadow:var(--shadow);backdrop-filter:blur(20px)}
+    .cover-wrap{position:relative;max-width:560px;margin:auto;width:100%}
+    .cover-glow{position:absolute;inset:12%;filter:blur(55px);opacity:.45;background:linear-gradient(135deg,var(--warm),var(--accent2));border-radius:50%}
+    .cover{position:relative;aspect-ratio:1;border-radius:28px;overflow:hidden;background:linear-gradient(150deg,#382b4c,#171324 44%,#40352f);box-shadow:0 35px 75px rgba(0,0,0,.47);border:1px solid rgba(255,255,255,.14)}
+    .cover img{width:100%;height:100%;display:block;object-fit:cover}
+    .cover-fallback{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;background:linear-gradient(to top,rgba(7,8,18,.88),rgba(7,8,18,.08) 58%)}
+    .cover-fallback b{font-family:Georgia,"Times New Roman",serif;font-size:clamp(27px,4vw,48px);line-height:.96;letter-spacing:-.03em;max-width:78%}
+    .cover-fallback span{margin-top:10px;font-size:12px;letter-spacing:.2em;color:#dfd9e9;text-transform:uppercase}
+    .content{padding:2px 4px}
+    .eyebrow{display:flex;align-items:center;gap:9px;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;margin-bottom:15px}
+    .eyebrow:before{content:"";width:25px;height:1px;background:var(--accent)}
+    h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(42px,6.2vw,76px);font-weight:500;line-height:.91;letter-spacing:-.055em;margin:0 0 13px;max-width:700px}
+    .artist{font-size:14px;font-weight:750;letter-spacing:.22em;color:#ddd8e8;text-transform:uppercase;margin-bottom:19px}
+    .story{font-size:16px;line-height:1.75;color:#c9c6d1;margin:0 0 24px;max-width:560px}
+    .story strong{color:white;font-weight:650}
+    .player{border:1px solid var(--line);border-radius:24px;padding:16px;background:rgba(6,7,14,.48);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+    .player-row{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:14px}
+    .play{width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#eee6ff,var(--accent2));color:#15121f;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 28px rgba(146,111,255,.3);transition:.2s transform,.2s filter}
+    .play:hover{transform:scale(1.04);filter:brightness(1.05)}
+    .play svg{width:23px;height:23px;fill:currentColor}
+    .track-info{min-width:0}.track-title{font-size:14px;font-weight:760;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track-sub{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:.04em}
+    .time{font-variant-numeric:tabular-nums;color:#bebaca;font-size:12px;min-width:82px;text-align:right}
+    .progress{position:relative;height:18px;margin-top:13px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+    .rail{position:absolute;left:0;right:0;height:4px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden}
+    .fill{height:100%;width:0;background:linear-gradient(90deg,var(--warm),var(--accent));border-radius:inherit}
+    .thumb{position:absolute;left:0;width:14px;height:14px;border-radius:50%;background:#fff;transform:translateX(-7px);box-shadow:0 2px 10px rgba(0,0,0,.35);opacity:0;transition:.2s opacity}
+    .progress:hover .thumb,.progress.dragging .thumb{opacity:1}
+    .lyrics-now{margin-top:18px;min-height:92px;padding:15px 16px;border:1px solid rgba(255,255,255,.07);border-radius:18px;background:rgba(255,255,255,.025)}
+    .lyric-prev,.lyric-next{font-size:12px;color:#777587;min-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lyric-current{font-family:Georgia,"Times New Roman",serif;font-size:20px;line-height:1.3;color:#fff;margin:7px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .actions{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:10px;margin-top:16px}
+    .btn{min-height:48px;border-radius:15px;border:1px solid var(--line);background:var(--panel2);display:flex;align-items:center;justify-content:center;gap:9px;padding:0 14px;color:#f3f1f8;text-decoration:none;font-size:12px;font-weight:750;cursor:pointer;transition:.18s background,.18s transform,.18s border-color;text-align:center}
+    .btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);transform:translateY(-1px)}
+    .btn.primary{background:#f3efff;color:#171321;border-color:transparent}.btn.primary:hover{background:white}
+    .btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+    .secondary-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:13px}
+    .text-btn{border:0;background:transparent;padding:3px 0;color:#aaa7b6;font-size:11px;letter-spacing:.03em;cursor:pointer;text-decoration:none}.text-btn:hover{color:white}
+    .quote{margin-top:24px;padding-top:21px;border-top:1px solid var(--line);color:#aaa7b5;font-size:12px;line-height:1.65}.quote em{font-family:Georgia,"Times New Roman",serif;color:#e7e2ed;font-size:15px}
+    .foot{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:19px 5px 0;color:#74717f;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+    .foot a{color:inherit;text-decoration:none}.foot a:hover{color:#b9b4c3}
+    .modal{position:fixed;inset:0;z-index:20;background:rgba(3,3,9,.74);backdrop-filter:blur(15px);display:none;align-items:flex-end;justify-content:center;padding:18px}
+    .modal.open{display:flex}
+    .sheet{width:min(720px,100%);max-height:86vh;overflow:auto;background:#11121d;border:1px solid var(--line);border-radius:28px 28px 20px 20px;padding:25px;box-shadow:0 30px 100px rgba(0,0,0,.7)}
+    .sheet-head{position:sticky;top:-25px;background:linear-gradient(#11121d 78%,transparent);padding:8px 0 20px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+    .sheet-head h2{font-size:15px;margin:0;letter-spacing:.08em}.close{border:1px solid var(--line);background:#1a1b28;color:white;width:37px;height:37px;border-radius:50%;cursor:pointer;font-size:20px}
+    .full-lyrics{font-size:14px;line-height:1.82;color:#a8a6b2}.full-lyrics .section{margin:19px 0 7px;color:#676575;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-weight:800}.full-lyrics .line{padding:5px 9px;border-radius:10px;transition:.2s;color:#aaa7b3}.full-lyrics .line.active{background:rgba(187,154,255,.1);color:white;transform:translateX(3px)}
+    .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#f4f0ff;color:#171321;border-radius:999px;padding:11px 16px;font-size:12px;font-weight:750;opacity:0;pointer-events:none;transition:.25s;z-index:30}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:830px){.wrap{width:min(100% - 24px,650px);padding-top:16px}.hero{grid-template-columns:1fr;gap:26px;padding:20px;border-radius:28px}.cover-wrap{max-width:440px}.content{padding:0 2px}h1{font-size:clamp(43px,12vw,68px)}.story{font-size:14px;line-height:1.65}.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:1/-1}.topbar{margin-bottom:12px}.edition{font-size:9px}.foot{align-items:flex-start;flex-direction:column;gap:8px}}
+    @media(max-width:450px){.wrap{width:calc(100% - 16px)}.hero{padding:14px;border-radius:24px}.cover{border-radius:22px}.content{padding:3px 4px 8px}.player{padding:13px}.player-row{grid-template-columns:52px 1fr}.play{width:52px;height:52px}.time{grid-column:2;text-align:left;margin-top:-5px}.actions{grid-template-columns:1fr 1fr}.btn{padding:0 10px}.lyric-current{font-size:18px}.topbar{padding:0 5px}.brand{font-size:10px}.edition{display:none}.quote{margin-top:20px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+    .content{min-width:0}h1{line-height:1.12;word-break:keep-all;overflow-wrap:anywhere;font-size:clamp(32px,4vw,60px)}.cover-fallback b{line-height:1.15;word-break:keep-all;overflow-wrap:anywhere}.brand{letter-spacing:.1em}
   </style>
 </head>
-
 <body>
-  <main class="share-card">
-    <img alt="우린 함께 간다 cover" class="cover" src="../sound/13.우린 함께 간다.png?v=20260805" />
-    <section>
-      <div class="kicker">75 MINTON MUSIC</div>
-      <h1>우린 함께 간다</h1>
-      <div class="artist">TONY PARK</div>
-      <audio controls preload="metadata" src="../sound/13.우린 함께 간다.mp3?v=20260805"></audio>
-      <div class="actions">
-        <a class="btn primary" href="../index.html?no=13">앱에서 듣기</a>
-        <a class="btn" href="../sound/13.우린 함께 간다.mp3?v=20260805" download="우린 함께 간다.mp3">MP3 다운로드</a>
-        <button class="btn" id="shareAgain" type="button">공유하기</button>
+  <main class="wrap">
+    <div class="topbar">
+      <a class="brand" href="https://75minton.github.io/music/" aria-label="75 Minton Music"><span class="brand-dot"></span>75 Minton Music</a>
+      <span class="edition">TRACK 13 · 75 MINTON</span>
+    </div>
+
+    <section class="hero" aria-label="우린 함께 간다 music page">
+      <div class="cover-wrap">
+        <div class="cover-glow"></div>
+        <div class="cover">
+          <img src="../sound/13.우린 함께 간다.png?v=20260805" alt="우린 함께 간다 album artwork" onerror="this.style.display='none'" />
+          <div class="cover-fallback" aria-hidden="true">
+            <b>우린 함께 간다</b><span>TONY PARK · Digital Single</span>
+          </div>
+        </div>
       </div>
-      <p class="status" id="status">공유 받은 곡을 바로 미리듣기 할 수 있습니다.</p>
+
+      <div class="content">
+        <div class="eyebrow">Official Audio</div>
+        <h1>우린 함께 간다</h1>
+        <div class="artist">TONY PARK</div>
+        <p class="story"><strong>하루 끝에 만나, 우리는 함께 갑니다.</strong><br>익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다.</p>
+
+        <div class="player">
+          <div class="player-row">
+            <button class="play" id="playBtn" aria-label="Play 우린 함께 간다">
+              <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <div class="track-info">
+              <div class="track-title">우린 함께 간다</div>
+              <div class="track-sub">TONY PARK · 75 Minton Music</div>
+            </div>
+            <div class="time"><span id="currentTime">0:00</span> / <span id="duration">--:--</span></div>
+          </div>
+          <div class="progress" id="progress" aria-label="Seek audio" role="slider" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" tabindex="0">
+            <div class="rail"><div class="fill" id="fill"></div></div><div class="thumb" id="thumb"></div>
+          </div>
+          <div class="lyrics-now" aria-live="polite">
+            <div class="lyric-prev" id="lyricPrev"></div>
+            <div class="lyric-current" id="lyricCurrent">재생 버튼을 눌러주세요</div>
+            <div class="lyric-next" id="lyricNext">하루 끝나면</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="mainPlay">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/></svg><span>PLAY / 듣기</span>
+          </button>
+          <a class="btn" href="../index.html?no=13">앱에서 듣기</a>
+          <button class="btn" id="shareBtn">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.6 6.6-4.1M8.7 13.4l6.6 4.1"/></svg>SHARE / 공유
+          </button>
+        </div>
+
+        <div class="secondary-actions">
+          <button class="text-btn" id="lyricsBtn">LYRICS / 전체 가사</button>
+          <a class="text-btn" href="https://75minton.github.io/music/index.html?no=13">OPEN FULL PLAYER</a>
+          <a class="text-btn" href="../sound/13.우린 함께 간다.mp3?v=20260805" download>DOWNLOAD MP3</a>
+        </div>
+
+        <div class="quote"><em>“하루 끝나면”</em><br>하루 끝에 만나, 우리는 함께 갑니다.</div>
+      </div>
     </section>
+
+    <footer class="foot"><span>© 2026 75 MINTON MUSIC</span><span>Music shared with care · <a href="https://75minton.github.io/music/">More music</a></span></footer>
   </main>
 
-  <script>
-    const sharePayload = {
-      title: "우린 함께 간다 - TONY PARK",
-      text: "75민턴 추천곡: 우린 함께 간다",
-      url: "https://75minton.github.io/music/share/13.html"
-    };
+  <audio id="audio" preload="metadata" src="../sound/13.우린 함께 간다.mp3?v=20260805"></audio>
 
-    document.getElementById('shareAgain').addEventListener('click', async () => {
-      const status = document.getElementById('status');
-      try {
-        if (navigator.share) {
-          await navigator.share(sharePayload);
-          return;
-        }
-        await navigator.clipboard.writeText(`${sharePayload.title}\n${sharePayload.url}`);
-        status.textContent = '공유 링크를 클립보드에 복사했습니다.';
-      } catch (err) {
-        if (err?.name === 'AbortError') return;
-        window.prompt('공유 링크를 복사하세요.', `${sharePayload.title}\n${sharePayload.url}`);
-      }
-    });
+  <div class="modal" id="lyricsModal" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Full lyrics">
+      <div class="sheet-head"><h2>우린 함께 간다 · LYRICS</h2><button class="close" id="closeLyrics" aria-label="Close lyrics">×</button></div>
+      <div class="full-lyrics" id="fullLyrics"></div>
+    </div>
+  </div>
+  <div class="toast" id="toast">Link copied</div>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('playBtn');
+    const mainPlay = document.getElementById('mainPlay');
+    const playIcon = document.getElementById('playIcon');
+    const progress = document.getElementById('progress');
+    const fill = document.getElementById('fill');
+    const thumb = document.getElementById('thumb');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const prevEl = document.getElementById('lyricPrev');
+    const currentEl = document.getElementById('lyricCurrent');
+    const nextEl = document.getElementById('lyricNext');
+    const fullLyrics = document.getElementById('fullLyrics');
+    const modal = document.getElementById('lyricsModal');
+    const toast = document.getElementById('toast');
+
+    const lyrics = [{"t":24.95,"x":"하루 끝나면"},{"t":27.12,"x":"우린 모인다"},{"t":31.44,"x":"익숙한 얼굴에"},{"t":33.95,"x":"힘이 오른다"},{"t":39,"x":"코트 위에서"},{"t":40.78,"x":"웃음이 돈다"},{"t":45.25,"x":"오랜 친구라"},{"t":47.44,"x":"바로 통한다"},{"t":51.78,"x":"점수보다"},{"t":54.61,"x":"마음이 먼저"},{"t":58.66,"x":"승부보다"},{"t":61.46,"x":"우리가 먼저"},{"t":66.5,"x":"간다 간다"},{"t":68.3,"x":"우린 같이 간다"},{"t":73.16,"x":"뛴다 뛴다"},{"t":75.27,"x":"웃으며 간다"},{"t":80.07,"x":"칠오 칠오"},{"t":81.97,"x":"이름만 불러도"},{"t":85.47,"x":"마음이 먼저"},{"t":88.75,"x":"움직이잖아"},{"t":93.89,"x":"간다 간다"},{"t":97.00999999999999,"x":"오늘도 간다"},{"t":99.97999999999999,"x":"함께한 순간이"},{"t":102.35,"x":"추억이 된다"},{"t":107.06,"x":"가끔 템포가"},{"t":108.47999999999999,"x":"살짝 엇나가도"},{"t":113.53,"x":"한마디면 또"},{"t":115.78999999999999,"x":"다시 맞는다"},{"t":120.3,"x":"말이 없어도"},{"t":122.61,"x":"눈빛은 안다."},{"t":126.37,"x":"같이 뛰는 이 밤"},{"t":129.52,"x":"더 깊어진다"},{"t":133.44,"x":"각자의 하루"},{"t":136.27,"x":"안고 왔지만"},{"t":139.9,"x":"여기 모이면"},{"t":142.99,"x":"하나가 된다"},{"t":148.32999999999998,"x":"간다 간다"},{"t":150.45,"x":"우린 같이 간다"},{"t":154.93,"x":"뛴다 뛴다"},{"t":156.97,"x":"웃으며 간다"},{"t":161.92000000000002,"x":"칠오 칠오"},{"t":163.71,"x":"이름만 불러도"},{"t":167.16,"x":"마음이 먼저"},{"t":170.31,"x":"움직이잖아"},{"t":175.59,"x":"간다 간다"},{"t":178.61,"x":"오늘도 간다"},{"t":181.46,"x":"함께한 순간이"},{"t":183.92,"x":"추억이 된다"},{"t":187.68,"x":"시간이 가도"},{"t":190.94,"x":"우린 여전해"},{"t":194.15,"x":"다시 만난 오늘"},{"t":197.04,"x":"더 반가워져"},{"t":202.6,"x":"간다 간다"},{"t":204.35,"x":"우린 같이 간다"},{"t":209.05,"x":"뛴다 뛴다"},{"t":211.13,"x":"끝까지 간다"},{"t":216.07999999999998,"x":"칠오 토끼"},{"t":217.5,"x":"그 이름 하나로"},{"t":221.1,"x":"오늘의 리듬이"},{"t":224.26,"x":"살아나잖아"},{"t":229.32999999999998,"x":"간다 간다"},{"t":232.44,"x":"내일도 간다"},{"t":235.56,"x":"우리의 장면은"},{"t":237.81,"x":"계속된다"},{"t":241.39,"x":"오오오 오오오"},{"t":244.52,"x":"우린 이어 진다"}];
+
+    function icon(playing){ playIcon.innerHTML = playing ? '<path d="M7 5h4v14H7zm6 0h4v14h-4z"/>' : '<path d="M8 5v14l11-7z"/>'; mainPlay.querySelector('span').textContent = playing ? 'PAUSE / 일시정지' : 'PLAY / 듣기'; }
+    function toggle(){ if(audio.paused) audio.play().catch(()=>showToast('음원을 재생하지 못했습니다. 다시 시도해 주세요.')); else audio.pause(); }
+    playBtn.addEventListener('click',toggle); mainPlay.addEventListener('click',toggle); audio.addEventListener('play',()=>icon(true)); audio.addEventListener('pause',()=>icon(false));
+    function fmt(sec){ sec=Math.max(0,Number(sec)||0); const m=Math.floor(sec/60),s=Math.floor(sec%60); return `${m}:${String(s).padStart(2,'0')}`; }
+    audio.addEventListener('loadedmetadata',()=>{durationEl.textContent=fmt(audio.duration);progress.setAttribute('aria-valuemax',Math.round(audio.duration));});
+
+    let active=-1;
+    function updateLyrics(t){ let idx=-1; for(let i=0;i<lyrics.length;i++){ if(t>=lyrics[i].t) idx=i; else break; } if(idx===active) return; active=idx; prevEl.textContent=idx>0?lyrics[idx-1].x:''; currentEl.textContent=idx>=0?lyrics[idx].x:'재생 버튼을 눌러주세요'; nextEl.textContent=(idx+1<lyrics.length)?lyrics[idx+1].x:''; document.querySelectorAll('.full-lyrics .line').forEach((el,i)=>el.classList.toggle('active',i===idx)); const ae=document.querySelector('.full-lyrics .line.active'); if(ae&&modal.classList.contains('open')) ae.scrollIntoView({block:'center',behavior:'smooth'}); }
+    audio.addEventListener('timeupdate',()=>{ const d=audio.duration||0,p=d>0?Math.min(1,audio.currentTime/d):0; fill.style.width=(p*100)+'%';thumb.style.left=(p*100)+'%';currentTimeEl.textContent=fmt(audio.currentTime);progress.setAttribute('aria-valuenow',Math.round(audio.currentTime));updateLyrics(audio.currentTime);});
+    function seekFromEvent(e){if(!Number.isFinite(audio.duration)||audio.duration<=0)return;const r=progress.getBoundingClientRect();const x=Math.max(0,Math.min(r.width,(e.clientX??e.touches?.[0]?.clientX)-r.left));audio.currentTime=(x/r.width)*(audio.duration||0)}
+    progress.addEventListener('click',seekFromEvent);
+    progress.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&Number.isFinite(audio.duration)){e.preventDefault();audio.currentTime=Math.max(0,Math.min(audio.duration||0,audio.currentTime+(e.key==='ArrowRight'?5:-5)));}});
+
+    const escapeText = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let lastSection=''; let html=''; lyrics.forEach((l,i)=>{ if(l.s&&l.s!==lastSection){html+=`<div class="section">${escapeText(l.s)}</div>`;lastSection=l.s;} html+=`<div class="line" data-i="${i}">${escapeText(l.x)}</div>`; }); fullLyrics.innerHTML=html;
+    fullLyrics.addEventListener('click',e=>{const line=e.target.closest('.line');if(!line)return;const i=+line.dataset.i;audio.currentTime=lyrics[i].t;audio.play().catch(()=>{});});
+    document.getElementById('lyricsBtn').addEventListener('click',()=>{modal.classList.add('open');modal.setAttribute('aria-hidden','false');});
+    document.getElementById('closeLyrics').addEventListener('click',closeModal); modal.addEventListener('click',e=>{if(e.target===modal)closeModal();}); function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal(); if(e.code==='Space'&&!/INPUT|BUTTON|A/.test(document.activeElement.tagName)){e.preventDefault();toggle();}});
+
+    function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),1800)}
+    document.getElementById('shareBtn').addEventListener('click',async()=>{const data={title:"우린 함께 간다 – TONY PARK",text:"우린 함께 간다 — TONY PARK. 익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다.",url:location.href};try{if(navigator.share){await navigator.share(data)}else{await navigator.clipboard.writeText(location.href);showToast('Link copied / 링크 복사됨')}}catch(e){if(e.name!=='AbortError'){try{await navigator.clipboard.writeText(location.href);showToast('Link copied / 링크 복사됨')}catch(_){showToast('Copy this page URL to share')}}}});
   </script>
 </body>
-
 </html>
