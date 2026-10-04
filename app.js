@@ -1,13 +1,21 @@
-﻿
-// 75 Minton Music build: 2026-08-09-v2.0-guide / assets: 20260809-v20-guide
+
+// 75 Minton Music build: 2026-10-05-v3.2-options / assets: 20261005-v32-options
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-const APP_BUILD_VERSION = '2026-09-23-v3.0-guide';
-const ASSET_VERSION = '20260923-v30-guide';
+const APP_BUILD_VERSION = '2026-10-05-v3.2-options';
+const ASSET_VERSION = '20261005-v32-options';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
-const TRACK_GAP_MS = 1000;
+const STORAGE_OPTIONS_KEY = '75minton_playback_options_v1';
+const playbackOptions = { keepScreenOn: false, gapSeconds: 1, continuous: true, visualEffects: true };
+try {
+  const saved = JSON.parse(localStorage.getItem(STORAGE_OPTIONS_KEY) || '{}');
+  for (const key of ['keepScreenOn', 'continuous', 'visualEffects']) {
+    if (typeof saved[key] === 'boolean') playbackOptions[key] = saved[key];
+  }
+  if ([0, 1, 2, 3].includes(saved.gapSeconds)) playbackOptions.gapSeconds = saved.gapSeconds;
+} catch (error) { console.warn('재생 옵션 복원 실패', error); }
 const SW_SCRIPT_URL = `./sw.js?v=${ASSET_VERSION}`;
 const STORAGE_SONGS_HASH_KEY = '75minton_songs_hash_v2';
 const STORAGE_SONGS_SNAPSHOT_KEY = '75minton_songs_snapshot_v2';
@@ -505,7 +513,12 @@ function setupMediaSession(song) {
     });
 
     navigator.mediaSession.setActionHandler('play', () => safePlay({ silent: true }));
-    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+    navigator.mediaSession.setActionHandler('pause', () => {
+      clearAutoAdvanceTimer();
+      hideStatus();
+      audio.pause();
+      audio.dispatchEvent(new Event('playbackoptionschange'));
+    });
     navigator.mediaSession.setActionHandler('previoustrack', prev);
     navigator.mediaSession.setActionHandler('nexttrack', next);
     navigator.mediaSession.setActionHandler('seekbackward', () => seekBy(-10));
@@ -596,7 +609,7 @@ function averageFrequencyRange(data, startRatio, endRatio) {
 }
 
 function tickReactiveBackdrop() {
-  if (!reactiveAnalyser || audio.paused || audio.ended) {
+  if (!playbackOptions.visualEffects || !reactiveAnalyser || audio.paused || audio.ended) {
     reactiveAnimationFrame = null;
     return;
   }
@@ -627,7 +640,9 @@ function tickReactiveBackdrop() {
 }
 
 async function startReactiveBackdrop() {
+  if (!playbackOptions.visualEffects) return;
   const ready = await ensureReactiveBackdropAnalyzer();
+  if (!playbackOptions.visualEffects || audio.paused) return;
   if (!ready) {
     document.body.classList.add('is-audio-reactive');
     setReactiveBackdropVars({ energy: 0.38, bass: 0.26, mid: 0.18, high: 0.14 });
@@ -684,9 +699,9 @@ function setEqUiEnabled(isEnabled) {
 
 function isMobileEqLayout() {
   try {
-    return window.matchMedia('(max-width: 768px), (max-height: 520px) and (pointer: coarse)').matches;
+    return window.matchMedia('(max-width: 768px), (orientation: landscape) and (max-height: 620px)').matches;
   } catch (err) {
-    return window.innerWidth <= 768 || (window.innerHeight <= 520 && window.matchMedia('(pointer: coarse)').matches);
+    return window.innerWidth <= 768 || (window.innerWidth > window.innerHeight && window.innerHeight <= 620);
   }
 }
 
@@ -824,23 +839,25 @@ function clearAutoAdvanceTimer() {
   }
 }
 
-function formatAutoAdvanceMessage(baseMessage, remainingMs) {
+function formatAutoAdvanceMessage(baseMessage, remainingMs, gapMs) {
   const seconds = Math.max(0, remainingMs / 1000);
   const spinnerFrames = ['.', '..', '...'];
-  const spinner = spinnerFrames[Math.floor((TRACK_GAP_MS - remainingMs) / 250) % spinnerFrames.length];
+  const spinner = spinnerFrames[Math.floor((gapMs - remainingMs) / 250) % spinnerFrames.length];
   return `${baseMessage} ${seconds.toFixed(1)}s ${spinner}`;
 }
 
 function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재생합니다' } = {}) {
   clearAutoAdvanceTimer();
+  const gapMs = playbackOptions.gapSeconds * 1000;
+  if (!gapMs) { hideStatus(); void callback(); return; }
 
   const startedAt = Date.now();
-  showStatus(formatAutoAdvanceMessage(message, TRACK_GAP_MS), { tone: 'info', duration: 0 });
+  showStatus(formatAutoAdvanceMessage(message, gapMs, gapMs), { tone: 'info', duration: 0 });
 
   autoAdvanceCountdownTimer = window.setInterval(() => {
     const elapsed = Date.now() - startedAt;
-    const remainingMs = Math.max(0, TRACK_GAP_MS - elapsed);
-    showStatus(formatAutoAdvanceMessage(message, remainingMs), { tone: 'info', duration: 0 });
+    const remainingMs = Math.max(0, gapMs - elapsed);
+    showStatus(formatAutoAdvanceMessage(message, remainingMs, gapMs), { tone: 'info', duration: 0 });
 
     if (remainingMs <= 0) {
       window.clearInterval(autoAdvanceCountdownTimer);
@@ -852,7 +869,7 @@ function scheduleAutoAdvance(callback, { message = '잠시 후 다음 곡을 재
     clearAutoAdvanceTimer();
     hideStatus();
     await callback();
-  }, TRACK_GAP_MS);
+  }, gapMs);
 }
 
 function shuffleArray(list) {
@@ -1073,7 +1090,7 @@ function waitForMetadata() {
 
 async function safePlay({ blockedMessage = '브라우저 정책으로 자동 재생이 차단되었습니다. 재생 버튼을 눌러주세요.', silent = false } = {}) {
   try {
-    await ensureReactiveBackdropAnalyzer();
+    if (playbackOptions.visualEffects) await ensureReactiveBackdropAnalyzer();
     if (state.eqEnabled) {
       await ensureEqAudioGraph();
     }
@@ -1835,6 +1852,7 @@ function renderVolumeFill() {
 }
 
 const toggle = () => {
+  if (autoAdvanceTimer) { clearAutoAdvanceTimer(); hideStatus(); return; }
   if (audio.paused) safePlay({ blockedMessage: '재생을 시작하지 못했습니다. 다시 시도해주세요.' });
   else audio.pause();
 };
@@ -1992,6 +2010,8 @@ audio.addEventListener('timeupdate', () => {
 });
 
 audio.addEventListener('ended', () => {
+  if (!playbackOptions.continuous && state.repeatMode !== 'one') return;
+  if (state.repeatMode === 'off' && (state.shuffle ? !state.shuffleQueue.length : state.cur === songs.length - 1)) return;
   if (state.repeatMode === 'one') {
     scheduleAutoAdvance(async () => {
       audio.currentTime = 0;
@@ -2223,8 +2243,12 @@ function getWarmCacheAssets() {
     .flatMap(song => [song.url, song.lrc, song.cover])
     .filter(Boolean)
     .map(resolveAssetUrl);
+  const initialImages = [
+    ...FALLBACK_SONGS.map(song => song.cover),
+    ...Array.from(document.images, image => image.currentSrc || image.src)
+  ].filter(Boolean).map(resolveAssetUrl);
   const sharePages = songs.map((_, index) => resolveAssetUrl(`./share/${index + 1}.html`));
-  return [...new Set([...shellAssets, ...sharePages, ...mediaAssets])];
+  return [...new Set([...shellAssets, ...sharePages, ...mediaAssets, ...initialImages])];
 }
 
 async function registerOfflinePwa() {
@@ -2381,7 +2405,7 @@ async function checkForSongsUpdates() {
   songsUpdateInFlight = (async () => {
     try {
       const freshSongs = await fetchSongsList({ forceNetwork: true });
-      const currentHash = getSongsFingerprint(songs);
+      const currentHash = getSongsFingerprint(songs.filter(song => !song.id.startsWith('local-')));
       const freshHash = getSongsFingerprint(freshSongs);
 
       if (freshHash !== currentHash) {
@@ -2420,7 +2444,7 @@ async function initializeApp() {
   loadStoredPreferences();
   updateLyricsExpandButton();
   const initialAutoplay = shouldAutoplayFromUrl();
-  setActiveTab(initialAutoplay ? 'player' : 'home');
+  setActiveTab(initialAutoplay || !document.getElementById('tab-home') ? 'player' : 'home');
   renderHome();
   setToggleButtonState($('shuffleBtn'), state.shuffle);
   updateRepeatButtonState();
@@ -2457,4 +2481,138 @@ async function initializeApp() {
   checkForSongsUpdates();
 }
 
+function setupPlaybackOptions() {
+  const opener = document.createElement('button');
+  opener.type = 'button';
+  opener.className = 'utility-btn';
+  opener.textContent = '옵션 설정';
+  opener.setAttribute('aria-haspopup', 'dialog');
+  document.querySelector('.top-actions')?.prepend(opener);
+  const dialog = document.createElement('dialog');
+  dialog.className = 'playback-options';
+  dialog.setAttribute('aria-labelledby', 'optionsTitle');
+  dialog.innerHTML = `
+    <form method="dialog" class="options-heading"><h2 id="optionsTitle">재생 옵션</h2><button aria-label="설정 닫기" autofocus>닫기</button></form>
+    <p class="options-intro" id="optionsSaved" role="status">변경한 설정은 이 브라우저에 자동 저장됩니다.</p>
+    <section><h3>화면과 차량 이용</h3>
+      <label class="option-row"><span>재생 중 화면 켜두기</span><input id="optionScreen" type="checkbox" aria-describedby="screenHelp"></label>
+      <p id="screenHelp">블루투스로 음악을 듣는 동안에도 플레이어 화면을 켜두도록 요청합니다. 이 화면이 보이는 동안 작동하며, 일시정지하면 해제됩니다. 앱으로 돌아오면 다시 요청합니다.</p>
+      <p>직접 화면을 잠그거나 다른 앱으로 전환하면 유지되지 않습니다. 절전 모드·배터리 부족·브라우저 정책에 따라 해제될 수 있습니다. 블루투스 연결을 자동 감지하지는 않습니다.</p>
+      <div class="option-row"><span id="screenLockStatus" role="status"></span><button type="button" id="screenRetry">다시 요청</button></div>
+    </section>
+    <section><h3>재생 방식</h3>
+      <label class="option-row"><span>연속 재생</span><input id="optionContinuous" type="checkbox"></label>
+      <p>켜면 곡이 끝난 뒤 다음 곡으로 이동합니다. 끄면 현재 곡에서 멈춥니다. 한 곡 반복은 계속 적용됩니다.</p>
+      <label class="option-row"><span>곡 사이 간격</span><select id="optionGap"><option value="0">0초</option><option value="1">1초</option><option value="2">2초</option><option value="3">3초</option></select></label>
+      <p>자동 다음 곡과 한 곡 반복에 적용됩니다. 직접 이전·다음 곡을 누르면 바로 전환합니다. 0초도 파일 로딩에 따라 짧은 지연이 있을 수 있으며, 음원 자체의 무음은 제거하지 않습니다. 대기 중 변경하면 현재 대기를 취소합니다.</p>
+      <label class="option-row"><span>반복 재생</span><select id="optionRepeat"><option value="off">반복 끔</option><option value="all">전체 반복</option><option value="one">한 곡 반복</option></select></label>
+      <label class="option-row"><span>셔플 재생</span><input id="optionShuffle" type="checkbox"></label>
+      <p>셔플은 곡 순서를 섞습니다. 반복 끔에서는 목록을 한 번 재생한 뒤 멈춥니다. 플레이어의 반복·셔플 버튼과 함께 적용됩니다.</p>
+    </section>
+    <section><h3>화면 효과</h3><label class="option-row"><span>음악 반응 배경 효과</span><input id="optionEffects" type="checkbox"></label>
+      <p>끄면 음악에 반응하는 배경 분석을 중지합니다. 장시간 이용 시 화면 처리 부담을 줄일 수 있습니다.</p>
+    </section>
+    <details><summary>설정 도움말</summary><p>화면 유지가 지원되지 않으면 HTTPS 주소에서 최신 브라우저로 열어주세요. 연결된 스피커·차량 선택과 블루투스 볼륨은 휴대전화 설정에서 조절합니다. 설정은 기기·브라우저별로 저장됩니다.</p></details>`;
+  document.body.append(dialog);
+  const controls = {
+    keepScreenOn: dialog.querySelector('#optionScreen'),
+    continuous: dialog.querySelector('#optionContinuous'),
+    gapSeconds: dialog.querySelector('#optionGap'),
+    visualEffects: dialog.querySelector('#optionEffects')
+  };
+  const lockStatus = dialog.querySelector('#screenLockStatus');
+  const retry = dialog.querySelector('#screenRetry');
+  let sentinel = null;
+  let pending = false;
+  let pageActive = true;
+  const supported = () => window.isSecureContext && 'wakeLock' in navigator;
+  const wanted = () => pageActive && !audio.error && playbackOptions.keepScreenOn && document.visibilityState === 'visible' && (!audio.paused || Boolean(autoAdvanceTimer));
+  function displayLockStatus(message) {
+    lockStatus.textContent = message || (!supported() ? '이 환경에서는 화면 유지가 지원되지 않습니다.' : !playbackOptions.keepScreenOn ? '화면 유지 꺼짐' : sentinel && !sentinel.released ? '화면 유지 중' : '재생 시 화면 유지를 요청합니다.');
+    controls.keepScreenOn.disabled = !supported();
+    retry.disabled = !supported() || !wanted() || pending;
+  }
+  async function updateScreenLock() {
+    if (!supported()) { displayLockStatus(); return; }
+    if (!wanted()) {
+      const previous = sentinel;
+      sentinel = null;
+      if (previous) { try { await previous.release(); } catch (error) { console.warn('화면 유지 해제 실패', error); } }
+      displayLockStatus();
+      return;
+    }
+    if (pending || (sentinel && !sentinel.released)) { displayLockStatus(); return; }
+    pending = true;
+    displayLockStatus('화면 유지 요청 중…');
+    try {
+      const acquired = await navigator.wakeLock.request('screen');
+      if (!wanted()) { await acquired.release(); displayLockStatus(); return; }
+      sentinel = acquired;
+      acquired.addEventListener('release', () => {
+        if (sentinel !== acquired) return;
+        sentinel = null;
+        displayLockStatus(playbackOptions.keepScreenOn ? '화면 유지가 해제되었습니다. 재생 중 다시 요청할 수 있습니다.' : undefined);
+      });
+      displayLockStatus();
+    } catch (error) {
+      console.warn('화면 유지 요청 실패', error);
+      displayLockStatus('화면 유지 요청이 거절되었습니다. 절전 설정을 확인한 뒤 다시 요청해주세요.');
+    } finally { pending = false; retry.disabled = !supported() || !wanted(); }
+  }
+  function syncControls() {
+    for (const [key, control] of Object.entries(controls)) {
+      if (control.type === 'checkbox') control.checked = playbackOptions[key];
+      else control.value = String(playbackOptions[key]);
+    }
+    dialog.querySelector('#optionRepeat').value = state.repeatMode;
+    dialog.querySelector('#optionShuffle').checked = state.shuffle;
+    displayLockStatus();
+  }
+  function saveOptions() {
+    try {
+      localStorage.setItem(STORAGE_OPTIONS_KEY, JSON.stringify(playbackOptions));
+      dialog.querySelector('#optionsSaved').textContent = '설정을 저장했습니다.';
+    } catch (error) { dialog.querySelector('#optionsSaved').textContent = '저장하지 못했습니다. 이번 실행에만 적용됩니다.'; }
+  }
+  for (const [key, control] of Object.entries(controls)) {
+    control.addEventListener('change', () => {
+      playbackOptions[key] = control.type === 'checkbox' ? control.checked : Number(control.value);
+      if (key === 'continuous' || key === 'gapSeconds') { clearAutoAdvanceTimer(); hideStatus(); }
+      if (key === 'visualEffects') {
+        if (!playbackOptions.visualEffects) stopReactiveBackdrop();
+        else if (!audio.paused) startReactiveBackdrop();
+      }
+      saveOptions();
+      void updateScreenLock();
+    });
+  }
+  dialog.querySelector('#optionRepeat').addEventListener('change', event => {
+    state.repeatMode = event.target.value;
+    state.repeat = state.repeatMode !== 'off';
+    updateRepeatButtonState();
+    clearAutoAdvanceTimer(); hideStatus();
+    persistPlayerState();
+    void updateScreenLock();
+  });
+  dialog.querySelector('#optionShuffle').addEventListener('change', event => {
+    state.shuffle = event.target.checked;
+    resetShufflePlaybackState(state.cur);
+    setToggleButtonState($('shuffleBtn'), state.shuffle);
+    clearAutoAdvanceTimer(); hideStatus();
+    persistPlayerState();
+    void updateScreenLock();
+  });
+  opener.addEventListener('click', () => { syncControls(); dialog.showModal(); });
+  dialog.addEventListener('close', () => opener.focus());
+  retry.addEventListener('click', () => void updateScreenLock());
+  for (const eventName of ['play', 'pause', 'ended', 'error', 'playbackoptionschange']) audio.addEventListener(eventName, () => void updateScreenLock());
+  document.addEventListener('visibilitychange', () => void updateScreenLock());
+  window.addEventListener('pagehide', () => { pageActive = false; void updateScreenLock(); });
+  window.addEventListener('pageshow', () => { pageActive = true; void updateScreenLock(); });
+  // Manual transport actions may cancel a gap without generating an audio pause event.
+  for (const id of ['playBtn', 'miniPlay', 'prevBtn', 'nextBtn', 'miniNext']) $(id)?.addEventListener('click', () => void updateScreenLock());
+  syncControls();
+}
+
+setupPlaybackOptions();
 initializeApp();

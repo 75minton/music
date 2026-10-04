@@ -1,4 +1,31 @@
-﻿    /* 75 Minton Music build: 2026-08-09-v2.0-guide / assets: 20260809-v20-guide */
+    /* 75 Minton Music build: 2026-10-05-v3.2-options / assets: 20261005-v32-options */
+    .playback-options {
+      margin: auto; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
+      padding: 24px; overflow-y: auto; color: var(--text-base); background: #141820;
+      border: 1px solid var(--border); border-radius: 20px; overscroll-behavior: contain;
+    }
+    .playback-options::backdrop { background: rgba(0, 0, 0, .75); }
+    .playback-options .options-heading, .playback-options .option-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .playback-options h2 { font-size: 1.3rem; }
+    .playback-options h3 { font-size: 1rem; margin-bottom: 16px; }
+    .playback-options section { padding: 20px 0; border-top: 1px solid var(--border); }
+    .playback-options p { color: var(--text-sub); font-size: .82rem; line-height: 1.7; margin: 10px 0 16px; }
+    .playback-options .option-row { margin-top: 16px; font-size: .9rem; }
+    .playback-options button, .playback-options select {
+      font: inherit; color: var(--text-base); background: #242d3b; border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; min-height: 44px; flex-shrink: 0;
+    }
+    .playback-options input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--accent); flex-shrink: 0; }
+    .playback-options button:disabled { opacity: .5; cursor: default; }
+    .playback-options :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .playback-options summary { cursor: pointer; padding: 12px 0; }
+    @media (max-width: 480px) {
+      .playback-options { padding: 18px; }
+      .topbar .top-actions { gap: 4px; }
+      .topbar .utility-btn { padding: 8px; font-size: .7rem; }
+    }
     :root {
       /* Modern black music app theme */
       --bg: #07090d;
@@ -545,6 +572,7 @@
     }
     .eq-head {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
@@ -597,12 +625,16 @@
     }
     .eq-presets {
       display: flex;
+      flex: 1 1 100%;
+      min-width: 0;
+      flex-wrap: wrap;
       gap: 6px;
       overflow-x: auto;
       scrollbar-width: none;
     }
     .eq-presets::-webkit-scrollbar { display: none; }
     .eq-preset {
+      flex: 0 0 auto;
       min-height: 28px;
       padding: 0 10px;
       font-size: 0.7rem;
@@ -846,6 +878,11 @@
       .lyrics-toggle-btn { display: none; }
     }
 
+    @media (min-width: 769px) and (min-height: 621px) {
+      .art-col { min-height: 0; overflow-y: auto; padding: 10px; }
+      .art-col > * { flex-shrink: 0; }
+    }
+
     /* ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧
        ?뵦 MOBILE OPTIMIZATION ?뵦
     ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧 */
@@ -1009,7 +1046,6 @@
         max-height: min(520px, calc(100dvh - var(--topbar-h) - var(--bar-h) - 72px));
         margin: 0 auto;
         overflow-y: auto;
-        overflow-x: hidden;
         overflow-x: hidden;
         padding: 16px;
         border-radius: 20px;
