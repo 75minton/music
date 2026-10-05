@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-10-05-v3.2-options / assets: 20261005-v32-options */
+    /* 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261005-v33-home */
     .playback-options {
       margin: auto; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
       padding: 24px; overflow-y: auto; color: var(--text-base); background: #141820;
@@ -26,6 +26,18 @@
       .topbar .top-actions { gap: 4px; }
       .topbar .utility-btn { padding: 8px; font-size: .7rem; }
     }
+    .song-artist-row { display: flex; justify-content: center; align-items: center; gap: 8px; min-width: 0; }
+    .song-artist-row .song-a { min-width: 0; }
+    .song-youtube { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 32px; flex-shrink: 0; border-radius: 8px; }
+    .song-youtube[hidden] { display: none; }
+    .song-youtube:hover { background: rgba(255, 0, 51, .15); }
+    .song-youtube:focus-visible, .home-partner a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .home-partner { padding: 18px 22px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-elevated); flex-shrink: 0; }
+    .home-partner h2 { font-size: .8rem; color: var(--text-sub); margin-bottom: 12px; }
+    .home-partner a { display: flex; align-items: center; gap: 16px; color: var(--text-base); text-decoration: none; }
+    .home-partner img { object-fit: contain; border-radius: 10px; }
+    .home-partner strong { display: block; margin-bottom: 6px; }
+    .home-partner a span span { color: var(--text-sub); font-size: .8rem; }
     :root {
       /* Modern black music app theme */
       --bg: #07090d;

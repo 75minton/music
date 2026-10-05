@@ -1,10 +1,10 @@
 
-// 75 Minton Music build: 2026-10-05-v3.2-options / assets: 20261005-v32-options
+// 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261005-v33-home
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
-const APP_BUILD_VERSION = '2026-10-05-v3.2-options';
-const ASSET_VERSION = '20261005-v32-options';
+const APP_BUILD_VERSION = '2026-10-05-v3.3-home';
+const ASSET_VERSION = '20261005-v33-home';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const STORAGE_OPTIONS_KEY = '75minton_playback_options_v1';
@@ -237,6 +237,18 @@ const $  = id => document.getElementById(id);
 const audio = $('audio');
 const titleEl = $('title');
 const artistEl = $('artist');
+const artistRow = document.createElement('div');
+artistRow.className = 'song-artist-row';
+artistEl.replaceWith(artistRow);
+artistRow.append(artistEl);
+const playerYoutubeLink = document.createElement('a');
+playerYoutubeLink.id = 'playerYoutubeLink';
+playerYoutubeLink.className = 'song-youtube';
+playerYoutubeLink.target = '_blank';
+playerYoutubeLink.rel = 'noopener noreferrer';
+playerYoutubeLink.hidden = true;
+playerYoutubeLink.innerHTML = '<svg viewBox="0 0 28 20" width="28" height="20" aria-hidden="true"><path fill="#ff0033" d="M27.4 3.1A3.5 3.5 0 0 0 25 .6C22.8 0 14 0 14 0S5.2 0 3 .6A3.5 3.5 0 0 0 .6 3.1 37 37 0 0 0 0 10a37 37 0 0 0 .6 6.9A3.5 3.5 0 0 0 3 19.4c2.2.6 11 .6 11 .6s8.8 0 11-.6a3.5 3.5 0 0 0 2.4-2.5A37 37 0 0 0 28 10a37 37 0 0 0-.6-6.9Z"/><path fill="white" d="m11 14.3 7.3-4.3L11 5.7Z"/></svg>';
+artistRow.append(playerYoutubeLink);
 const coverEl = $('cover');
 const progressEl = $('progress');
 const progFill = $('progFill');
@@ -1325,6 +1337,17 @@ async function fetchSongsList({ forceNetwork = false } = {}) {
 function syncSongMeta(song) {
   titleEl.textContent = $('miniTitle').textContent = song.title;
   artistEl.textContent = $('miniArtist').textContent = song.artist;
+  playerYoutubeLink.hidden = true;
+  playerYoutubeLink.removeAttribute('href');
+  try {
+    const youtubeUrl = new URL(song.youtube);
+    if (youtubeUrl.protocol === 'https:' && ['youtu.be', 'youtube.com', 'www.youtube.com', 'm.youtube.com'].includes(youtubeUrl.hostname)) {
+      playerYoutubeLink.href = youtubeUrl.href;
+      playerYoutubeLink.setAttribute('aria-label', `${song.title} YouTube 영상 열기 (새 탭)`);
+      playerYoutubeLink.title = 'YouTube 영상 보기';
+      playerYoutubeLink.hidden = false;
+    }
+  } catch { /* Tracks without a YouTube URL have no video button. */ }
   $('lrcTrackName').textContent = song.title;
   coverEl.src = $('miniCover').src = song.cover || defaultCover;
   updateMusicBackdrop(song);
@@ -2614,5 +2637,13 @@ function setupPlaybackOptions() {
   syncControls();
 }
 
+const homeWrap = document.querySelector('#tab-home .home-wrap');
+if (homeWrap) {
+  const partner = document.createElement('section');
+  partner.className = 'home-partner';
+  partner.setAttribute('aria-label', '제휴 채널');
+  partner.innerHTML = '<h2>제휴 채널</h2><a href="https://tnpmusic.vercel.app" target="_blank" rel="noopener noreferrer" aria-label="TNP Studio 방문 (새 탭)"><img src="./icons/tnp-studio-partner.png" alt="TNP Studio" width="64" height="64"><span><strong>TNP Studio</strong><span>tnpmusic.vercel.app ↗</span></span></a>';
+  homeWrap.append(partner);
+}
 setupPlaybackOptions();
 initializeApp();

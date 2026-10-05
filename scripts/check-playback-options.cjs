@@ -47,6 +47,10 @@ const server = http.createServer((req, res) => {
     const base = `http://127.0.0.1:${server.address().port}`;
     await page.goto(base);
     await page.waitForFunction(count => songs.length === count, trackCount);
+    await page.waitForFunction(() => document.getElementById('homeMonthlySong').textContent === 'Still Beautiful');
+    assert.equal(await page.locator('#homeRecommendedSong').textContent(), '우리는 하나 (10대 그 시절)');
+    assert.equal(await page.locator('.home-partner a').getAttribute('href'), 'https://tnpmusic.vercel.app');
+    await page.waitForFunction(() => document.querySelector('.home-partner img').naturalWidth > 0);
     await page.getByRole('button', { name: '옵션 설정', exact: true }).click();
     for (const width of [320, 390, 844, 1366]) {
       await page.setViewportSize({ width, height: width === 844 ? 390 : 844 });
@@ -109,7 +113,15 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#artist').textContent(), 'TRINITY');
       await page.waitForFunction(() => document.getElementById('cover').naturalWidth > 0);
       assert(await page.evaluate(() => getTrackShareUrl().endsWith('/share/15.html')));
+      assert(await page.locator('#playerYoutubeLink').isVisible());
+      assert((await page.locator('#playerYoutubeLink').getAttribute('href')).includes('PC42I5BXtqE'));
+      await page.evaluate(() => loadTrack(1, false));
+      assert(!await page.locator('#playerYoutubeLink').isVisible());
     }
+    await page.goto(base + '/main.html');
+    await page.waitForFunction(() => document.getElementById('homeMonthlySong').textContent === 'Still Beautiful');
+    assert.equal(await page.locator('#homeRecommendedSong').textContent(), '우리는 하나 (10대 그 시절)');
+    assert(await page.locator('.home-partner').count());
     assert.deepEqual(errors, []);
     console.log('PASS: options layout, persistence, mocked wake-lock request/release/retry, 0–3 second timing, continuous stop, pending-gap cancellation, Escape and m.html entry');
   } finally { if (browser) await browser.close(); server.close(); }
