@@ -26,7 +26,10 @@ const server = http.createServer((req,res) => {
     page.on('pageerror',e=>errors.push(e.message));
     // Never send test visits to the production analytics property.
     await page.route('https://**/*',route=>route.fulfill({status:200,contentType:'text/javascript',body:''}));
-    for(let no=1;no<=13;no++){
+    const selected = process.argv.slice(2).map(Number);
+    const trackNumbers = selected.length ? selected : Array.from({length:13}, (_, index) => index + 1);
+    assert(trackNumbers.every(no => Number.isInteger(no) && no >= 1 && no <= songs.length), 'Invalid track number');
+    for(const no of trackNumbers){
       await page.setViewportSize({width:1440,height:1000});
       await page.goto(`http://127.0.0.1:${server.address().port}/share/${no}.html`);
       await page.waitForFunction(()=>Number.isFinite(document.getElementById('audio').duration));

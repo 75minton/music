@@ -1,5 +1,5 @@
-// Regenerate share/1.html through share/13.html from the 14.html design.
-// Run: node scripts/build-share-pages.cjs
+// Regenerate share pages using the 14.html design, preserving that source page.
+// Run all: node scripts/build-share-pages.cjs; one track: node scripts/build-share-pages.cjs 15
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
@@ -24,7 +24,12 @@ const descriptions = [
   ['괜찮아, 잠시 멈춰도 돼.', '긴 하루와 말하지 못한 눈물 곁에 머무는 목소리. 힘든 순간에도 혼자가 아니라는 다정한 마음을 전합니다.'],
   ['하루 끝에 만나, 우리는 함께 갑니다.', '익숙한 얼굴과 오래된 친구들이 모이는 코트. 점수 너머의 웃음과 함께하는 힘을 노래합니다.']
 ];
-for (let i = 0; i < 13; i++) {
+const requested = process.argv.slice(2).map(Number);
+if (requested.some(no => !Number.isInteger(no) || no < 1 || no > songs.length || no === 14)) {
+  throw new Error('Choose an existing track number other than the source template 14.');
+}
+for (let i = 0; i < songs.length; i++) {
+  if (i === 13 || (requested.length && !requested.includes(i + 1))) continue;
   const song = songs[i], no = i + 1;
   const bytes = fs.readFileSync(path.join(root, song.lrc.split('?')[0]));
   let lrc;
@@ -39,7 +44,7 @@ for (let i = 0; i < 13; i++) {
   }
   lyrics.sort((a,b) => a.t-b.t);
   if (!lyrics.length || lrc.includes('\uFFFD')) throw new Error(`Invalid lyrics: ${song.lrc}`);
-  const [headline, story] = descriptions[i];
+  const [headline, story] = descriptions[i] || [song.title, `${song.artist}의 ${song.title}. 음악과 가사를 함께 감상하세요.`];
   const description = `${song.title} — ${song.artist}. ${story}`;
   const cover = new URL(song.cover, base).href;
   const audio = new URL(song.url, base).href;

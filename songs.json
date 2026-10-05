@@ -1,6 +1,6 @@
 {
-  "version": "2026-08-09-v2.0-guide",
-  "updatedAt": "2026-08-24T00:00:00+09:00",
+  "version": "2026-10-05-still-beautiful",
+  "updatedAt": "2026-10-05T00:00:00+09:00",
   "songs": [
     {
       "id": "we-are-75-rabbits",
@@ -126,6 +126,15 @@
       "cover": "./sound/THE TENTH SEASON.png?v=20260923",
       "url": "./sound/THE TENTH SEASON.mp3?v=20260923",
       "lrc": "./sound/THE TENTH SEASON.lrc?v=20260923",
+      "youtube": ""
+    },
+    {
+      "id": "still-beautiful",
+      "title": "Still Beautiful",
+      "artist": "TRINITY",
+      "cover": "./sound/Still Beautiful.png?v=20261005",
+      "url": "./sound/Still Beautiful.mp3?v=20261005",
+      "lrc": "./sound/Still Beautiful.lrc?v=20261005",
       "youtube": ""
     }
 
