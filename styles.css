@@ -1,4 +1,4 @@
-    /* 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261005-v33-home */
+    /* 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261007-v34-partner */
     .playback-options {
       margin: auto; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
       padding: 24px; overflow-y: auto; color: var(--text-base); background: #141820;
@@ -38,6 +38,7 @@
     .home-partner img { object-fit: contain; border-radius: 10px; }
     .home-partner strong { display: block; margin-bottom: 6px; }
     .home-partner a span span { color: var(--text-sub); font-size: .8rem; }
+    .home-partner .partner-channel { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); font-size: .85rem; color: var(--accent); }
     :root {
       /* Modern black music app theme */
       --bg: #07090d;

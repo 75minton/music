@@ -49,7 +49,8 @@ const server = http.createServer((req, res) => {
     await page.waitForFunction(count => songs.length === count, trackCount);
     await page.waitForFunction(() => document.getElementById('homeMonthlySong').textContent === 'Still Beautiful');
     assert.equal(await page.locator('#homeRecommendedSong').textContent(), '우리는 하나 (10대 그 시절)');
-    assert.equal(await page.locator('.home-partner a').getAttribute('href'), 'https://tnpmusic.vercel.app');
+    assert.equal(await page.locator('.home-partner a').first().getAttribute('href'), 'https://tnpmusic.kr');
+    assert.equal(await page.locator('.partner-channel').getAttribute('href'), 'https://tnpmusic.kr/group/75minton');
     await page.waitForFunction(() => document.querySelector('.home-partner img').naturalWidth > 0);
     await page.getByRole('button', { name: '옵션 설정', exact: true }).click();
     for (const width of [320, 390, 844, 1366]) {

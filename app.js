@@ -1,10 +1,10 @@
 
-// 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261005-v33-home
+// 75 Minton Music build: 2026-10-05-v3.3-home / assets: 20261007-v34-partner
 // 기본 커버 이미지 리소스입니다.
 const defaultCover = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232c2d30'/%3E%3Cstop offset='100%25' stop-color='%23121316'/%3E%3C/radialGradient%3E%3ClinearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F2D06B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23bg)'/%3E%3Ccircle cx='250' cy='250' r='230' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='2'/%3E%3Ccircle cx='250' cy='250' r='190' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3Ccircle cx='250' cy='250' r='150' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='4'/%3E%3Ccircle cx='250' cy='250' r='130' fill='%231a1a1a' stroke='url(%23gold)' stroke-width='4'/%3E%3Cpath d='M220 160 Q200 90 230 110 Q240 130 240 160' fill='url(%23gold)'/%3E%3Cpath d='M280 160 Q300 90 270 110 Q260 130 260 160' fill='url(%23gold)'/%3E%3Cpath d='M225 330 L275 330 L260 360 L240 360 Z' fill='url(%23gold)'/%3E%3Ccircle cx='250' cy='365' r='10' fill='%23fff'/%3E%3Ctext x='250' y='285' font-family='Arial, sans-serif' font-weight='900' font-size='100' fill='url(%23gold)' text-anchor='middle' letter-spacing='-5'%3E75%3C/text%3E%3Ctext x='250' y='145' font-family='Arial' font-weight='bold' font-size='14' fill='%23aaa' text-anchor='middle' letter-spacing='4'%3ERABBIT CLUB%3C/text%3E%3Ctext x='250' y='315' font-family='Arial' font-weight='bold' font-size='12' fill='%23aaa' text-anchor='middle' letter-spacing='6'%3EMINTON%3C/text%3E%3C/svg%3E";
 
 const APP_BUILD_VERSION = '2026-10-05-v3.3-home';
-const ASSET_VERSION = '20261005-v33-home';
+const ASSET_VERSION = '20261007-v34-partner';
 const SONGS_JSON_URL = './songs.json';
 const SONGS_POLL_MS = 60000;
 const STORAGE_OPTIONS_KEY = '75minton_playback_options_v1';
@@ -2642,7 +2642,7 @@ if (homeWrap) {
   const partner = document.createElement('section');
   partner.className = 'home-partner';
   partner.setAttribute('aria-label', '제휴 채널');
-  partner.innerHTML = '<h2>제휴 채널</h2><a href="https://tnpmusic.vercel.app" target="_blank" rel="noopener noreferrer" aria-label="TNP Studio 방문 (새 탭)"><img src="./icons/tnp-studio-partner.png" alt="TNP Studio" width="64" height="64"><span><strong>TNP Studio</strong><span>tnpmusic.vercel.app ↗</span></span></a>';
+  partner.innerHTML = '<h2>제휴 채널</h2><a href="https://tnpmusic.kr" target="_blank" rel="noopener noreferrer" aria-label="TNP Music 방문 (새 탭)"><img src="./icons/tnp-studio-partner.png" alt="TNP Music" width="64" height="64"><span><strong>TNP Music</strong><span>tnpmusic.kr ↗</span></span></a><a class="partner-channel" href="https://tnpmusic.kr/group/75minton" target="_blank" rel="noopener noreferrer" aria-label="TNP Music의 75minton 채널 방문 (새 탭)">TNP Music · 75minton 채널 ↗</a>';
   homeWrap.append(partner);
 }
 setupPlaybackOptions();
